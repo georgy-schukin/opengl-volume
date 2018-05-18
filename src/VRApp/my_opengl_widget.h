@@ -27,7 +27,7 @@ private:
 private:
     std::shared_ptr<QOpenGLShaderProgram> program;
     QOpenGLVertexArrayObject vao;
-    QOpenGLBuffer vertex_buffer, color_buffer;
+    QOpenGLBuffer vertex_buffer, color_buffer, index_buffer;
     QMatrix4x4 model, view, projection;
 };
 
