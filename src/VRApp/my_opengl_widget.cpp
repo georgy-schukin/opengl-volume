@@ -14,7 +14,11 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setSamples(4);
     setFormat(format);
+
+    connect(&timer, &QTimer::timeout, this, &MyOpenGLWidget::onTimer);
+    timer.start(60);
 }
 
 MyOpenGLWidget::~MyOpenGLWidget() {
@@ -25,7 +29,8 @@ void MyOpenGLWidget::initializeGL() {
     auto *gl = context()->functions();
 
     gl->glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
-    gl->glEnable(GL_DEPTH_TEST);    
+    gl->glEnable(GL_DEPTH_TEST);
+    gl->glEnable(GL_MULTISAMPLE);
 
     initView();
     initProgram();
@@ -128,11 +133,10 @@ void MyOpenGLWidget::resizeGL(int width, int height) {
 void MyOpenGLWidget::initView() {
     model.setToIdentity();
     view.setToIdentity();    
-    view.lookAt(QVector3D(0.0f, 0.0f, -4.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
+    view.lookAt(QVector3D(3.0f, 3.0f, 3.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
     projection.setToIdentity();
     const auto aspect = float(width())/height();
-    projection.perspective(45.0f, aspect, -10.0f, 10.0f);
-    //projection.ortho(-4.0f, 4.0f, -4.0f, 4.0f, -4.0f, 4.0f);
+    projection.perspective(45.0f, aspect, 0.01f, 100.0f);
 }
 
 void MyOpenGLWidget::paintGL() {
@@ -147,12 +151,20 @@ void MyOpenGLWidget::paintGL() {
     program->bind();
 
     const int mvp_loc = program->uniformLocation("MVP");
-    program->setUniformValue(mvp_loc, projection*view*model);
+    QMatrix4x4 rotate;
+    rotate.setToIdentity();
+    rotate.rotate(angle, QVector3D(0.0f, 1.0f, 0.0f));
+    program->setUniformValue(mvp_loc, projection*view*rotate*model);
 
     vao.bind();
-    const auto count = 12*3;
+    const auto count = 12*3;    
     gl->glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
     vao.release();
 
     program->release();
+}
+
+void MyOpenGLWidget::onTimer() {
+    angle += 1.0f;
+    update();
 }

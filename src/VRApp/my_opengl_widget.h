@@ -4,6 +4,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
+#include <QTimer>
 #include <memory>
 
 class QOpenGLShaderProgram;
@@ -23,11 +24,14 @@ protected:
 private:
     void initProgram();
     void initView();
+    void onTimer();
 
 private:
     std::shared_ptr<QOpenGLShaderProgram> program;
     QOpenGLVertexArrayObject vao;
     QOpenGLBuffer vertex_buffer, color_buffer, index_buffer;
     QMatrix4x4 model, view, projection;
+    float angle;
+    QTimer timer;
 };
 
