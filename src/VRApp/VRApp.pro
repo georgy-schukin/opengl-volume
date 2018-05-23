@@ -32,7 +32,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     my_opengl_widget.h \
-    util.h
+    util.h \
+    frame3d.h
 
 FORMS    += mainwindow.ui
 
