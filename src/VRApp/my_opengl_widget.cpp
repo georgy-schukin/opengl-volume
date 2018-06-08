@@ -8,7 +8,8 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     QOpenGLWidget(parent),
     vertex_buffer(QOpenGLBuffer::VertexBuffer),
     color_buffer(QOpenGLBuffer::VertexBuffer),
-    index_buffer(QOpenGLBuffer::IndexBuffer)
+    index_buffer(QOpenGLBuffer::IndexBuffer),
+    num_of_vertices(0)
 {
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
@@ -43,51 +44,72 @@ void MyOpenGLWidget::initProgram() {
     program->link();
     program->bind();
 
-    const GLfloat vertices[] = {
-      // front
-     -1.0f, -1.0f,  1.0f,
-      1.0f, -1.0f,  1.0f,
-      1.0f,  1.0f,  1.0f,
-     -1.0f,  1.0f,  1.0f,
-      // back
-     -1.0f, -1.0f, -1.0f,
-      1.0f, -1.0f, -1.0f,
-      1.0f,  1.0f, -1.0f,
-     -1.0f,  1.0f, -1.0f
-    };
-
-    const GLfloat colors[] = {
-        // front colors
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        // back colors
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f
-    };
-
-    const GLuint indices[] = {
+    const std::vector<QVector3D> cv = {
         // front
-        0, 1, 2,
-        2, 3, 0,
-        // right
-        1, 5, 6,
-        6, 2, 1,
+        QVector3D(-1.0f, -1.0f,  1.0f),
+        QVector3D(1.0f, -1.0f,  1.0f),
+        QVector3D(1.0f,  1.0f,  1.0f),
+        QVector3D(-1.0f,  1.0f,  1.0f),
         // back
-        7, 6, 5,
-        5, 4, 7,
+        QVector3D(-1.0f, -1.0f, -1.0f),
+        QVector3D(1.0f, -1.0f, -1.0f),
+        QVector3D(1.0f,  1.0f, -1.0f),
+        QVector3D(-1.0f,  1.0f, -1.0f)
+    };
+
+    const std::vector<QVector3D> cc = {
+        // front colors
+        QVector3D(1.0f, 0.0f, 0.0f),
+        QVector3D(0.0f, 1.0f, 0.0f),
+        QVector3D(0.0f, 0.0f, 1.0f),
+        QVector3D(1.0f, 1.0f, 1.0f),
+        // back colors
+        QVector3D(1.0f, 0.0f, 0.0f),
+        QVector3D(0.0f, 1.0f, 0.0f),
+        QVector3D(0.0f, 0.0f, 1.0f),
+        QVector3D(1.0f, 1.0f, 1.0f)
+    };
+
+    const std::vector<QVector3D> vertices = {
+        // front
+        cv[0], cv[1], cv[2],
+        cv[2], cv[3], cv[0],
+        // right
+        cv[1], cv[5], cv[6],
+        cv[6], cv[2], cv[1],
+        // back
+        cv[7], cv[6], cv[5],
+        cv[5], cv[4], cv[7],
         // left
-        4, 0, 3,
-        3, 7, 4,
+        cv[4], cv[0], cv[3],
+        cv[3], cv[7], cv[4],
         // bottom
-        4, 5, 1,
-        1, 0, 4,
+        cv[4], cv[5], cv[1],
+        cv[1], cv[0], cv[4],
         // top
-        3, 2, 6,
-        6, 7, 3
+        cv[3], cv[2], cv[6],
+        cv[6], cv[7], cv[3]
+    };
+
+    const std::vector<QVector3D> colors = {
+        // front
+        cc[0], cc[1], cc[2],
+        cc[2], cc[3], cc[0],
+        // right
+        cc[1], cc[5], cc[6],
+        cc[6], cc[2], cc[1],
+        // back
+        cc[7], cc[6], cc[5],
+        cc[5], cc[4], cc[7],
+        // left
+        cc[4], cc[0], cc[3],
+        cc[3], cc[7], cc[4],
+        // bottom
+        cc[4], cc[5], cc[1],
+        cc[1], cc[0], cc[4],
+        // top
+        cc[3], cc[2], cc[6],
+        cc[6], cc[7], cc[3]
     };
 
     const int v_loc = program->attributeLocation("vertex");
@@ -99,7 +121,7 @@ void MyOpenGLWidget::initProgram() {
     vertex_buffer.create();
     vertex_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     vertex_buffer.bind();
-    vertex_buffer.allocate(vertices, sizeof(vertices));    
+    vertex_buffer.allocate(&vertices[0], vertices.size()*sizeof(QVector3D));
     program->enableAttributeArray(v_loc);
     program->setAttributeBuffer(v_loc, GL_FLOAT, 0, 3);
     vertex_buffer.release();
@@ -107,19 +129,21 @@ void MyOpenGLWidget::initProgram() {
     color_buffer.create();
     color_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     color_buffer.bind();
-    color_buffer.allocate(colors, sizeof(colors));
+    color_buffer.allocate(&colors[0], colors.size()*sizeof(QVector3D));
     program->enableAttributeArray(c_loc);
     program->setAttributeBuffer(c_loc, GL_FLOAT, 0, 3);
     color_buffer.release();
 
-    index_buffer.create();
+    /*index_buffer.create();
     index_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     index_buffer.bind();
-    index_buffer.allocate(indices, sizeof(indices));
+    index_buffer.allocate(indices, sizeof(indices));*/
     //index_buffer.release();
 
     vao.release();
     program->release();
+
+    num_of_vertices = vertices.size();
 }
 
 void MyOpenGLWidget::resizeGL(int width, int height) {
@@ -157,8 +181,9 @@ void MyOpenGLWidget::paintGL() {
     program->setUniformValue(mvp_loc, projection*view*rotate*model);
 
     vao.bind();
-    const auto count = 12*3;    
-    gl->glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
+    //const auto count = 12*3;
+    //gl->glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
+    gl->glDrawArrays(GL_TRIANGLES, 0, num_of_vertices);
     vao.release();
 
     program->release();

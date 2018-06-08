@@ -33,5 +33,6 @@ private:
     QMatrix4x4 model, view, projection;
     float angle;
     QTimer timer;
+    int num_of_vertices;
 };
 
