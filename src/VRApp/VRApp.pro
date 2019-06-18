@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
+CONFIG += c++14
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,4 +40,6 @@ FORMS    += mainwindow.ui
 
 DISTFILES += \
     shaders/basic.vert \
-    shaders/basic.frag
+    shaders/basic.frag \
+    shaders/texture.frag \
+    shaders/texture.vert

@@ -4,6 +4,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QMatrix4x4>
+#include <QOpenGLTexture>
 #include <QTimer>
 #include <memory>
 
@@ -13,8 +14,7 @@ class MyOpenGLWidget : public QOpenGLWidget {
     Q_OBJECT
 
 public:
-    explicit MyOpenGLWidget(QWidget *parent=0);
-    ~MyOpenGLWidget();
+    explicit MyOpenGLWidget(QWidget *parent=nullptr);
 
 protected:
     virtual void initializeGL() override;
@@ -24,13 +24,15 @@ protected:
 private:
     void initProgram();
     void initView();
+    void initTextures();
     void onTimer();
 
 private:
     std::shared_ptr<QOpenGLShaderProgram> program;
     QOpenGLVertexArrayObject vao;
-    QOpenGLBuffer vertex_buffer, color_buffer, index_buffer;
+    QOpenGLBuffer vertex_buffer, color_buffer, tex_coord_buffer, index_buffer;
     QMatrix4x4 model, view, projection;
+    QOpenGLTexture texture_3d;
     float angle;
     QTimer timer;
     int num_of_vertices;
