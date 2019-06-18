@@ -14,6 +14,7 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     tex_coord_buffer(QOpenGLBuffer::VertexBuffer),
     index_buffer(QOpenGLBuffer::IndexBuffer),
     texture_3d(QOpenGLTexture::Target3D),
+    palette(QOpenGLTexture::Target1D),
     num_of_vertices(0)
 {
     QSurfaceFormat format;
@@ -90,7 +91,7 @@ void MyOpenGLWidget::initProgram() {
         QVector3D(1.0f, 1.0f, 1.0f)
     };
 
-    const std::vector<size_t> indices = {
+    const std::vector<unsigned int> indices = {
         // front
         0, 1, 2,
         2, 3, 0,
@@ -129,7 +130,7 @@ void MyOpenGLWidget::initProgram() {
     vertex_buffer.create();
     vertex_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     vertex_buffer.bind();
-    vertex_buffer.allocate(&vertices[0], vertices.size()*sizeof(QVector3D));
+    vertex_buffer.allocate(vertices.data(), vertices.size()*sizeof(QVector3D));
     program->enableAttributeArray(v_loc);
     program->setAttributeBuffer(v_loc, GL_FLOAT, 0, 3);
     vertex_buffer.release();
@@ -145,7 +146,7 @@ void MyOpenGLWidget::initProgram() {
     tex_coord_buffer.create();
     tex_coord_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     tex_coord_buffer.bind();
-    tex_coord_buffer.allocate(&tex_coords[0], tex_coords.size()*sizeof(QVector3D));
+    tex_coord_buffer.allocate(tex_coords.data(), tex_coords.size()*sizeof(QVector3D));
     program->enableAttributeArray(tc_loc);
     program->setAttributeBuffer(tc_loc, GL_FLOAT, 0, 3);
     tex_coord_buffer.release();
@@ -153,29 +154,50 @@ void MyOpenGLWidget::initProgram() {
     /*index_buffer.create();
     index_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     index_buffer.bind();
-    index_buffer.allocate(indices, sizeof(indices));*/
-    //index_buffer.release();
+    index_buffer.allocate(&indices[0], indices.size()*sizeof(size_t));
+    index_buffer.release();*/
 
     vao.release();
     program->release();
 
     num_of_vertices = vertices.size();
+    num_of_indices = indices.size();
 }
 
 void MyOpenGLWidget::initTextures() {
-    const float PI = std::acos(-1.0);
-    Frame3D<QVector3D> frame(256, 256, 256);
-    frame.fill([PI](size_t i, size_t j, size_t k) -> auto {
-        return QVector3D(std::abs(std::sin(PI*float(i)/128)),
-                         std::abs(std::cos(PI*float(j)/128)),
-                         std::abs(std::cos(PI*float(k)/128)));
+    const size_t tex_size = 256;
+    //const float PI = std::acos(-1.0f);
+    const float domain_size = 5.0f;
+    Frame3D<float> frame(tex_size, tex_size, tex_size);
+    frame.fill([&](size_t i, size_t j, size_t k) -> auto {
+        const auto x = domain_size*float(i)/tex_size;
+        const auto y = domain_size*float(j)/tex_size;
+        const auto z = domain_size*float(k)/tex_size;
+        return std::sqrt(x*x + y*y + z*z)/(domain_size*std::sqrt(3.0f));
     });
 
-    texture_3d.setSize(256, 256, 256);
+    texture_3d.setSize(tex_size, tex_size, tex_size);
     texture_3d.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
-    texture_3d.setFormat(QOpenGLTexture::RGB8_UNorm);
+    texture_3d.setFormat(QOpenGLTexture::R16F);
     texture_3d.allocateStorage();
-    texture_3d.setData(QOpenGLTexture::RGB, QOpenGLTexture::Float32, static_cast<const void*>(frame.data()));
+    texture_3d.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, static_cast<const void*>(frame.data()));
+
+    const std::vector<QVector3D> palette_colors = {
+        QVector3D(0.0f, 0.0f, 0.0f),
+        QVector3D(1.0f, 0.0f, 1.0f),
+        QVector3D(0.0f, 0.0f, 1.0f),
+        QVector3D(0.0f, 1.0f, 1.0f),
+        QVector3D(0.0f, 1.0f, 0.0f),
+        QVector3D(1.0f, 1.0f, 0.0f),
+        QVector3D(1.0f, 0.0f, 0.0f)
+    };
+
+    palette.setSize(palette_colors.size());
+    palette.setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,  QOpenGLTexture::LinearMipMapLinear);
+    palette.setWrapMode(QOpenGLTexture::ClampToEdge);
+    palette.setFormat(QOpenGLTexture::RGB8_UNorm);
+    palette.allocateStorage();
+    palette.setData(QOpenGLTexture::RGB, QOpenGLTexture::Float32, palette_colors.data());
 }
 
 void MyOpenGLWidget::initView() {
@@ -212,15 +234,24 @@ void MyOpenGLWidget::paintGL() {
     rotate.rotate(angle, QVector3D(0.0f, 1.0f, 0.0f));
     program->setUniformValue(mvp_loc, projection*view*rotate*model);
 
+    const int tex3d_loc = program->uniformLocation("texture3d");
+    const int pal_loc = program->uniformLocation("palette");
+
+    glActiveTexture(GL_TEXTURE0);
+    program->setUniformValue(tex3d_loc, 0);
     texture_3d.bind();
 
+    glActiveTexture(GL_TEXTURE1);
+    program->setUniformValue(pal_loc, 1);
+    palette.bind();
+
     vao.bind();
-    //const auto count = 12*3;
-    //gl->glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
+    //gl->glDrawElements(GL_TRIANGLES, num_of_indices, GL_UNSIGNED_INT, 0);
     gl->glDrawArrays(GL_TRIANGLES, 0, num_of_vertices);
     vao.release();
 
     texture_3d.release();
+    palette.release();
 
     program->release();
 }

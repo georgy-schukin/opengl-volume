@@ -32,9 +32,9 @@ private:
     QOpenGLVertexArrayObject vao;
     QOpenGLBuffer vertex_buffer, color_buffer, tex_coord_buffer, index_buffer;
     QMatrix4x4 model, view, projection;
-    QOpenGLTexture texture_3d;
+    QOpenGLTexture texture_3d, palette;
     float angle;
     QTimer timer;
-    int num_of_vertices;
+    int num_of_vertices, num_of_indices;
 };
 
