@@ -14,7 +14,7 @@ class MyOpenGLWidget : public QOpenGLWidget {
     Q_OBJECT
 
 public:
-    explicit MyOpenGLWidget(QWidget *parent=nullptr);
+    explicit MyOpenGLWidget(QWidget *parent=nullptr);    
 
 protected:
     virtual void initializeGL() override;

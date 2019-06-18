@@ -170,14 +170,15 @@ void MyOpenGLWidget::initTextures() {
     const float domain_size = 5.0f;
     Frame3D<float> frame(tex_size, tex_size, tex_size);
     frame.fill([&](size_t i, size_t j, size_t k) -> auto {
-        const auto x = domain_size*float(i)/tex_size;
-        const auto y = domain_size*float(j)/tex_size;
-        const auto z = domain_size*float(k)/tex_size;
+        const auto x = domain_size*float(i)/(tex_size - 1);
+        const auto y = domain_size*float(j)/(tex_size - 1);
+        const auto z = domain_size*float(k)/(tex_size - 1);
         return std::sqrt(x*x + y*y + z*z)/(domain_size*std::sqrt(3.0f));
     });
 
     texture_3d.setSize(tex_size, tex_size, tex_size);
     texture_3d.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
+    texture_3d.setWrapMode(QOpenGLTexture::ClampToEdge);
     texture_3d.setFormat(QOpenGLTexture::R16F);
     texture_3d.allocateStorage();
     texture_3d.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, static_cast<const void*>(frame.data()));
@@ -237,11 +238,11 @@ void MyOpenGLWidget::paintGL() {
     const int tex3d_loc = program->uniformLocation("texture3d");
     const int pal_loc = program->uniformLocation("palette");
 
-    glActiveTexture(GL_TEXTURE0);
+    gl->glActiveTexture(GL_TEXTURE0);
     program->setUniformValue(tex3d_loc, 0);
     texture_3d.bind();
 
-    glActiveTexture(GL_TEXTURE1);
+    gl->glActiveTexture(GL_TEXTURE1);
     program->setUniformValue(pal_loc, 1);
     palette.bind();
 
