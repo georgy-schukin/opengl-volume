@@ -4,6 +4,7 @@
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
+#include <QMouseEvent>
 
 #include <cmath>
 
@@ -14,8 +15,7 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     tex_coord_buffer(QOpenGLBuffer::VertexBuffer),
     index_buffer(QOpenGLBuffer::IndexBuffer),
     texture_3d(QOpenGLTexture::Target3D),
-    palette(QOpenGLTexture::Target1D),
-    num_of_vertices(0)
+    palette(QOpenGLTexture::Target1D)
 {
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
@@ -232,7 +232,8 @@ void MyOpenGLWidget::paintGL() {
     const int mvp_loc = program->uniformLocation("MVP");
     QMatrix4x4 rotate;
     rotate.setToIdentity();
-    rotate.rotate(angle, QVector3D(0.0f, 1.0f, 0.0f));
+    rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
+    rotate.rotate(rotation_z_angle, QVector3D(0.0f, 0.0f, 1.0f));
     program->setUniformValue(mvp_loc, projection*view*rotate*model);
 
     const int tex3d_loc = program->uniformLocation("texture3d");
@@ -258,6 +259,23 @@ void MyOpenGLWidget::paintGL() {
 }
 
 void MyOpenGLWidget::onTimer() {
-    angle += 1.0f;
+    rotation_y_angle += 1.0f;
+    update();
+}
+
+void MyOpenGLWidget::mousePressEvent(QMouseEvent *event) {
+    mouse_pos = event->pos();
+}
+
+void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
+    rotation_y_angle += float(event->pos().x() - mouse_pos.x());
+    rotation_z_angle += float(event->pos().y() - mouse_pos.y());
+    mouse_pos = event->pos();
+    update();
+}
+
+void MyOpenGLWidget::wheelEvent(QWheelEvent *event) {
+    const auto coeff = (event->angleDelta().y() > 0 ? 1.0f : -1.0f);
+    view.translate(coeff*QVector3D(0.2f, 0.2f, 0.2f));
     update();
 }
