@@ -43,14 +43,8 @@ void MyOpenGLWidget::initializeGL() {
 }
 
 void MyOpenGLWidget::initProgram() {
-    program = std::make_shared<QOpenGLShaderProgram>();
-    program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/texture.vert");
-    program->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/texture.frag");
-    program->link();
-    program->bind();
-
     // Vertex coordinates.
-    const std::vector<QVector3D> cv = {
+    const std::vector<QVector3D> vertices = {
         // front
         QVector3D(-1.0f, -1.0f,  1.0f),
         QVector3D(1.0f, -1.0f,  1.0f),
@@ -64,7 +58,7 @@ void MyOpenGLWidget::initProgram() {
     };
 
     // Vertex texture coordinates.
-    const std::vector<QVector3D> ct = {
+    const std::vector<QVector3D> tex_coords = {
         // front
         QVector3D(0.0f, 0.0f,  1.0f),
         QVector3D(1.0f, 0.0f,  1.0f),
@@ -78,7 +72,7 @@ void MyOpenGLWidget::initProgram() {
     };
 
     // Vertex colors.
-    const std::vector<QVector3D> cc = {
+    const std::vector<QVector3D> colors = {
         // front colors
         QVector3D(1.0f, 0.0f, 0.0f),
         QVector3D(0.0f, 1.0f, 0.0f),
@@ -91,7 +85,7 @@ void MyOpenGLWidget::initProgram() {
         QVector3D(1.0f, 1.0f, 1.0f)
     };
 
-    const std::vector<unsigned int> indices = {
+    const std::vector<GLuint> indices = {
         // front
         0, 1, 2,
         2, 3, 0,
@@ -112,16 +106,16 @@ void MyOpenGLWidget::initProgram() {
         6, 7, 3
     };
 
-    std::vector<QVector3D> vertices, tex_coords, colors;
+    num_of_indices = indices.size();
 
-    for (const auto &idx: indices) {
-        vertices.push_back(cv[idx]);
-        tex_coords.push_back(ct[idx]);
-        colors.push_back(cv[idx]);
-    }
+    program = std::make_shared<QOpenGLShaderProgram>();
+    program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/texture.vert");
+    program->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/texture.frag");
+    program->link();
+    program->bind();
 
     const int v_loc = program->attributeLocation("vertex");
-    const int c_loc = program->attributeLocation("color");
+    //const int c_loc = program->attributeLocation("color");
     const int tc_loc = program->attributeLocation("tCoord");
 
     vao.create();
@@ -133,15 +127,13 @@ void MyOpenGLWidget::initProgram() {
     vertex_buffer.allocate(vertices.data(), vertices.size()*sizeof(QVector3D));
     program->enableAttributeArray(v_loc);
     program->setAttributeBuffer(v_loc, GL_FLOAT, 0, 3);
-    vertex_buffer.release();
 
     /*color_buffer.create();
     color_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     color_buffer.bind();
-    color_buffer.allocate(&colors[0], colors.size()*sizeof(QVector3D));
+    color_buffer.allocate(colors.data(), colors.size()*sizeof(QVector3D));
     program->enableAttributeArray(c_loc);
-    program->setAttributeBuffer(c_loc, GL_FLOAT, 0, 3);
-    color_buffer.release();*/
+    program->setAttributeBuffer(c_loc, GL_FLOAT, 0, 3);*/
 
     tex_coord_buffer.create();
     tex_coord_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
@@ -149,19 +141,15 @@ void MyOpenGLWidget::initProgram() {
     tex_coord_buffer.allocate(tex_coords.data(), tex_coords.size()*sizeof(QVector3D));
     program->enableAttributeArray(tc_loc);
     program->setAttributeBuffer(tc_loc, GL_FLOAT, 0, 3);
-    tex_coord_buffer.release();
 
-    /*index_buffer.create();
+    index_buffer.create();
     index_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
     index_buffer.bind();
-    index_buffer.allocate(&indices[0], indices.size()*sizeof(size_t));
-    index_buffer.release();*/
+    index_buffer.allocate(indices.data(), indices.size()*sizeof(GLuint));
 
     vao.release();
-    program->release();
 
-    num_of_vertices = vertices.size();
-    num_of_indices = indices.size();
+    program->release();
 }
 
 void MyOpenGLWidget::initTextures() {
@@ -248,8 +236,7 @@ void MyOpenGLWidget::paintGL() {
     palette.bind();
 
     vao.bind();
-    //gl->glDrawElements(GL_TRIANGLES, num_of_indices, GL_UNSIGNED_INT, 0);
-    gl->glDrawArrays(GL_TRIANGLES, 0, num_of_vertices);
+    gl->glDrawElements(GL_TRIANGLES, num_of_indices, GL_UNSIGNED_INT, 0);
     vao.release();
 
     texture_3d.release();

@@ -39,7 +39,7 @@ private:
     QMatrix4x4 model, view, projection;
     QOpenGLTexture texture_3d, palette;
 
-    int num_of_vertices {0}, num_of_indices {0};
+    int num_of_indices {0};
 
     float rotation_y_angle {0.0f}, rotation_z_angle {0.0f};
     QTimer timer;
