@@ -32,7 +32,6 @@ SOURCES += main.cpp\
     objects/cube.cpp \
     objects/plane.cpp \
     objects/triangulated_shape.cpp \
-    plane.cpp \
     util.cpp
 
 HEADERS  += mainwindow.h \

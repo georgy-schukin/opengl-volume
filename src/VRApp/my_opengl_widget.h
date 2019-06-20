@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "objects/cube.h"
+#include "objects/plane.h"
 
 class QOpenGLShaderProgram;
 
@@ -41,6 +42,7 @@ private:
     QOpenGLTexture texture_3d, palette;
 
     std::shared_ptr<Cube> cube;
+    std::shared_ptr<Plane> plane;
 
     float rotation_y_angle {0.0f}, rotation_z_angle {0.0f};
 

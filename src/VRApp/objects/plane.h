@@ -1,4 +1,6 @@
-#ifndef PLANE_H
-#define PLANE_H
+#include "triangulated_shape.h"
 
-#endif // PLANE_H
+class Plane : public TriangulatedShape {
+public:
+    Plane();
+};

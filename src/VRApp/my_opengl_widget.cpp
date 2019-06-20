@@ -14,7 +14,7 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     palette(QOpenGLTexture::Target1D)
 {
     QSurfaceFormat format;
-    format.setDepthBufferSize(24);
+    //format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     format.setProfile(QSurfaceFormat::CoreProfile);
     format.setSamples(4);
@@ -28,12 +28,14 @@ void MyOpenGLWidget::initializeGL() {
     auto *gl = context()->functions();
 
     gl->glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
-    gl->glEnable(GL_DEPTH_TEST);
+    gl->glDisable(GL_DEPTH_TEST);
+    gl->glDepthFunc(GL_ALWAYS);
     gl->glEnable(GL_MULTISAMPLE);
-    //gl->glEnable(GL_BLEND);
-    //gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    gl->glEnable(GL_BLEND);
+    gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    program = initProgram("shaders/texture.vert", "shaders/texture.frag");
+    //program = initProgram("shaders/texture.vert", "shaders/texture.frag");
+    program = initProgram("shaders/plane.vert", "shaders/plane.frag");
     initView();
     initObjects();
     initTextures();
@@ -48,9 +50,12 @@ std::shared_ptr<QOpenGLShaderProgram> MyOpenGLWidget::initProgram(QString vertex
 }
 
 void MyOpenGLWidget::initObjects() {
-    cube = std::make_shared<Cube>();
+    /*cube = std::make_shared<Cube>();
     cube->attachVertices(program.get(), "vertex");
-    cube->attachTextureCoords(program.get(), "tCoord");
+    cube->attachTextureCoords(program.get(), "tCoord");*/
+
+    plane = std::make_shared<Plane>();
+    plane->attachVertices(program.get(), "vertex");
 }
 
 void MyOpenGLWidget::initTextures() {
@@ -94,11 +99,17 @@ void MyOpenGLWidget::initTextures() {
 
 void MyOpenGLWidget::initView() {
     model_matrix.setToIdentity();
+
     view_matrix.setToIdentity();
     view_matrix.lookAt(QVector3D(3.0f, 3.0f, 3.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
+
     projection_matrix.setToIdentity();
     const auto aspect = float(width())/height();
     projection_matrix.perspective(45.0f, aspect, 0.01f, 100.0f);
+
+    texture_matrix.setToIdentity();
+    texture_matrix.scale(2.0f);
+    texture_matrix.translate(-0.5f, -0.5f, -0.5f);
 }
 
 void MyOpenGLWidget::resizeGL(int width, int height) {
@@ -120,21 +131,24 @@ void MyOpenGLWidget::paintGL() {
 
     program->bind();
 
-    texture_matrix.setToIdentity();
-    texture_matrix.scale(2.0f);
-    texture_matrix.translate(-1.0f, -1.0f, -1.0f);
-    texture_matrix.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
-    texture_matrix.rotate(rotation_z_angle, QVector3D(0.0f, 0.0f, 1.0f));
-
-    const auto texture_inverse = (view_matrix * texture_matrix).inverted();
-
-    const int mvp_loc = program->uniformLocation("MVP");
     QMatrix4x4 rotate;
     rotate.setToIdentity();
     rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
     rotate.rotate(rotation_z_angle, QVector3D(0.0f, 0.0f, 1.0f));
+
+    const auto texture_inverse_matrix = (view_matrix * rotate * texture_matrix).inverted();
+
+    const auto proj_loc = program->uniformLocation("Proj");
+    const auto model_loc = program->uniformLocation("Model");
+    const auto tex_inv_loc = program->uniformLocation("TexInv");
+
+    program->setUniformValue(proj_loc, projection_matrix);
+    program->setUniformValue(tex_inv_loc, texture_inverse_matrix);
+
+    /*const int mvp_loc = program->uniformLocation("MVP");
+
     QMatrix4x4 mvp = projection_matrix*view_matrix*rotate*model_matrix;
-    program->setUniformValue(mvp_loc, mvp);
+    program->setUniformValue(mvp_loc, mvp);*/
 
     const int tex3d_loc = program->uniformLocation("texture3d");
     const int pal_loc = program->uniformLocation("palette");
@@ -147,7 +161,21 @@ void MyOpenGLWidget::paintGL() {
     program->setUniformValue(pal_loc, 1);
     palette.bind();
 
-    cube->draw(gl);
+    QMatrix4x4 plane_model;
+    plane_model.setToIdentity();
+    plane_model.scale(4, 4, 1);
+    const float render_length = 4.0f;
+    const int volume_size = 128;
+    plane_model.translate(0, 0, -3 - render_length);
+
+    const auto step = 1.0f/volume_size;
+    for (int i = 0; i < volume_size*render_length; i++) {
+        program->setUniformValue(model_loc, plane_model);
+        plane->draw(gl);
+        plane_model.translate(0, 0, step);
+    }
+
+    //cube->draw(gl);
 
     texture_3d.release();
     palette.release();
