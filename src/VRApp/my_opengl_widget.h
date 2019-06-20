@@ -10,6 +10,7 @@
 
 #include "objects/cube.h"
 #include "objects/plane.h"
+#include "frame3d.h"
 
 class QOpenGLShaderProgram;
 
@@ -18,6 +19,11 @@ class MyOpenGLWidget : public QOpenGLWidget {
 
 public:
     explicit MyOpenGLWidget(QWidget *parent=nullptr);
+
+public slots:
+    void setRandomFrame();
+    void setSphereFrame();
+    void setSectorFrame();
 
 protected:
     virtual void initializeGL() override;
@@ -30,16 +36,22 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    std::shared_ptr<QOpenGLShaderProgram> initProgram(QString vertex_shader_file, QString fragment_shader_file);
+    std::shared_ptr<QOpenGLShaderProgram> loadProgram(QString vertex_shader_file, QString fragment_shader_file);
     void initView();
     void initObjects();
-    void initTextures();
+    void initTextures();    
+
     void onTimer();
+
+    void setData(const Frame3D<GLfloat> &data);
+    void setColorPalette(const std::vector<QVector3D> &colors);
+    void setOpacityPalette(const std::vector<GLfloat> &values);
 
 private:
     std::shared_ptr<QOpenGLShaderProgram> program;
-    QMatrix4x4 model_matrix, view_matrix, projection_matrix, texture_matrix;
-    QOpenGLTexture texture_3d, palette;
+    QOpenGLTexture texture_3d, palette, opacity;
+
+    QMatrix4x4 model_matrix, view_matrix, projection_matrix, texture_matrix;    
 
     std::shared_ptr<Cube> cube;
     std::shared_ptr<Plane> plane;
@@ -50,5 +62,7 @@ private:
     int timer_interval {60};
 
     QPoint mouse_pos {0, 0};
+
+    size_t frame_size {256};
 };
 

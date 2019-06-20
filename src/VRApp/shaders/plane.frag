@@ -6,6 +6,7 @@ out vec4 fragColor;
 
 uniform sampler3D texture3d;
 uniform sampler1D palette;
+uniform sampler1D opacity;
 
 void main()
 {
@@ -14,6 +15,6 @@ void main()
     }
     float data_value = texture(texture3d, texCoord).r;
     vec3 color = texture(palette, data_value).rgb;
-    float alpha = pow(data_value, 6);
+    float alpha = texture(opacity, data_value).r;
     fragColor = vec4(color, alpha);
 }

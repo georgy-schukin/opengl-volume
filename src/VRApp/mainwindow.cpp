@@ -11,10 +11,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     ui->mainToolBar->hide();
-    ui->statusBar->hide();
+    ui->statusBar->hide();        
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_actionSector_triggered() {
+    ui->openGLWidget->setSectorFrame();
+}
+
+void MainWindow::on_actionRandom_triggered() {
+    ui->openGLWidget->setRandomFrame();
+}
+
+void MainWindow::on_actionSphere_triggered() {
+    ui->openGLWidget->setSphereFrame();
 }
