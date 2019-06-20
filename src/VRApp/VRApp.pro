@@ -29,10 +29,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     my_opengl_widget.cpp \
+    objects/cube.cpp \
+    objects/plane.cpp \
+    objects/triangulated_shape.cpp \
+    plane.cpp \
     util.cpp
 
 HEADERS  += mainwindow.h \
     my_opengl_widget.h \
+    objects/buffer.h \
+    objects/cube.h \
+    objects/plane.h \
+    objects/shape.h \
+    objects/triangulated_shape.h \
     util.h \
     frame3d.h
 
@@ -41,5 +50,7 @@ FORMS    += mainwindow.ui
 DISTFILES += \
     shaders/basic.vert \
     shaders/basic.frag \
+    shaders/plane.frag \
+    shaders/plane.vert \
     shaders/texture.frag \
     shaders/texture.vert

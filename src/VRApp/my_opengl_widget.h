@@ -8,6 +8,8 @@
 #include <QTimer>
 #include <memory>
 
+#include "objects/cube.h"
+
 class QOpenGLShaderProgram;
 
 class MyOpenGLWidget : public QOpenGLWidget {
@@ -27,19 +29,18 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    void initProgram();
+    std::shared_ptr<QOpenGLShaderProgram> initProgram(QString vertex_shader_file, QString fragment_shader_file);
     void initView();
+    void initObjects();
     void initTextures();
     void onTimer();
 
 private:
     std::shared_ptr<QOpenGLShaderProgram> program;
-    QOpenGLVertexArrayObject vao;
-    QOpenGLBuffer vertex_buffer, color_buffer, tex_coord_buffer, index_buffer;
-    QMatrix4x4 model, view, projection;
+    QMatrix4x4 model_matrix, view_matrix, projection_matrix, texture_matrix;
     QOpenGLTexture texture_3d, palette;
 
-    int num_of_indices {0};
+    std::shared_ptr<Cube> cube;
 
     float rotation_y_angle {0.0f}, rotation_z_angle {0.0f};
 

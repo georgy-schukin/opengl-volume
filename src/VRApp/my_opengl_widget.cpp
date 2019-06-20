@@ -10,10 +10,6 @@
 
 MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     QOpenGLWidget(parent),
-    vertex_buffer(QOpenGLBuffer::VertexBuffer),
-    color_buffer(QOpenGLBuffer::VertexBuffer),
-    tex_coord_buffer(QOpenGLBuffer::VertexBuffer),
-    index_buffer(QOpenGLBuffer::IndexBuffer),
     texture_3d(QOpenGLTexture::Target3D),
     palette(QOpenGLTexture::Target1D)
 {
@@ -34,129 +30,34 @@ void MyOpenGLWidget::initializeGL() {
     gl->glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
     gl->glEnable(GL_DEPTH_TEST);
     gl->glEnable(GL_MULTISAMPLE);
-    gl->glEnable(GL_TEXTURE);
-    gl->glEnable(GL_TEXTURE_3D);
+    //gl->glEnable(GL_BLEND);
+    //gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    program = initProgram("shaders/texture.vert", "shaders/texture.frag");
     initView();
-    initProgram();
+    initObjects();
     initTextures();
 }
 
-void MyOpenGLWidget::initProgram() {
-    // Vertex coordinates.
-    const std::vector<QVector3D> vertices = {
-        // front
-        QVector3D(-1.0f, -1.0f,  1.0f),
-        QVector3D(1.0f, -1.0f,  1.0f),
-        QVector3D(1.0f,  1.0f,  1.0f),
-        QVector3D(-1.0f,  1.0f,  1.0f),
-        // back
-        QVector3D(-1.0f, -1.0f, -1.0f),
-        QVector3D(1.0f, -1.0f, -1.0f),
-        QVector3D(1.0f,  1.0f, -1.0f),
-        QVector3D(-1.0f,  1.0f, -1.0f)
-    };
+std::shared_ptr<QOpenGLShaderProgram> MyOpenGLWidget::initProgram(QString vertex_shader_file, QString fragment_shader_file) {
+    auto prog = std::make_shared<QOpenGLShaderProgram>();
+    prog->addShaderFromSourceFile(QOpenGLShader::Vertex, vertex_shader_file);
+    prog->addShaderFromSourceFile(QOpenGLShader::Fragment, fragment_shader_file);
+    prog->link();
+    return prog;
+}
 
-    // Vertex texture coordinates.
-    const std::vector<QVector3D> tex_coords = {
-        // front
-        QVector3D(0.0f, 0.0f,  1.0f),
-        QVector3D(1.0f, 0.0f,  1.0f),
-        QVector3D(1.0f, 1.0f,  1.0f),
-        QVector3D(0.0f, 1.0f,  1.0f),
-        // back
-        QVector3D(0.0f, 0.0f, 0.0f),
-        QVector3D(1.0f, 0.0f, 0.0f),
-        QVector3D(1.0f, 1.0f, 0.0f),
-        QVector3D(0.0f, 1.0f, 0.0f)
-    };
-
-    // Vertex colors.
-    const std::vector<QVector3D> colors = {
-        // front colors
-        QVector3D(1.0f, 0.0f, 0.0f),
-        QVector3D(0.0f, 1.0f, 0.0f),
-        QVector3D(0.0f, 0.0f, 1.0f),
-        QVector3D(1.0f, 1.0f, 1.0f),
-        // back colors
-        QVector3D(1.0f, 0.0f, 0.0f),
-        QVector3D(0.0f, 1.0f, 0.0f),
-        QVector3D(0.0f, 0.0f, 1.0f),
-        QVector3D(1.0f, 1.0f, 1.0f)
-    };
-
-    const std::vector<GLuint> indices = {
-        // front
-        0, 1, 2,
-        2, 3, 0,
-        // right
-        1, 5, 6,
-        6, 2, 1,
-        // back
-        7, 6, 5,
-        5, 4, 7,
-        // left
-        4, 0, 3,
-        3, 7, 4,
-        // bottom
-        4, 5, 1,
-        1, 0, 4,
-        // top
-        3, 2, 6,
-        6, 7, 3
-    };
-
-    num_of_indices = indices.size();
-
-    program = std::make_shared<QOpenGLShaderProgram>();
-    program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/texture.vert");
-    program->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/texture.frag");
-    program->link();
-    program->bind();
-
-    const int v_loc = program->attributeLocation("vertex");
-    //const int c_loc = program->attributeLocation("color");
-    const int tc_loc = program->attributeLocation("tCoord");
-
-    vao.create();
-    vao.bind();
-
-    vertex_buffer.create();
-    vertex_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    vertex_buffer.bind();
-    vertex_buffer.allocate(vertices.data(), vertices.size()*sizeof(QVector3D));
-    program->enableAttributeArray(v_loc);
-    program->setAttributeBuffer(v_loc, GL_FLOAT, 0, 3);
-
-    /*color_buffer.create();
-    color_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    color_buffer.bind();
-    color_buffer.allocate(colors.data(), colors.size()*sizeof(QVector3D));
-    program->enableAttributeArray(c_loc);
-    program->setAttributeBuffer(c_loc, GL_FLOAT, 0, 3);*/
-
-    tex_coord_buffer.create();
-    tex_coord_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    tex_coord_buffer.bind();
-    tex_coord_buffer.allocate(tex_coords.data(), tex_coords.size()*sizeof(QVector3D));
-    program->enableAttributeArray(tc_loc);
-    program->setAttributeBuffer(tc_loc, GL_FLOAT, 0, 3);
-
-    index_buffer.create();
-    index_buffer.setUsagePattern(QOpenGLBuffer::StaticDraw);
-    index_buffer.bind();
-    index_buffer.allocate(indices.data(), indices.size()*sizeof(GLuint));
-
-    vao.release();
-
-    program->release();
+void MyOpenGLWidget::initObjects() {
+    cube = std::make_shared<Cube>();
+    cube->attachVertices(program.get(), "vertex");
+    cube->attachTextureCoords(program.get(), "tCoord");
 }
 
 void MyOpenGLWidget::initTextures() {
     const size_t tex_size = 256;
     //const float PI = std::acos(-1.0f);
     const float domain_size = 5.0f;
-    Frame3D<float> frame(tex_size, tex_size, tex_size);
+    Frame3D<GLfloat> frame(tex_size, tex_size, tex_size);
     frame.fill([&](size_t i, size_t j, size_t k) -> auto {
         const auto x = domain_size*float(i)/(tex_size - 1);
         const auto y = domain_size*float(j)/(tex_size - 1);
@@ -165,9 +66,10 @@ void MyOpenGLWidget::initTextures() {
     });
 
     texture_3d.setSize(tex_size, tex_size, tex_size);
+    //texture_3d.setMinMagFilters(QOpenGLTexture::Nearest,  QOpenGLTexture::Nearest);
     texture_3d.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
     texture_3d.setWrapMode(QOpenGLTexture::ClampToEdge);
-    texture_3d.setFormat(QOpenGLTexture::R16F);
+    texture_3d.setFormat(QOpenGLTexture::R32F);
     texture_3d.allocateStorage();
     texture_3d.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, static_cast<const void*>(frame.data()));
 
@@ -182,7 +84,8 @@ void MyOpenGLWidget::initTextures() {
     };
 
     palette.setSize(palette_colors.size());
-    palette.setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,  QOpenGLTexture::LinearMipMapLinear);
+    palette.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
+    //palette.setMinMagFilters(QOpenGLTexture::Nearest,  QOpenGLTexture::Nearest);
     palette.setWrapMode(QOpenGLTexture::ClampToEdge);
     palette.setFormat(QOpenGLTexture::RGB8_UNorm);
     palette.allocateStorage();
@@ -190,12 +93,12 @@ void MyOpenGLWidget::initTextures() {
 }
 
 void MyOpenGLWidget::initView() {
-    model.setToIdentity();
-    view.setToIdentity();
-    view.lookAt(QVector3D(3.0f, 3.0f, 3.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
-    projection.setToIdentity();
+    model_matrix.setToIdentity();
+    view_matrix.setToIdentity();
+    view_matrix.lookAt(QVector3D(3.0f, 3.0f, 3.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
+    projection_matrix.setToIdentity();
     const auto aspect = float(width())/height();
-    projection.perspective(45.0f, aspect, 0.01f, 100.0f);
+    projection_matrix.perspective(45.0f, aspect, 0.01f, 100.0f);
 }
 
 void MyOpenGLWidget::resizeGL(int width, int height) {
@@ -217,12 +120,21 @@ void MyOpenGLWidget::paintGL() {
 
     program->bind();
 
+    texture_matrix.setToIdentity();
+    texture_matrix.scale(2.0f);
+    texture_matrix.translate(-1.0f, -1.0f, -1.0f);
+    texture_matrix.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
+    texture_matrix.rotate(rotation_z_angle, QVector3D(0.0f, 0.0f, 1.0f));
+
+    const auto texture_inverse = (view_matrix * texture_matrix).inverted();
+
     const int mvp_loc = program->uniformLocation("MVP");
     QMatrix4x4 rotate;
     rotate.setToIdentity();
     rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
     rotate.rotate(rotation_z_angle, QVector3D(0.0f, 0.0f, 1.0f));
-    program->setUniformValue(mvp_loc, projection*view*rotate*model);
+    QMatrix4x4 mvp = projection_matrix*view_matrix*rotate*model_matrix;
+    program->setUniformValue(mvp_loc, mvp);
 
     const int tex3d_loc = program->uniformLocation("texture3d");
     const int pal_loc = program->uniformLocation("palette");
@@ -235,9 +147,7 @@ void MyOpenGLWidget::paintGL() {
     program->setUniformValue(pal_loc, 1);
     palette.bind();
 
-    vao.bind();
-    gl->glDrawElements(GL_TRIANGLES, num_of_indices, GL_UNSIGNED_INT, 0);
-    vao.release();
+    cube->draw(gl);
 
     texture_3d.release();
     palette.release();
@@ -271,6 +181,6 @@ void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
 
 void MyOpenGLWidget::wheelEvent(QWheelEvent *event) {
     const auto coeff = (event->angleDelta().y() > 0 ? 1.0f : -1.0f);
-    view.translate(coeff*QVector3D(0.2f, 0.2f, 0.2f));
+    view_matrix.translate(coeff*QVector3D(0.2f, 0.2f, 0.2f));
     update();
 }
