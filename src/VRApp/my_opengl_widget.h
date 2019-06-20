@@ -42,7 +42,9 @@ private:
     int num_of_indices {0};
 
     float rotation_y_angle {0.0f}, rotation_z_angle {0.0f};
+
     QTimer timer;
+    int timer_interval {60};
 
     QPoint mouse_pos {0, 0};
 };

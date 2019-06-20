@@ -25,7 +25,7 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     setFormat(format);
 
     connect(&timer, &QTimer::timeout, this, &MyOpenGLWidget::onTimer);
-    timer.start(60);
+    timer.start(timer_interval);
 }
 
 void MyOpenGLWidget::initializeGL() {
@@ -251,7 +251,15 @@ void MyOpenGLWidget::onTimer() {
 }
 
 void MyOpenGLWidget::mousePressEvent(QMouseEvent *event) {
-    mouse_pos = event->pos();
+    if (event->button() == Qt::LeftButton) {
+        mouse_pos = event->pos();
+    } else if (event->button() == Qt::RightButton) {
+        if (timer.isActive()) {
+            timer.stop();
+        } else {
+            timer.start(timer_interval);
+        }
+    }
 }
 
 void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
