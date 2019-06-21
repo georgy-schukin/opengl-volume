@@ -42,6 +42,19 @@ Frame3D<GLfloat> makeSphereFrame(size_t dim_size) {
     return frame;
 }
 
+Frame3D<GLfloat> makeParabolaFrame(size_t dim_size) {
+    Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
+    frame.fill([&](size_t i, size_t j, size_t k) -> auto {
+        const auto x = 1.0f - 2.0f*float(i)/(dim_size - 1);
+        const auto y = 1.0f - 2.0f*float(j)/(dim_size - 1);
+        const auto z = 1.0f - 2.0f*float(k)/(dim_size - 1);
+        const auto par = x*x + y*y;
+        const auto diff = std::abs(z - par);
+        return diff < 0.5f ? 1.0f - diff : 0.0f;
+    });
+    return frame;
+}
+
 std::vector<QVector3D> makeRainbowPalette() {
     const std::vector<QVector3D> rainbow = {
         QVector3D(0.0f, 0.0f, 0.0f),

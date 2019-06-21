@@ -40,6 +40,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::initGlWidget() {
     gl_widget->setFrame(makeSectorFrame(gl_widget->getFrameSize()));
+    //gl_widget->setFrame(makeParabolaFrame(gl_widget->getFrameSize()));
     gl_widget->setColorPalette(makeRainbowPalette());
     gl_widget->setOpacityPalette(defaultOpacityPalette());
     gl_widget->update();

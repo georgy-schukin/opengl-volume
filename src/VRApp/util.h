@@ -10,6 +10,7 @@
 Frame3D<GLfloat> makeRandomFrame(size_t dim_size);
 Frame3D<GLfloat> makeSectorFrame(size_t dim_size);
 Frame3D<GLfloat> makeSphereFrame(size_t dim_size);
+Frame3D<GLfloat> makeParabolaFrame(size_t dim_size);
 
 std::vector<QVector3D> makeRainbowPalette();
 
