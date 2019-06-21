@@ -32,6 +32,7 @@ void MyOpenGLWidget::initializeGL() {
     gl->glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
     gl->glEnable(GL_DEPTH_TEST);
     gl->glEnable(GL_MULTISAMPLE);
+    gl->glDisable(GL_CULL_FACE);
     gl->glEnable(GL_BLEND);
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -59,6 +60,9 @@ void MyOpenGLWidget::initObjects() {
 
     plane = std::make_shared<Plane>();
     plane->attachVertices(program.get(), "vertex");
+
+    //hemisphere = std::make_shared<HemiSphere>(1.0, 16, 16);
+    //hemisphere->attachVertices(program.get(), "vertex");
 }
 
 void MyOpenGLWidget::initTextures() {
@@ -180,6 +184,7 @@ void MyOpenGLWidget::paintGL() {
         program->setUniformValue(proj_loc, projection_matrix * plane_model);
         program->setUniformValue(tex_inv_loc, texture_inverse_matrix * plane_model);
         plane->draw(gl);
+        //hemisphere->draw(gl);
         plane_model.translate(0, 0, step);
     }
 

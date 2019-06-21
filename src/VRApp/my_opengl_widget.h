@@ -10,6 +10,7 @@
 
 #include "objects/cube.h"
 #include "objects/plane.h"
+#include "objects/hemisphere.h"
 #include "frame3d.h"
 
 class QOpenGLShaderProgram;
@@ -57,6 +58,7 @@ private:
 
     std::shared_ptr<Cube> cube;
     std::shared_ptr<Plane> plane;
+    std::shared_ptr<HemiSphere> hemisphere;
 
     float rotation_y_angle {0.0f}, rotation_z_angle {0.0f};
 

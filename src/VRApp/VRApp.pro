@@ -30,6 +30,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     my_opengl_widget.cpp \
     objects/cube.cpp \
+    objects/hemisphere.cpp \
     objects/plane.cpp \
     objects/triangulated_shape.cpp \
     util.cpp
@@ -38,6 +39,7 @@ HEADERS  += mainwindow.h \
     my_opengl_widget.h \
     objects/buffer.h \
     objects/cube.h \
+    objects/hemisphere.h \
     objects/plane.h \
     objects/shape.h \
     objects/triangulated_shape.h \
