@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>577</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFrame">
@@ -51,6 +51,10 @@
     <addaction name="actionSector"/>
     <addaction name="actionRandom"/>
     <addaction name="actionSphere"/>
+    <addaction name="actionParabololoid"/>
+    <addaction name="actionHyperboloid"/>
+    <addaction name="actionHyperbolic_Paraboloid"/>
+    <addaction name="actionHelix"/>
    </widget>
    <widget class="QMenu" name="menuOpacity">
     <property name="title">
@@ -112,6 +116,26 @@
   <action name="actionOp_x">
    <property name="text">
     <string>x</string>
+   </property>
+  </action>
+  <action name="actionParabololoid">
+   <property name="text">
+    <string>Paraboloid</string>
+   </property>
+  </action>
+  <action name="actionHyperbolic_Paraboloid">
+   <property name="text">
+    <string>Hyperbolic Paraboloid</string>
+   </property>
+  </action>
+  <action name="actionHyperboloid">
+   <property name="text">
+    <string>Hyperboloid</string>
+   </property>
+  </action>
+  <action name="actionHelix">
+   <property name="text">
+    <string>Helix</string>
    </property>
   </action>
  </widget>

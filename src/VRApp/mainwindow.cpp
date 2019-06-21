@@ -39,8 +39,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initGlWidget() {
-    gl_widget->setFrame(makeSectorFrame(gl_widget->getFrameSize()));
-    //gl_widget->setFrame(makeParabolaFrame(gl_widget->getFrameSize()));
+    gl_widget->setFrame(makeSectorFrame(gl_widget->getFrameSize()));    
     gl_widget->setColorPalette(makeRainbowPalette());
     gl_widget->setOpacityPalette(defaultOpacityPalette());
     gl_widget->update();
@@ -58,6 +57,26 @@ void MainWindow::on_actionRandom_triggered() {
 
 void MainWindow::on_actionSphere_triggered() {
     gl_widget->setFrame(makeSphereFrame(gl_widget->getFrameSize()));
+    gl_widget->update();
+}
+
+void MainWindow::on_actionParabololoid_triggered() {
+    gl_widget->setFrame(makeParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
+    gl_widget->update();
+}
+
+void MainWindow::on_actionHyperboloid_triggered() {
+    gl_widget->setFrame(makeHyperboloidFrame(gl_widget->getFrameSize(), 0.2f));
+    gl_widget->update();
+}
+
+void MainWindow::on_actionHyperbolic_Paraboloid_triggered() {
+    gl_widget->setFrame(makeHyperbolicParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
+    gl_widget->update();
+}
+
+void MainWindow::on_actionHelix_triggered() {
+    gl_widget->setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f));
     gl_widget->update();
 }
 
@@ -85,3 +104,4 @@ void MainWindow::on_actionOp_x_8_triggered() {
     gl_widget->setOpacityPalette(powOpacityPalette(8));
     gl_widget->update();
 }
+

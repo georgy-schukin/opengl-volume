@@ -21,6 +21,10 @@ private slots:
     void on_actionSector_triggered();
     void on_actionRandom_triggered();
     void on_actionSphere_triggered();
+    void on_actionParabololoid_triggered();
+    void on_actionHyperboloid_triggered();
+    void on_actionHyperbolic_Paraboloid_triggered();
+    void on_actionHelix_triggered();
 
     void on_actionOpDefault_triggered();
     void on_actionOp_x_triggered();
