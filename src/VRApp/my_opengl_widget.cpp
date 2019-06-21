@@ -35,11 +35,13 @@ void MyOpenGLWidget::initializeGL() {
     gl->glEnable(GL_BLEND);
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //program = initProgram("shaders/texture.vert", "shaders/texture.frag");
     program = loadProgram("shaders/plane.vert", "shaders/plane.frag");
+
     initView();
     initObjects();
     initTextures();
+
+    emit initialized();
 }
 
 std::shared_ptr<QOpenGLShaderProgram> MyOpenGLWidget::loadProgram(QString vertex_shader_file, QString fragment_shader_file) {
@@ -60,12 +62,10 @@ void MyOpenGLWidget::initObjects() {
 }
 
 void MyOpenGLWidget::initTextures() {
-    setSectorFrame();
-    setColorPalette(makeRainbowPalette());
-    setOpacityPalette({0.0f, 0.001f, 0.002f, 0.003f, 0.01f, 0.02f, 0.05f, 1.0f});
+    // Will be initialized in MainWindow
 }
 
-void MyOpenGLWidget::setData(const Frame3D<GLfloat> &data) {
+void MyOpenGLWidget::setFrame(const Frame3D<GLfloat> &data) {
     texture_3d.destroy();
     texture_3d.setSize(data.width(), data.height(), data.depth());
     texture_3d.setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,  QOpenGLTexture::LinearMipMapLinear);
@@ -76,12 +76,11 @@ void MyOpenGLWidget::setData(const Frame3D<GLfloat> &data) {
     texture_3d.setFormat(QOpenGLTexture::R32F);
     texture_3d.allocateStorage();
     texture_3d.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, data.data());
-    //texture_3d.generateMipMaps();
 }
 
 void MyOpenGLWidget::setColorPalette(const std::vector<QVector3D> &colors) {
     palette.destroy();
-    palette.setSize(colors.size());
+    palette.setSize(static_cast<int>(colors.size()));
     palette.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
     palette.setWrapMode(QOpenGLTexture::ClampToEdge);
     palette.setFormat(QOpenGLTexture::RGB8_UNorm);
@@ -91,7 +90,7 @@ void MyOpenGLWidget::setColorPalette(const std::vector<QVector3D> &colors) {
 
 void MyOpenGLWidget::setOpacityPalette(const std::vector<GLfloat> &values) {
     opacity.destroy();
-    opacity.setSize(values.size());
+    opacity.setSize(static_cast<int>(values.size()));
     opacity.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
     opacity.setWrapMode(QOpenGLTexture::ClampToEdge);
     opacity.setFormat(QOpenGLTexture::R32F);
@@ -102,7 +101,7 @@ void MyOpenGLWidget::setOpacityPalette(const std::vector<GLfloat> &values) {
 void MyOpenGLWidget::initView() {
     model_matrix.setToIdentity();
 
-    view_matrix.setToIdentity();    
+    view_matrix.setToIdentity();
     view_matrix.lookAt(QVector3D(3.0f, 3.0f, 3.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
 
     projection_matrix.setToIdentity();
@@ -127,20 +126,24 @@ void MyOpenGLWidget::paintGL() {
 
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (!program) {
+    if (!program ||
+        !texture_3d.isCreated() ||
+        !palette.isCreated() ||
+        !opacity.isCreated())
+    {
         return;
     }
 
     program->bind();
 
-    QMatrix4x4 rotate;    
+    QMatrix4x4 rotate;
     rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
     rotate.rotate(rotation_z_angle, QVector3D(0.0f, 0.0f, 1.0f));
 
     const auto texture_inverse_matrix = (view_matrix * rotate * texture_matrix).inverted();
 
-    const auto proj_loc = program->uniformLocation("Proj");    
-    const auto tex_inv_loc = program->uniformLocation("TexInv");    
+    const auto proj_loc = program->uniformLocation("Proj");
+    const auto tex_inv_loc = program->uniformLocation("TexInv");
 
     /*const int mvp_loc = program->uniformLocation("MVP");
     QMatrix4x4 mvp = projection_matrix*view_matrix*rotate*model_matrix;
@@ -162,7 +165,7 @@ void MyOpenGLWidget::paintGL() {
     program->setUniformValue(op_loc, 2);
     opacity.bind();
 
-    QMatrix4x4 plane_model;    
+    QMatrix4x4 plane_model;
     plane_model.scale(2, 2, 1);
 
     const int plane_density = texture_3d.width() / 1;
@@ -219,17 +222,3 @@ void MyOpenGLWidget::wheelEvent(QWheelEvent *event) {
     update();
 }
 
-void MyOpenGLWidget::setRandomFrame() {
-    setData(makeRandomFrame(frame_size));
-    update();
-}
-
-void MyOpenGLWidget::setSectorFrame() {
-    setData(makeSectorFrame(frame_size));
-    update();
-}
-
-void MyOpenGLWidget::setSphereFrame() {
-    setData(makeSphereFrame(frame_size));
-    update();
-}

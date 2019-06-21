@@ -33,6 +33,9 @@ Frame3D<GLfloat> makeSphereFrame(size_t dim_size) {
         const auto x = 1.0f - 2.0f*float(i)/(dim_size - 1);
         const auto y = 1.0f - 2.0f*float(j)/(dim_size - 1);
         const auto z = 1.0f - 2.0f*float(k)/(dim_size - 1);
+        if (z < 0.0f) {
+            return 0.0f;
+        }
         const auto dist = std::sqrt(x*x + y*y + z*z);
         return dist <= 1.0f ? 1.0f - dist : 0.0f;
     });

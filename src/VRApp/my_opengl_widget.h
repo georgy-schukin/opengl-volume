@@ -20,10 +20,16 @@ class MyOpenGLWidget : public QOpenGLWidget {
 public:
     explicit MyOpenGLWidget(QWidget *parent=nullptr);
 
-public slots:
-    void setRandomFrame();
-    void setSphereFrame();
-    void setSectorFrame();
+    void setFrame(const Frame3D<GLfloat> &data);
+    void setColorPalette(const std::vector<QVector3D> &colors);
+    void setOpacityPalette(const std::vector<GLfloat> &values);
+
+    size_t getFrameSize() const {
+        return frame_size;
+    }
+
+signals:
+    void initialized();
 
 protected:
     virtual void initializeGL() override;
@@ -39,19 +45,15 @@ private:
     std::shared_ptr<QOpenGLShaderProgram> loadProgram(QString vertex_shader_file, QString fragment_shader_file);
     void initView();
     void initObjects();
-    void initTextures();    
+    void initTextures();
 
     void onTimer();
-
-    void setData(const Frame3D<GLfloat> &data);
-    void setColorPalette(const std::vector<QVector3D> &colors);
-    void setOpacityPalette(const std::vector<GLfloat> &values);
 
 private:
     std::shared_ptr<QOpenGLShaderProgram> program;
     QOpenGLTexture texture_3d, palette, opacity;
 
-    QMatrix4x4 model_matrix, view_matrix, projection_matrix, texture_matrix;    
+    QMatrix4x4 model_matrix, view_matrix, projection_matrix, texture_matrix;
 
     std::shared_ptr<Cube> cube;
     std::shared_ptr<Plane> plane;
