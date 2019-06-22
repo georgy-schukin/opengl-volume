@@ -35,6 +35,9 @@ private slots:
     void on_actionOp_x_4_triggered();
     void on_actionOp_x_8_triggered();    
 
+    void on_actionPalRainbow_triggered();
+    void on_actionPalMonochrome_triggered();
+
 private:
     Ui::MainWindow *ui;
     MyOpenGLWidget *gl_widget;

@@ -69,7 +69,15 @@
     <addaction name="actionOp_x_4"/>
     <addaction name="actionOp_x_8"/>
    </widget>
+   <widget class="QMenu" name="menuPalette">
+    <property name="title">
+     <string>Palette</string>
+    </property>
+    <addaction name="actionPalRainbow"/>
+    <addaction name="actionPalMonochrome"/>
+   </widget>
    <addaction name="menuFrame"/>
+   <addaction name="menuPalette"/>
    <addaction name="menuOpacity"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -154,6 +162,16 @@
   <action name="actionBubbles">
    <property name="text">
     <string>Bubbles</string>
+   </property>
+  </action>
+  <action name="actionPalRainbow">
+   <property name="text">
+    <string>Rainbow</string>
+   </property>
+  </action>
+  <action name="actionPalMonochrome">
+   <property name="text">
+    <string>Monochrome</string>
    </property>
   </action>
  </widget>

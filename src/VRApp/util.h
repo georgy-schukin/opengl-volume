@@ -27,6 +27,7 @@ Frame3D<GLfloat> makeTorusFrame(size_t dim_size, float cutoff, float R, float r)
 Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, float min_rad, float max_rad);
 
 std::vector<QVector3D> makeRainbowPalette();
+std::vector<QVector3D> makeMonochromePalette();
 
 template <typename Func>
 std::vector<GLfloat> makeOpacityPalette(size_t size, Func func) {
