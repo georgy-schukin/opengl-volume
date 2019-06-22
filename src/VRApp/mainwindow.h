@@ -38,6 +38,8 @@ private slots:
     void on_actionPalRainbow_triggered();
     void on_actionPalMonochrome_triggered();
 
+    void on_actionOpen_triggered();
+
 private:
     Ui::MainWindow *ui;
     MyOpenGLWidget *gl_widget;

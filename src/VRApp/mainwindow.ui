@@ -48,6 +48,8 @@
     <property name="title">
      <string>Frame</string>
     </property>
+    <addaction name="actionOpen"/>
+    <addaction name="separator"/>
     <addaction name="actionSector"/>
     <addaction name="actionRandom"/>
     <addaction name="actionSphere"/>
@@ -172,6 +174,11 @@
   <action name="actionPalMonochrome">
    <property name="text">
     <string>Monochrome</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open...</string>
    </property>
   </action>
  </widget>

@@ -6,6 +6,7 @@
 #include <QVector3D>
 
 #include <vector>
+#include <string>
 #include <functional>
 
 Frame3D<GLfloat> makeRandomFrame(size_t dim_size);
@@ -25,6 +26,8 @@ Frame3D<GLfloat> makeHelicoidFrame(size_t dim_size, float cutoff);
 Frame3D<GLfloat> makeTorusFrame(size_t dim_size, float cutoff, float R, float r);
 
 Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, float min_rad, float max_rad);
+
+Frame3D<GLfloat> loadFrameFromFile(const std::string &filename);
 
 std::vector<QVector3D> makeRainbowPalette();
 std::vector<QVector3D> makeMonochromePalette();

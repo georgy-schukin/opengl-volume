@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstddef>
 #include <algorithm>
+#include <omp.h>
 
 template <class T>
 class Frame3D {
@@ -39,15 +40,25 @@ public:
 
     template <typename Func>
     void fill(Func func) {
-        for (size_t i = 0; i < _width; i++)
-            for (size_t j = 0; j < _height; j++)
+        #pragma omp parallel for
+        for (size_t i = 0; i < _width; i++) {
+            for (size_t j = 0; j < _height; j++) {
                 for (size_t k = 0; k < _depth; k++) {
                     at(i, j, k) = func(i, j, k);
                 }
+            }
+        }
     }
 
     void fillBy(const T &value) {
         std::fill(_data.begin(), _data.end(), value);
+    }
+
+    void normalize() {
+        const auto max = *std::max_element(_data.begin(), _data.end());
+        for (auto &el: _data) {
+            el /= max;
+        }
     }
 
     T& at(size_t x, size_t y, size_t z) {

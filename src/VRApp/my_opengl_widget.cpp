@@ -30,9 +30,9 @@ void MyOpenGLWidget::initializeGL() {
     auto *gl = context()->functions();
 
     gl->glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
-    gl->glEnable(GL_DEPTH_TEST);
-    gl->glEnable(GL_MULTISAMPLE);
+    gl->glDisable(GL_DEPTH_TEST);
     gl->glDisable(GL_CULL_FACE);
+    gl->glEnable(GL_MULTISAMPLE);
     gl->glEnable(GL_BLEND);
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -71,7 +71,9 @@ void MyOpenGLWidget::initTextures() {
 
 void MyOpenGLWidget::setFrame(const Frame3D<GLfloat> &data) {
     texture_3d.destroy();
-    texture_3d.setSize(data.width(), data.height(), data.depth());
+    texture_3d.setSize(static_cast<int>(data.width()),
+                       static_cast<int>(data.height()),
+                       static_cast<int>(data.depth()));
     texture_3d.setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,  QOpenGLTexture::LinearMipMapLinear);
     texture_3d.setWrapMode(QOpenGLTexture::ClampToEdge);
     texture_3d.setAutoMipMapGenerationEnabled(true);

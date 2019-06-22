@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 #include <ctime>
+#include <fstream>
 
 Frame3D<GLfloat> makeRandomFrame(size_t dim_size) {    
     //std::random_device rd;
@@ -145,6 +146,35 @@ Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, float 
     return frame;
 }
 
+Frame3D<GLfloat> loadFrameFromFile(const std::string &filename) {
+    std::ifstream in(filename.c_str(), std::ios_base::in | std::ios_base::binary);
+    if (!in.is_open()) {
+        throw std::runtime_error("Cannot open file " + filename);
+    }
+
+    size_t width, height, depth;
+    // Make slices go by X.
+    in.read(reinterpret_cast<char *>(&height), sizeof(height));
+    in.read(reinterpret_cast<char *>(&depth), sizeof(depth));
+    in.read(reinterpret_cast<char *>(&width), sizeof(width));
+
+    // We have 2 bytes per voxel's value.
+    std::vector<short> values(width*height*depth);
+    in.read(reinterpret_cast<char *>(values.data()), values.size()*sizeof(short));
+    in.close();
+
+    Frame3D<GLfloat> frame(width, height, depth);
+    for (size_t i = 0, p = 0; i < width; i++) {
+        for (size_t j = 0; j < height; j++) {
+            for (size_t k = 0; k < depth; k++, p++) {
+                frame.at(i, j, k) = static_cast<GLfloat>(values[p]);
+            }
+        }
+    }
+    frame.normalize();
+    return frame;
+}
+
 std::vector<QVector3D> makeRainbowPalette() {
     const std::vector<QVector3D> rainbow = {
         QVector3D(0.0f, 0.0f, 0.0f),
@@ -174,3 +204,5 @@ std::vector<QVector3D> makeMonochromePalette() {
         QVector3D(1.0f, 1.0f, 1.0f)
     };
 }
+
+

@@ -4,6 +4,7 @@
 
 #include <QStatusBar>
 #include <QToolBar>
+#include <QFileDialog>
 
 #include <cmath>
 
@@ -127,5 +128,18 @@ void MainWindow::on_actionPalRainbow_triggered() {
 
 void MainWindow::on_actionPalMonochrome_triggered() {
     gl_widget->setColorPalette(makeMonochromePalette());
+    gl_widget->update();
+}
+
+void MainWindow::on_actionOpen_triggered() {
+    auto filename = QFileDialog::getOpenFileName(this,
+                                                 "Open frame file",
+                                                 "",
+                                                 "Frame files (*.frame);;All files(*.*)");
+    if (filename.isNull()) {
+        return;
+    }
+    auto frame = loadFrameFromFile(filename.toStdString());
+    gl_widget->setFrame(frame);
     gl_widget->update();
 }
