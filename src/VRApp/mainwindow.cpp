@@ -76,7 +76,22 @@ void MainWindow::on_actionHyperbolic_Paraboloid_triggered() {
 }
 
 void MainWindow::on_actionHelix_triggered() {
-    gl_widget->setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f));
+    gl_widget->setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f, 0.7f, 0.1f, 8.0f));
+    gl_widget->update();
+}
+
+void MainWindow::on_actionHelicoid_triggered() {
+    gl_widget->setFrame(makeHelicoidFrame(gl_widget->getFrameSize(), 0.2f));
+    gl_widget->update();
+}
+
+void MainWindow::on_actionTorus_triggered() {
+    gl_widget->setFrame(makeTorusFrame(gl_widget->getFrameSize(), 0.2f, 0.7f, 0.2f));
+    gl_widget->update();
+}
+
+void MainWindow::on_actionBubbles_triggered() {
+    gl_widget->setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05f, 0.25f));
     gl_widget->update();
 }
 
@@ -104,4 +119,3 @@ void MainWindow::on_actionOp_x_8_triggered() {
     gl_widget->setOpacityPalette(powOpacityPalette(8));
     gl_widget->update();
 }
-

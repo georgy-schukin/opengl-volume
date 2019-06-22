@@ -55,6 +55,9 @@
     <addaction name="actionHyperboloid"/>
     <addaction name="actionHyperbolic_Paraboloid"/>
     <addaction name="actionHelix"/>
+    <addaction name="actionHelicoid"/>
+    <addaction name="actionTorus"/>
+    <addaction name="actionBubbles"/>
    </widget>
    <widget class="QMenu" name="menuOpacity">
     <property name="title">
@@ -136,6 +139,21 @@
   <action name="actionHelix">
    <property name="text">
     <string>Helix</string>
+   </property>
+  </action>
+  <action name="actionHelicoid">
+   <property name="text">
+    <string>Helicoid</string>
+   </property>
+  </action>
+  <action name="actionTorus">
+   <property name="text">
+    <string>Torus</string>
+   </property>
+  </action>
+  <action name="actionBubbles">
+   <property name="text">
+    <string>Bubbles</string>
    </property>
   </action>
  </widget>

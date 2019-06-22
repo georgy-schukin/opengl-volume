@@ -25,12 +25,15 @@ private slots:
     void on_actionHyperboloid_triggered();
     void on_actionHyperbolic_Paraboloid_triggered();
     void on_actionHelix_triggered();
+    void on_actionHelicoid_triggered();
+    void on_actionTorus_triggered();
+    void on_actionBubbles_triggered();
 
     void on_actionOpDefault_triggered();
     void on_actionOp_x_triggered();
     void on_actionOp_x_2_triggered();
     void on_actionOp_x_4_triggered();
-    void on_actionOp_x_8_triggered();
+    void on_actionOp_x_8_triggered();    
 
 private:
     Ui::MainWindow *ui;
