@@ -41,9 +41,9 @@ public:
     template <typename Func>
     void fill(Func func) {
         #pragma omp parallel for
-        for (size_t i = 0; i < _width; i++) {
-            for (size_t j = 0; j < _height; j++) {
-                for (size_t k = 0; k < _depth; k++) {
+        for (size_t k = 0; k < _depth; k++) {
+            for (size_t i = 0; i < _width; i++) {
+                for (size_t j = 0; j < _height; j++) {
                     at(i, j, k) = func(i, j, k);
                 }
             }
@@ -56,13 +56,18 @@ public:
 
     void normalize() {
         const auto max = *std::max_element(_data.begin(), _data.end());
+        const auto min = *std::min_element(_data.begin(), _data.end());
         for (auto &el: _data) {
-            el /= max;
+            el = (el)/(max);
         }
     }
 
     T& at(size_t x, size_t y, size_t z) {
-        return _data[x*_height*_depth + y*_depth + z];
+        return _data[index(x, y, z)];
+    }
+
+    size_t index(size_t x, size_t y, size_t z) const {
+        return z*_width*_height + x*_width + y;
     }
 
 private:

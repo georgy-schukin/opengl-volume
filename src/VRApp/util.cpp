@@ -8,6 +8,57 @@
 #include <ctime>
 #include <fstream>
 
+namespace  {
+    template <typename T, typename U>
+    T lerp(T start, T end, U u_start, U u_end, U u_value) {
+        const T ind = T(u_value - u_start)/(u_end - u_start);
+        return start*(T(1.0) - ind) + ind*end;
+    }
+
+    GLfloat hounsfield(int value) {
+        const static std::vector<std::tuple<int, int, GLfloat, GLfloat>> ranges = {
+            /*{13, 50, 0.5f, 0.6f},
+            {50, 75, 0.6f, 0.7f},
+            {100, 300, 0.4f, 0.5f},
+            {300, 400, 0.9f, 1.0f},
+            {1800, 1900, 0.9f, 1.0f},
+            {1900, 4000, 0.2f, 0.3f},*/
+            {900, 1200, 0.8f, 1.0f},
+            {1200, 2000, 0.3f, 0.5f},
+            {2000, 4000, 0.2f, 0.3f},
+            {0, 1200, 0.01f, 0.1f}
+        };
+        for (const auto &t: ranges) {
+            const auto rs = std::get<0>(t);
+            const auto re = std::get<1>(t);
+            const auto vs = std::get<2>(t);
+            const auto ve = std::get<3>(t);
+            if (value >= rs && value < re) {
+                return lerp(vs, ve, rs, re, value);
+            }
+        }
+        return 0.0f;
+    }
+
+    template <typename T>
+    typename std::map<std::pair<int, int>, int> histogramm(const typename std::vector<T> &values, int num_of_buckets) {
+        const auto max = *std::max_element(values.begin(), values.end());
+        const auto buck_size = std::ceil(float(max)/num_of_buckets);
+
+        typename std::map<std::pair<int, int>, int> histo;
+        for (int i = 0; i < num_of_buckets; i++) {
+            histo[std::make_pair(i*buck_size, (i + 1)*buck_size)] = 0;
+        }
+
+        for (const auto &v: values) {
+            const auto b = std::floor(v/buck_size)*buck_size;
+            auto buck = std::make_pair(b, b + buck_size);
+            histo[buck]++;
+        }
+        return histo;
+    }
+}
+
 Frame3D<GLfloat> makeRandomFrame(size_t dim_size) {    
     //std::random_device rd;
     std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
@@ -22,9 +73,9 @@ Frame3D<GLfloat> makeRandomFrame(size_t dim_size) {
 Frame3D<GLfloat> makeSectorFrame(size_t dim_size) {
     Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
     frame.fill([&](size_t i, size_t j, size_t k) -> auto {
-        const auto x = float(i)/(dim_size - 1);
-        const auto y = float(j)/(dim_size - 1);
-        const auto z = float(k)/(dim_size - 1);
+        const auto x = float(i)/(frame.width() - 1);
+        const auto y = float(j)/(frame.height() - 1);
+        const auto z = float(k)/(frame.depth() - 1);
         return std::sqrt(x*x + y*y + z*z)/std::sqrt(3.0f);
     });
     return frame;
@@ -152,26 +203,33 @@ Frame3D<GLfloat> loadFrameFromFile(const std::string &filename) {
         throw std::runtime_error("Cannot open file " + filename);
     }
 
-    size_t width, height, depth;
-    // Make slices go by X.
-    in.read(reinterpret_cast<char *>(&height), sizeof(height));
-    in.read(reinterpret_cast<char *>(&depth), sizeof(depth));
+    size_t width, height, depth;    
     in.read(reinterpret_cast<char *>(&width), sizeof(width));
+    in.read(reinterpret_cast<char *>(&height), sizeof(height));
+    in.read(reinterpret_cast<char *>(&depth), sizeof(depth));    
 
     // We have 2 bytes per voxel's value.
-    std::vector<short> values(width*height*depth);
-    in.read(reinterpret_cast<char *>(values.data()), values.size()*sizeof(short));
+    using VoxelType = short;
+    std::vector<VoxelType> values(width*height*depth);
+    in.read(reinterpret_cast<char *>(values.data()), values.size()*sizeof(VoxelType));
     in.close();
 
-    Frame3D<GLfloat> frame(width, height, depth);
-    for (size_t i = 0, p = 0; i < width; i++) {
-        for (size_t j = 0; j < height; j++) {
-            for (size_t k = 0; k < depth; k++, p++) {
-                frame.at(i, j, k) = static_cast<GLfloat>(values[p]);
+    const auto max = *std::max_element(values.begin(), values.end());
+    const auto min = *std::min_element(values.begin(), values.end());
+    const auto avg = double(std::accumulate(values.begin(), values.end(), 0.0)) / values.size();    
+
+    Frame3D<GLfloat> frame(width, height, depth);    
+    // Slices are arranged by depth.
+    #pragma omp parallel for
+    for (size_t k = 0; k < depth; k++) {
+        for (size_t i = 0; i < width; i++) {
+            for (size_t j = 0; j < height; j++) {                
+                const auto index = frame.index(i, j, k);
+                // Normalize data.
+                frame.at(i, j, k) = GLfloat(values[index])/max;
             }
         }
-    }
-    frame.normalize();
+    }    
     return frame;
 }
 

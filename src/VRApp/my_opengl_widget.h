@@ -52,7 +52,7 @@ private:
 
 private:
     std::shared_ptr<QOpenGLShaderProgram> program;
-    QOpenGLTexture texture_3d, palette, opacity;
+    QOpenGLTexture data_texture, color_texture, opacity_texture;
 
     QMatrix4x4 model_matrix, view_matrix, projection_matrix, texture_matrix;
 
@@ -60,7 +60,7 @@ private:
     std::shared_ptr<Plane> plane;
     std::shared_ptr<HemiSphere> hemisphere;
 
-    float rotation_y_angle {0.0f}, rotation_z_angle {0.0f};
+    float rotation_y_angle {0.0f}, rotation_x_angle {0.0f};
 
     QTimer timer;
     int timer_interval {60};

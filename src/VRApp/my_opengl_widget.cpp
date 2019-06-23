@@ -11,9 +11,9 @@
 
 MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     QOpenGLWidget(parent),
-    texture_3d(QOpenGLTexture::Target3D),
-    palette(QOpenGLTexture::Target1D),
-    opacity(QOpenGLTexture::Target1D)
+    data_texture(QOpenGLTexture::Target3D),
+    color_texture(QOpenGLTexture::Target1D),
+    opacity_texture(QOpenGLTexture::Target1D)
 {
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
@@ -70,38 +70,38 @@ void MyOpenGLWidget::initTextures() {
 }
 
 void MyOpenGLWidget::setFrame(const Frame3D<GLfloat> &data) {
-    texture_3d.destroy();
-    texture_3d.setSize(static_cast<int>(data.width()),
+    data_texture.destroy();
+    data_texture.setSize(static_cast<int>(data.width()),
                        static_cast<int>(data.height()),
                        static_cast<int>(data.depth()));
-    texture_3d.setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,  QOpenGLTexture::LinearMipMapLinear);
-    texture_3d.setWrapMode(QOpenGLTexture::ClampToEdge);
-    texture_3d.setAutoMipMapGenerationEnabled(true);
-    //texture_3d.setMaximumAnisotropy(16.0f);
-    //texture_3d.setBorderColor(0.0f, 0.0f, 0.0f, 0.0f);
-    texture_3d.setFormat(QOpenGLTexture::R32F);
-    texture_3d.allocateStorage();
-    texture_3d.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, data.data());
+    data_texture.setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,  QOpenGLTexture::LinearMipMapLinear);
+    data_texture.setWrapMode(QOpenGLTexture::ClampToEdge);
+    data_texture.setAutoMipMapGenerationEnabled(true);
+    data_texture.setMaximumAnisotropy(16.0f);
+    //data_texture.setBorderColor(0.0f, 0.0f, 0.0f, 0.0f);
+    data_texture.setFormat(QOpenGLTexture::R32F);
+    data_texture.allocateStorage();
+    data_texture.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, data.data());
 }
 
 void MyOpenGLWidget::setColorPalette(const std::vector<QVector3D> &colors) {
-    palette.destroy();
-    palette.setSize(static_cast<int>(colors.size()));
-    palette.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
-    palette.setWrapMode(QOpenGLTexture::ClampToEdge);
-    palette.setFormat(QOpenGLTexture::RGB8_UNorm);
-    palette.allocateStorage();
-    palette.setData(QOpenGLTexture::RGB, QOpenGLTexture::Float32, colors.data());
+    color_texture.destroy();
+    color_texture.setSize(static_cast<int>(colors.size()));
+    color_texture.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
+    color_texture.setWrapMode(QOpenGLTexture::ClampToEdge);
+    color_texture.setFormat(QOpenGLTexture::RGB8_UNorm);
+    color_texture.allocateStorage();
+    color_texture.setData(QOpenGLTexture::RGB, QOpenGLTexture::Float32, colors.data());
 }
 
 void MyOpenGLWidget::setOpacityPalette(const std::vector<GLfloat> &values) {
-    opacity.destroy();
-    opacity.setSize(static_cast<int>(values.size()));
-    opacity.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
-    opacity.setWrapMode(QOpenGLTexture::ClampToEdge);
-    opacity.setFormat(QOpenGLTexture::R32F);
-    opacity.allocateStorage();
-    opacity.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, values.data());
+    opacity_texture.destroy();
+    opacity_texture.setSize(static_cast<int>(values.size()));
+    opacity_texture.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
+    opacity_texture.setWrapMode(QOpenGLTexture::ClampToEdge);
+    opacity_texture.setFormat(QOpenGLTexture::R32F);
+    opacity_texture.allocateStorage();
+    opacity_texture.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, values.data());
 }
 
 void MyOpenGLWidget::initView() {
@@ -133,9 +133,9 @@ void MyOpenGLWidget::paintGL() {
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (!program ||
-        !texture_3d.isCreated() ||
-        !palette.isCreated() ||
-        !opacity.isCreated())
+        !data_texture.isCreated() ||
+        !color_texture.isCreated() ||
+        !opacity_texture.isCreated())
     {
         return;
     }
@@ -144,7 +144,7 @@ void MyOpenGLWidget::paintGL() {
 
     QMatrix4x4 rotate;
     rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
-    rotate.rotate(rotation_z_angle, QVector3D(0.0f, 0.0f, 1.0f));
+    rotate.rotate(rotation_x_angle, QVector3D(1.0f, 0.0f, 0.0f));
 
     const auto texture_inverse_matrix = (view_matrix * rotate * texture_matrix).inverted();
 
@@ -161,20 +161,21 @@ void MyOpenGLWidget::paintGL() {
 
     gl->glActiveTexture(GL_TEXTURE0);
     program->setUniformValue(tex3d_loc, 0);
-    texture_3d.bind();
+    data_texture.bind();
 
     gl->glActiveTexture(GL_TEXTURE1);
     program->setUniformValue(pal_loc, 1);
-    palette.bind();
+    color_texture.bind();
 
     gl->glActiveTexture(GL_TEXTURE2);
     program->setUniformValue(op_loc, 2);
-    opacity.bind();
+    opacity_texture.bind();
 
     QMatrix4x4 plane_model;
     plane_model.scale(2, 2, 1);
 
-    const int plane_density = texture_3d.width() / 1;
+    const auto max_dim = std::max(data_texture.width(), std::max(data_texture.height(), data_texture.depth()));
+    const auto plane_density = max_dim;
     // Data cube is located in [0,0] in world coordinates and has side length of 2.
     const float center_dist = (view_matrix * QVector4D(0, 0, 0, 1)).length();
     const float cube_size = 1.0f;
@@ -192,8 +193,8 @@ void MyOpenGLWidget::paintGL() {
 
     //cube->draw(gl);
 
-    texture_3d.release();
-    palette.release();
+    data_texture.release();
+    color_texture.release();
 
     program->release();
 }
@@ -217,7 +218,7 @@ void MyOpenGLWidget::mousePressEvent(QMouseEvent *event) {
 
 void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
     rotation_y_angle += float(event->pos().x() - mouse_pos.x());
-    rotation_z_angle += float(event->pos().y() - mouse_pos.y());
+    rotation_x_angle += float(event->pos().y() - mouse_pos.y());
     mouse_pos = event->pos();
     update();
 }
