@@ -48,20 +48,31 @@
     <property name="title">
      <string>Frame</string>
     </property>
+    <widget class="QMenu" name="menuCustom_Frame">
+     <property name="title">
+      <string>Custom Frame</string>
+     </property>
+     <addaction name="actionSector"/>
+     <addaction name="actionRandom"/>
+     <addaction name="actionBubbles"/>
+     <addaction name="actionSphere"/>
+     <addaction name="actionParabololoid"/>
+     <addaction name="actionHyperboloid"/>
+     <addaction name="actionHyperbolic_Paraboloid"/>
+     <addaction name="actionHelix"/>
+     <addaction name="actionHelicoid"/>
+     <addaction name="actionTorus"/>
+    </widget>
+    <widget class="QMenu" name="menuType_Here">
+     <property name="title">
+      <string>Type Here</string>
+     </property>
+    </widget>
     <addaction name="actionOpen"/>
-    <addaction name="separator"/>
-    <addaction name="actionSector"/>
-    <addaction name="actionRandom"/>
-    <addaction name="actionSphere"/>
-    <addaction name="actionParabololoid"/>
-    <addaction name="actionHyperboloid"/>
-    <addaction name="actionHyperbolic_Paraboloid"/>
-    <addaction name="actionHelix"/>
-    <addaction name="actionHelicoid"/>
-    <addaction name="actionTorus"/>
-    <addaction name="actionBubbles"/>
+    <addaction name="menuCustom_Frame"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
+    <addaction name="menuType_Here"/>
    </widget>
    <widget class="QMenu" name="menuOpacity">
     <property name="title">
@@ -199,10 +210,16 @@
    <property name="text">
     <string>Rainbow</string>
    </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
   </action>
   <action name="actionPalMonochrome">
    <property name="text">
     <string>Monochrome</string>
+   </property>
+   <property name="shortcut">
+    <string>M</string>
    </property>
   </action>
   <action name="actionOpen">
