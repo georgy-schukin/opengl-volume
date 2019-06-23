@@ -78,7 +78,7 @@ void MyOpenGLWidget::setFrame(const Frame3D<GLfloat> &data) {
     data_texture.setWrapMode(QOpenGLTexture::ClampToEdge);
     data_texture.setAutoMipMapGenerationEnabled(true);
     data_texture.setMaximumAnisotropy(16.0f);
-    //data_texture.setBorderColor(0.0f, 0.0f, 0.0f, 0.0f);
+    data_texture.setBorderColor(0.0f, 0.0f, 0.0f, 0.0f);
     data_texture.setFormat(QOpenGLTexture::R32F);
     data_texture.allocateStorage();
     data_texture.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, data.data());
