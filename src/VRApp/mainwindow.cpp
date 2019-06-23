@@ -41,95 +41,97 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initGlWidget() {
-    gl_widget->setFrame(makeSectorFrame(gl_widget->getFrameSize()));    
-    gl_widget->setColorPalette(makeRainbowPalette());
-    gl_widget->setOpacityPalette(defaultOpacityPalette());
-    gl_widget->update();
+    setFrame(makeSectorFrame(gl_widget->getFrameSize()));
+    setColorPalette(makeRainbowPalette());
+    setOpacityPalette(defaultOpacityPalette());
 }
 
 void MainWindow::on_actionSector_triggered() {
-    gl_widget->setFrame(makeSectorFrame(gl_widget->getFrameSize()));
-    gl_widget->update();
+    setFrame(makeSectorFrame(gl_widget->getFrameSize()));
 }
 
 void MainWindow::on_actionRandom_triggered() {
-    gl_widget->setFrame(makeRandomFrame(gl_widget->getFrameSize()));
-    gl_widget->update();
+    setFrame(makeRandomFrame(gl_widget->getFrameSize()));
 }
 
 void MainWindow::on_actionSphere_triggered() {
-    gl_widget->setFrame(makeSphereFrame(gl_widget->getFrameSize()));
-    gl_widget->update();
+    setFrame(makeSphereFrame(gl_widget->getFrameSize()));
 }
 
 void MainWindow::on_actionParabololoid_triggered() {
-    gl_widget->setFrame(makeParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
-    gl_widget->update();
+    setFrame(makeParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
 }
 
 void MainWindow::on_actionHyperboloid_triggered() {
-    gl_widget->setFrame(makeHyperboloidFrame(gl_widget->getFrameSize(), 0.2f));
-    gl_widget->update();
+    setFrame(makeHyperboloidFrame(gl_widget->getFrameSize(), 0.2f));
 }
 
 void MainWindow::on_actionHyperbolic_Paraboloid_triggered() {
-    gl_widget->setFrame(makeHyperbolicParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
-    gl_widget->update();
+    setFrame(makeHyperbolicParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
 }
 
 void MainWindow::on_actionHelix_triggered() {
-    gl_widget->setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f, 0.6f, 0.1f, 8.0f));
-    gl_widget->update();
+    setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f, 0.6f, 0.1f, 8.0f));
 }
 
 void MainWindow::on_actionHelicoid_triggered() {
-    gl_widget->setFrame(makeHelicoidFrame(gl_widget->getFrameSize(), 0.2f));
-    gl_widget->update();
+    setFrame(makeHelicoidFrame(gl_widget->getFrameSize(), 0.2f));
 }
 
 void MainWindow::on_actionTorus_triggered() {
-    gl_widget->setFrame(makeTorusFrame(gl_widget->getFrameSize(), 0.2f, 0.7f, 0.2f));
-    gl_widget->update();
+    setFrame(makeTorusFrame(gl_widget->getFrameSize(), 0.2f, 0.7f, 0.2f));
 }
 
 void MainWindow::on_actionBubbles_triggered() {
-    gl_widget->setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05f, 0.25f));
-    gl_widget->update();
+    setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05f, 0.25f));
 }
 
 void MainWindow::on_actionOpDefault_triggered() {
-    gl_widget->setOpacityPalette(defaultOpacityPalette());
-    gl_widget->update();
+    setOpacityPalette(defaultOpacityPalette());
 }
 
 void MainWindow::on_actionOp_x_triggered() {
-    gl_widget->setOpacityPalette(powOpacityPalette(1));
-    gl_widget->update();
+    setOpacityPalette(powOpacityPalette(1));
 }
 
 void MainWindow::on_actionOp_x_2_triggered() {
-    gl_widget->setOpacityPalette(powOpacityPalette(2));
-    gl_widget->update();
+    setOpacityPalette(powOpacityPalette(2));
+}
+
+void MainWindow::on_actionOp_x_3_triggered() {
+    setOpacityPalette(powOpacityPalette(3));
 }
 
 void MainWindow::on_actionOp_x_4_triggered() {
-    gl_widget->setOpacityPalette(powOpacityPalette(4));
-    gl_widget->update();
+    setOpacityPalette(powOpacityPalette(4));
+}
+
+void MainWindow::on_actionOp_x_5_triggered() {
+    setOpacityPalette(powOpacityPalette(5));
+}
+
+void MainWindow::on_actionOp_x_6_triggered() {
+    setOpacityPalette(powOpacityPalette(6));
+}
+
+void MainWindow::on_actionOp_x_7_triggered() {
+    setOpacityPalette(powOpacityPalette(7));
 }
 
 void MainWindow::on_actionOp_x_8_triggered() {
-    gl_widget->setOpacityPalette(powOpacityPalette(8));
-    gl_widget->update();
+    setOpacityPalette(powOpacityPalette(8));
+}
+
+void MainWindow::on_actionOp_x_9_triggered() {
+    setOpacityPalette(powOpacityPalette(9));
 }
 
 void MainWindow::on_actionPalRainbow_triggered() {
-    gl_widget->setColorPalette(makeRainbowPalette());
-    gl_widget->update();
+    setColorPalette(makeRainbowPalette());
 }
 
 void MainWindow::on_actionPalMonochrome_triggered() {
-    gl_widget->setColorPalette(makeMonochromePalette());
-    gl_widget->update();
+    setColorPalette(makeMonochromePalette());
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -139,10 +141,8 @@ void MainWindow::on_actionOpen_triggered() {
                                                  "Frame files (*.frame);;All files(*.*)");
     if (filename.isNull()) {
         return;
-    }
-    auto frame = loadFrameFromFile(filename.toStdString());
-    gl_widget->setFrame(frame);
-    gl_widget->update();
+    }    
+    setFrame(loadFrameFromFile(filename.toStdString()));
 }
 
 void MainWindow::on_actionExit_triggered() {
@@ -155,4 +155,19 @@ void MainWindow::on_actionAbout_triggered() {
             QString("Programmed by Georgy Schukin<br>") +
             QString("<a href='mailto:schukin@ssd.sscc.ru'>schukin@ssd.sscc.ru</a>");
     QMessageBox::information(this, "About", about);
+}
+
+void MainWindow::setFrame(const Frame3D<GLfloat> &frame) {
+    gl_widget->setFrame(frame);
+    gl_widget->update();
+}
+
+void MainWindow::setColorPalette(const std::vector<QVector3D> &palette) {
+    gl_widget->setColorPalette(palette);
+    gl_widget->update();
+}
+
+void MainWindow::setOpacityPalette(const std::vector<GLfloat> &palette) {
+    gl_widget->setOpacityPalette(palette);
+    gl_widget->update();
 }

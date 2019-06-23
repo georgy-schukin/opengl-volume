@@ -1,12 +1,19 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QOpenGLFunctions>
+#include <QVector3D>
+
+#include <vector>
 
 namespace Ui {
 class MainWindow;
 }
 
 class MyOpenGLWidget;
+
+template <typename T>
+class Frame3D;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -32,8 +39,13 @@ private slots:
     void on_actionOpDefault_triggered();
     void on_actionOp_x_triggered();
     void on_actionOp_x_2_triggered();
+    void on_actionOp_x_3_triggered();
     void on_actionOp_x_4_triggered();
+    void on_actionOp_x_5_triggered();
+    void on_actionOp_x_6_triggered();
+    void on_actionOp_x_7_triggered();
     void on_actionOp_x_8_triggered();    
+    void on_actionOp_x_9_triggered();
 
     void on_actionPalRainbow_triggered();
     void on_actionPalMonochrome_triggered();
@@ -43,6 +55,11 @@ private slots:
     void on_actionExit_triggered();
 
     void on_actionAbout_triggered();
+
+private:
+    void setFrame(const Frame3D<GLfloat> &frame);
+    void setColorPalette(const std::vector<QVector3D> &palette);
+    void setOpacityPalette(const std::vector<GLfloat> &palette);
 
 private:
     Ui::MainWindow *ui;
