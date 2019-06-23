@@ -40,6 +40,10 @@ private slots:
 
     void on_actionOpen_triggered();
 
+    void on_actionExit_triggered();
+
+    void on_actionAbout_triggered();
+
 private:
     Ui::MainWindow *ui;
     MyOpenGLWidget *gl_widget;

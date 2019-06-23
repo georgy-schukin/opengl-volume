@@ -5,6 +5,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include <cmath>
 
@@ -142,4 +143,16 @@ void MainWindow::on_actionOpen_triggered() {
     auto frame = loadFrameFromFile(filename.toStdString());
     gl_widget->setFrame(frame);
     gl_widget->update();
+}
+
+void MainWindow::on_actionExit_triggered() {
+    qApp->exit();
+}
+
+void MainWindow::on_actionAbout_triggered() {
+    QString about =
+            QString("Volume Rendering v1.0<br>") +
+            QString("Programmed by Georgy Schukin<br>") +
+            QString("<a href='mailto:schukin@ssd.sscc.ru'>schukin@ssd.sscc.ru</a>");
+    QMessageBox::information(this, "About", about);
 }
