@@ -23,10 +23,10 @@ namespace  {
             {300, 400, 0.9f, 1.0f},
             {1800, 1900, 0.9f, 1.0f},
             {1900, 4000, 0.2f, 0.3f},*/
-            {900, 1200, 0.8f, 1.0f},
-            {1200, 2000, 0.3f, 0.5f},
-            {2000, 4000, 0.2f, 0.3f},
-            {0, 1200, 0.01f, 0.1f}
+            std::make_tuple(900, 1200, 0.8f, 1.0f),
+            std::make_tuple(1200, 2000, 0.3f, 0.5f),
+            std::make_tuple(2000, 4000, 0.2f, 0.3f),
+            std::make_tuple(0, 1200, 0.01f, 0.1f)
         };
         for (const auto &t: ranges) {
             const auto rs = std::get<0>(t);
@@ -59,7 +59,7 @@ namespace  {
     }
 }
 
-Frame3D<GLfloat> makeRandomFrame(size_t dim_size) {    
+Frame3D<GLfloat> makeRandomFrame(size_t dim_size) {
     //std::random_device rd;
     std::mt19937 mt(static_cast<unsigned int>(time(nullptr)));
     std::uniform_real_distribution<GLfloat> distribution(0.0f, 1.0f);
@@ -203,33 +203,37 @@ Frame3D<GLfloat> loadFrameFromFile(const std::string &filename) {
         throw std::runtime_error("Cannot open file " + filename);
     }
 
-    size_t width, height, depth;    
-    in.read(reinterpret_cast<char *>(&width), sizeof(width));
-    in.read(reinterpret_cast<char *>(&height), sizeof(height));
-    in.read(reinterpret_cast<char *>(&depth), sizeof(depth));    
+    unsigned short w, h, d;
+    in.read(reinterpret_cast<char *>(&w), sizeof(w));
+    in.read(reinterpret_cast<char *>(&h), sizeof(h));
+    in.read(reinterpret_cast<char *>(&d), sizeof(d));
+
+    const auto width = static_cast<size_t>(w);
+    const auto height = static_cast<size_t>(h);
+    const auto depth = static_cast<size_t>(d);
 
     // We have 2 bytes per voxel's value.
     using VoxelType = short;
     std::vector<VoxelType> values(width*height*depth);
-    in.read(reinterpret_cast<char *>(values.data()), values.size()*sizeof(VoxelType));
+    in.read(reinterpret_cast<char *>(values.data()), static_cast<int>(values.size()*sizeof(VoxelType)));
     in.close();
 
     const auto max = *std::max_element(values.begin(), values.end());
     const auto min = *std::min_element(values.begin(), values.end());
-    const auto avg = double(std::accumulate(values.begin(), values.end(), 0.0)) / values.size();    
+    const auto avg = double(std::accumulate(values.begin(), values.end(), 0.0)) / values.size();
 
-    Frame3D<GLfloat> frame(width, height, depth);    
+    Frame3D<GLfloat> frame(width, height, depth);
     // Slices are arranged by depth.
     #pragma omp parallel for
     for (size_t k = 0; k < depth; k++) {
         for (size_t i = 0; i < width; i++) {
-            for (size_t j = 0; j < height; j++) {                
+            for (size_t j = 0; j < height; j++) {
                 const auto index = frame.index(i, j, k);
                 // Normalize data.
-                frame.at(i, j, k) = GLfloat(values[index])/max;
+                frame.at(i, j, k) = GLfloat(values[index])/(max);
             }
         }
-    }    
+    }
     return frame;
 }
 
