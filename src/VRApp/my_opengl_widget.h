@@ -29,6 +29,9 @@ public:
         return frame_size;
     }
 
+    void setBackgroundColor(QColor color);
+    QColor getBackgroundColor();
+
 signals:
     void initialized();
 
@@ -68,5 +71,7 @@ private:
     QPoint mouse_pos {0, 0};
 
     size_t frame_size {256};
+
+    QColor background_color {0, 0, 25};
 };
 

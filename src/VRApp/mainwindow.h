@@ -44,7 +44,7 @@ private slots:
     void on_actionOp_x_5_triggered();
     void on_actionOp_x_6_triggered();
     void on_actionOp_x_7_triggered();
-    void on_actionOp_x_8_triggered();    
+    void on_actionOp_x_8_triggered();
     void on_actionOp_x_9_triggered();
 
     void on_actionPalRainbow_triggered();
@@ -55,6 +55,8 @@ private slots:
     void on_actionExit_triggered();
 
     void on_actionAbout_triggered();
+
+    void on_actionBackground_Color_triggered();
 
 private:
     void setFrame(const Frame3D<GLfloat> &frame);

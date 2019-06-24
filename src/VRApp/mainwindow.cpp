@@ -6,6 +6,7 @@
 #include <QToolBar>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QColorDialog>
 
 #include <cmath>
 
@@ -141,7 +142,7 @@ void MainWindow::on_actionOpen_triggered() {
                                                  "Frame files (*.frame);;All files(*.*)");
     if (filename.isNull()) {
         return;
-    }    
+    }
     setFrame(loadFrameFromFile(filename.toStdString()));
 }
 
@@ -170,4 +171,14 @@ void MainWindow::setColorPalette(const std::vector<QVector3D> &palette) {
 void MainWindow::setOpacityPalette(const std::vector<GLfloat> &palette) {
     gl_widget->setOpacityPalette(palette);
     gl_widget->update();
+}
+
+void MainWindow::on_actionBackground_Color_triggered() {
+    QColor color = QColorDialog::getColor(gl_widget->getBackgroundColor(), this,
+                                          "Choose background color",
+                                          QColorDialog::DontUseNativeDialog);
+    if (color.isValid()) {
+        gl_widget->setBackgroundColor(color);
+        gl_widget->update();
+    }
 }

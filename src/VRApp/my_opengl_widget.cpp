@@ -29,7 +29,6 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
 void MyOpenGLWidget::initializeGL() {
     auto *gl = context()->functions();
 
-    gl->glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
     gl->glDisable(GL_DEPTH_TEST);
     gl->glDisable(GL_CULL_FACE);
     gl->glEnable(GL_MULTISAMPLE);
@@ -104,6 +103,14 @@ void MyOpenGLWidget::setOpacityPalette(const std::vector<GLfloat> &values) {
     opacity_texture.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, values.data());
 }
 
+void MyOpenGLWidget::setBackgroundColor(QColor color) {
+    background_color = color;
+}
+
+QColor MyOpenGLWidget::getBackgroundColor() {
+    return background_color;
+}
+
 void MyOpenGLWidget::initView() {
     model_matrix.setToIdentity();
 
@@ -130,6 +137,9 @@ void MyOpenGLWidget::resizeGL(int width, int height) {
 void MyOpenGLWidget::paintGL() {
     auto *gl = context()->functions();
 
+    gl->glClearColor(static_cast<GLfloat>(background_color.redF()),
+                     static_cast<GLfloat>(background_color.greenF()),
+                     static_cast<GLfloat>(background_color.blueF()), 1.0f);
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (!program ||
