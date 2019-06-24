@@ -10,6 +10,10 @@ int main(int argc, char *argv[]) {
 
     a.setApplicationName("OpenGL Volume Rendering");
 
+    QCoreApplication::setOrganizationName("SSD");
+    QCoreApplication::setOrganizationDomain("ssd.sscc.ru");
+    QCoreApplication::setApplicationName("OpenGL Volume Rendering");
+
     MainWindow w;
 
     // Center and resize the main window.

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "cutoff_dialog.h"
 #include "util.h"
 
 #include <QStatusBar>
@@ -7,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QColorDialog>
+#include <QSettings>
 
 #include <cmath>
 
@@ -136,14 +138,17 @@ void MainWindow::on_actionPalMonochrome_triggered() {
 }
 
 void MainWindow::on_actionOpen_triggered() {
+    const static QString FRAME_DIR = "frame_dir";
+    QSettings settings;
     auto filename = QFileDialog::getOpenFileName(this,
                                                  "Open frame file",
-                                                 "",
+                                                 settings.value(FRAME_DIR).toString(),
                                                  "Frame files (*.frame);;All files(*.*)");
     if (filename.isNull()) {
         return;
     }
     setFrame(loadFrameFromFile(filename.toStdString()));
+    settings.setValue(FRAME_DIR, QFileInfo(filename).dir().absolutePath());
 }
 
 void MainWindow::on_actionExit_triggered() {
@@ -179,6 +184,15 @@ void MainWindow::on_actionBackground_Color_triggered() {
                                           QColorDialog::DontUseNativeDialog);
     if (color.isValid()) {
         gl_widget->setBackgroundColor(color);
+        gl_widget->update();
+    }
+}
+
+void MainWindow::on_actionCutoff_triggered() {
+    const auto cutoff = gl_widget->getCutoff();
+    CutoffDialog dlg(cutoff.first, cutoff.second, this);
+    if (dlg.exec() == QDialog::Accepted) {
+        gl_widget->setCutoff(dlg.getLow(), dlg.getHigh());
         gl_widget->update();
     }
 }

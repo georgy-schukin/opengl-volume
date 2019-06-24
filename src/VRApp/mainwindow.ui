@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>577</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFrame">
@@ -101,6 +101,7 @@
      <string>Settings</string>
     </property>
     <addaction name="actionBackground_Color"/>
+    <addaction name="actionCutoff"/>
    </widget>
    <addaction name="menuFrame"/>
    <addaction name="menuPalette"/>
@@ -296,6 +297,11 @@
   <action name="actionBackground_Color">
    <property name="text">
     <string>Background Color...</string>
+   </property>
+  </action>
+  <action name="actionCutoff">
+   <property name="text">
+    <string>Cutoff...</string>
    </property>
   </action>
  </widget>

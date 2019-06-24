@@ -107,8 +107,17 @@ void MyOpenGLWidget::setBackgroundColor(QColor color) {
     background_color = color;
 }
 
-QColor MyOpenGLWidget::getBackgroundColor() {
+QColor MyOpenGLWidget::getBackgroundColor() const {
     return background_color;
+}
+
+void MyOpenGLWidget::setCutoff(float low, float high) {
+    cutoff_low = low;
+    cutoff_high = high;
+}
+
+std::pair<float, float> MyOpenGLWidget::getCutoff() const {
+    return std::make_pair(cutoff_low, cutoff_high);
 }
 
 void MyOpenGLWidget::initView() {
@@ -151,6 +160,10 @@ void MyOpenGLWidget::paintGL() {
     }
 
     program->bind();
+
+    program->setUniformValue(program->uniformLocation("cutoff_low"), cutoff_low);
+    program->setUniformValue(program->uniformLocation("cutoff_high"), cutoff_high);
+    program->setUniformValue(program->uniformLocation("cutoff_coeff"), 1.0f/(cutoff_high - cutoff_low));
 
     QMatrix4x4 rotate;
     rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));

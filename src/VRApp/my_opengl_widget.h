@@ -30,7 +30,10 @@ public:
     }
 
     void setBackgroundColor(QColor color);
-    QColor getBackgroundColor();
+    QColor getBackgroundColor() const;
+
+    void setCutoff(float low, float high);
+    std::pair<float, float> getCutoff() const;
 
 signals:
     void initialized();
@@ -73,5 +76,7 @@ private:
     size_t frame_size {256};
 
     QColor background_color {0, 0, 25};
+
+    float cutoff_low {0.0f}, cutoff_high {1.0f};
 };
 
