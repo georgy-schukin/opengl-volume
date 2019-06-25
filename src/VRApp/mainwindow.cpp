@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "cutoff_dialog.h"
 #include "util.h"
+#include "file_util.h"
 
 #include <QStatusBar>
 #include <QToolBar>

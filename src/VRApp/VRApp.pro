@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
     cutoff_dialog.cpp \
+    file_util.cpp \
         mainwindow.cpp \
     my_opengl_widget.cpp \
     objects/cube.cpp \
@@ -41,6 +42,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     cutoff_dialog.h \
+    file_util.h \
     my_opengl_widget.h \
     objects/buffer.h \
     objects/cube.h \

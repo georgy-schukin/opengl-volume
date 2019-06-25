@@ -197,46 +197,6 @@ Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, float 
     return frame;
 }
 
-Frame3D<GLfloat> loadFrameFromFile(const std::string &filename) {
-    std::ifstream in(filename.c_str(), std::ios_base::in | std::ios_base::binary);
-    if (!in.is_open()) {
-        throw std::runtime_error("Cannot open file " + filename);
-    }
-
-    unsigned short w, h, d;
-    in.read(reinterpret_cast<char *>(&w), sizeof(w));
-    in.read(reinterpret_cast<char *>(&h), sizeof(h));
-    in.read(reinterpret_cast<char *>(&d), sizeof(d));
-
-    const auto width = static_cast<size_t>(w);
-    const auto height = static_cast<size_t>(h);
-    const auto depth = static_cast<size_t>(d);
-
-    // We have 2 bytes per voxel's value.
-    using VoxelType = short;
-    std::vector<VoxelType> values(width*height*depth);
-    in.read(reinterpret_cast<char *>(values.data()), static_cast<int>(values.size()*sizeof(VoxelType)));
-    in.close();
-
-    const auto max = *std::max_element(values.begin(), values.end());
-    const auto min = *std::min_element(values.begin(), values.end());
-    const auto avg = double(std::accumulate(values.begin(), values.end(), 0.0)) / values.size();
-
-    Frame3D<GLfloat> frame(width, height, depth);
-    // Slices are arranged by depth.
-    #pragma omp parallel for
-    for (size_t k = 0; k < depth; k++) {
-        for (size_t i = 0; i < width; i++) {
-            for (size_t j = 0; j < height; j++) {
-                const auto index = frame.index(i, j, k);
-                // Normalize data.
-                frame.at(i, j, k) = GLfloat(values[index])/(max);
-            }
-        }
-    }
-    return frame;
-}
-
 std::vector<QVector3D> makeRainbowPalette() {
     const std::vector<QVector3D> rainbow = {
         QVector3D(0.0f, 0.0f, 0.0f),

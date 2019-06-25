@@ -5,6 +5,8 @@
  * - Data: slices in depth-order, width*height unsigned shorts each.
 */
 
+#include "../common/types.h"
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -27,9 +29,11 @@ int main(int argc, char **argv) {
 
     std::ofstream out(output_file.c_str(), std::ios_base::out | std::ios_base::binary);
 
+    const unsigned char type = static_cast<unsigned char>(ValueType::VT_INT16);
     const unsigned short w = static_cast<unsigned short>(width);
     const unsigned short h = static_cast<unsigned short>(height);
     const unsigned short d = static_cast<unsigned short>(depth);
+    out.write(reinterpret_cast<const char *>(&type), sizeof(type));
     out.write(reinterpret_cast<const char *>(&w), sizeof(w));
     out.write(reinterpret_cast<const char *>(&h), sizeof(h));
     out.write(reinterpret_cast<const char *>(&d), sizeof(d));

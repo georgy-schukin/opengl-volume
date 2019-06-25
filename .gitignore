@@ -36,3 +36,4 @@
 src/VRApp/VRApp
 src/VolumeRead/VolumeRead
 src/VolumeImgRead/VolumeImgRead
+src/VolumeConvert/VolumeConvert
