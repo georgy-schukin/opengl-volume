@@ -32,7 +32,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
     cutoff_dialog.cpp \
     file_util.cpp \
-        mainwindow.cpp \
+    main_window.cpp \
     my_opengl_widget.cpp \
     objects/cube.cpp \
     objects/hemisphere.cpp \
@@ -40,9 +40,10 @@ SOURCES += main.cpp\
     objects/triangulated_shape.cpp \
     util.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     cutoff_dialog.h \
     file_util.h \
+    main_window.h \
     my_opengl_widget.h \
     objects/buffer.h \
     objects/cube.h \
@@ -53,8 +54,9 @@ HEADERS  += mainwindow.h \
     util.h \
     frame3d.h
 
-FORMS    += mainwindow.ui \
-    cutoff_dialog.ui
+FORMS    += \
+    cutoff_dialog.ui \
+    main_window.ui
 
 DISTFILES += \
     shaders/basic.vert \

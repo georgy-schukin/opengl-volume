@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "main_window.h"
+#include "ui_main_window.h"
 #include "cutoff_dialog.h"
 #include "util.h"
 #include "file_util.h"
@@ -23,6 +23,19 @@ std::vector<GLfloat> powOpacityPalette(int n) {
     return makeOpacityPalette(1024, [n](const GLfloat &x) {return std::pow(x, n);});
 }
 
+QColor getColorSetting(QString key) {
+    QSettings settings;
+    auto value = settings.value(key);
+    return QColor(QRgb(value.toUInt()));
+}
+
+void setColorSetting(QString key, QColor color) {
+    QSettings settings;
+    settings.setValue(key, static_cast<unsigned int>(color.rgb()));
+}
+
+const QString BG_COLOR_KEY = "background-color";
+
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -45,6 +58,10 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initGlWidget() {
+    auto bgColor = getColorSetting(BG_COLOR_KEY);
+    if (bgColor.isValid()) {
+        gl_widget->setBackgroundColor(bgColor);
+    }
     setFrame(makeSectorFrame(gl_widget->getFrameSize()));
     setColorPalette(makeRainbowPalette());
     setOpacityPalette(defaultOpacityPalette());
@@ -184,6 +201,7 @@ void MainWindow::on_actionBackground_Color_triggered() {
                                           "Choose background color",
                                           QColorDialog::DontUseNativeDialog);
     if (color.isValid()) {
+        setColorSetting(BG_COLOR_KEY, color);
         gl_widget->setBackgroundColor(color);
         gl_widget->update();
     }
