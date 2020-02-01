@@ -38,9 +38,11 @@ SOURCES += main.cpp\
     objects/hemisphere.cpp \
     objects/plane.cpp \
     objects/triangulated_shape.cpp \
+    raw_dialog.cpp \
     util.cpp
 
 HEADERS  += \
+    ../common/types.h \
     cutoff_dialog.h \
     file_util.h \
     main_window.h \
@@ -51,12 +53,14 @@ HEADERS  += \
     objects/plane.h \
     objects/shape.h \
     objects/triangulated_shape.h \
+    raw_dialog.h \
     util.h \
     frame3d.h
 
 FORMS    += \
     cutoff_dialog.ui \
-    main_window.ui
+    main_window.ui \
+    raw_dialog.ui
 
 DISTFILES += \
     shaders/basic.vert \
