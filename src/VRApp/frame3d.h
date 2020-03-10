@@ -55,10 +55,12 @@ public:
     }
 
     void normalize() {
-        const auto max = *std::max_element(_data.begin(), _data.end());
-        const auto min = *std::min_element(_data.begin(), _data.end());
+        auto mm = std::minmax_element(_data.begin(), _data.end());
+        const auto min = *(mm.first);
+        const auto max = *(mm.second);
+        const auto coeff = 1.0/(max - std::min(static_cast<T>(0.0), min));
         for (auto &el: _data) {
-            el /= max;
+            el *= coeff;
         }
     }
 

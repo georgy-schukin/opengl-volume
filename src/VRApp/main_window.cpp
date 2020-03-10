@@ -166,7 +166,7 @@ void MainWindow::on_actionOpen_triggered() {
     if (filename.isNull()) {
         return;
     }
-    if (filename.contains(".cube")) {
+    if (filename.endsWith(".cube")) {
         setFrame(cube::loadCube(filename.toStdString()));
     } else {
         setFrame(loadFrameFromFile(filename.toStdString()));

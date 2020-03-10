@@ -10,7 +10,7 @@ Frame3D<GLfloat> cubeToframe(const CubeData &data) {
     const auto dy = data.dim[1];
     const auto dz = data.dim[2];
     Frame3D<GLfloat> frame(dx, dy, dz);
-    frame.fill([&](size_t i, size_t j, size_t k) -> auto {
+    frame.fill([&data, dx, dy](size_t i, size_t j, size_t k) -> auto {
         const auto index = i*dx*dy + j*dx + k;
         assert (index < data.data.size());
         return static_cast<GLfloat>(data.data[index]);
