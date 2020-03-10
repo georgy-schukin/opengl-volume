@@ -3,6 +3,7 @@
 #include "cutoff_dialog.h"
 #include "util.h"
 #include "file_util.h"
+#include "cube/cube_util.h"
 
 #include <QStatusBar>
 #include <QToolBar>
@@ -161,11 +162,15 @@ void MainWindow::on_actionOpen_triggered() {
     auto filename = QFileDialog::getOpenFileName(this,
                                                  "Open frame file",
                                                  settings.value(FRAME_DIR).toString(),
-                                                 "Frame files (*.frame);;All files(*.*)");
+                                                 "Frame files (*.frame);;Cube files (*.cube);;All files(*.*)");
     if (filename.isNull()) {
         return;
     }
-    setFrame(loadFrameFromFile(filename.toStdString()));
+    if (filename.contains(".cube")) {
+        setFrame(cube::loadCube(filename.toStdString()));
+    } else {
+        setFrame(loadFrameFromFile(filename.toStdString()));
+    }
     settings.setValue(FRAME_DIR, QFileInfo(filename).dir().absolutePath());
 }
 

@@ -30,6 +30,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
+    cube/cube_data.cpp \
+    cube/cube_util.cpp \
     cutoff_dialog.cpp \
     file_util.cpp \
     main_window.cpp \
@@ -41,6 +43,8 @@ SOURCES += main.cpp\
     util.cpp
 
 HEADERS  += \
+    cube/cube_data.h \
+    cube/cube_util.h \
     cutoff_dialog.h \
     file_util.h \
     main_window.h \
