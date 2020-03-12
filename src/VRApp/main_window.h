@@ -61,12 +61,13 @@ private slots:
     void on_actionCutoff_triggered();
 
 private:
-    void setFrame(const Frame3D<GLfloat> &frame);
+    void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");
     void setColorPalette(const std::vector<QVector3D> &palette);
     void setOpacityPalette(const std::vector<GLfloat> &palette);
 
 private:
     Ui::MainWindow *ui;
     MyOpenGLWidget *gl_widget;
+    QString default_title;
 };
 

@@ -51,6 +51,8 @@ MainWindow::MainWindow(QWidget *parent) :
     gl_widget = ui->openGLWidget;
 
     connect(gl_widget, &MyOpenGLWidget::initialized, this, &MainWindow::initGlWidget);
+
+    default_title = windowTitle();
 }
 
 MainWindow::~MainWindow()
@@ -63,49 +65,49 @@ void MainWindow::initGlWidget() {
     if (bgColor.isValid()) {
         gl_widget->setBackgroundColor(bgColor);
     }
-    setFrame(makeSectorFrame(gl_widget->getFrameSize()));
+    setFrame(makeSectorFrame(gl_widget->getFrameSize()), "Sector");
     setColorPalette(makeRainbowPalette());
     setOpacityPalette(defaultOpacityPalette());
 }
 
 void MainWindow::on_actionSector_triggered() {
-    setFrame(makeSectorFrame(gl_widget->getFrameSize()));
+    setFrame(makeSectorFrame(gl_widget->getFrameSize()), "Sector");
 }
 
 void MainWindow::on_actionRandom_triggered() {
-    setFrame(makeRandomFrame(gl_widget->getFrameSize()));
+    setFrame(makeRandomFrame(gl_widget->getFrameSize()), "Random");
 }
 
 void MainWindow::on_actionSphere_triggered() {
-    setFrame(makeSphereFrame(gl_widget->getFrameSize()));
+    setFrame(makeSphereFrame(gl_widget->getFrameSize()), "Sphere");
 }
 
 void MainWindow::on_actionParabololoid_triggered() {
-    setFrame(makeParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
+    setFrame(makeParaboloidFrame(gl_widget->getFrameSize(), 0.2f), "Paraboloid");
 }
 
 void MainWindow::on_actionHyperboloid_triggered() {
-    setFrame(makeHyperboloidFrame(gl_widget->getFrameSize(), 0.2f));
+    setFrame(makeHyperboloidFrame(gl_widget->getFrameSize(), 0.2f), "Hyperboloid");
 }
 
 void MainWindow::on_actionHyperbolic_Paraboloid_triggered() {
-    setFrame(makeHyperbolicParaboloidFrame(gl_widget->getFrameSize(), 0.2f));
+    setFrame(makeHyperbolicParaboloidFrame(gl_widget->getFrameSize(), 0.2f), "Hyperbolic Paraboloid");
 }
 
 void MainWindow::on_actionHelix_triggered() {
-    setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f, 0.6f, 0.1f, 8.0f));
+    setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f, 0.6f, 0.1f, 8.0f), "Helix");
 }
 
 void MainWindow::on_actionHelicoid_triggered() {
-    setFrame(makeHelicoidFrame(gl_widget->getFrameSize(), 0.2f));
+    setFrame(makeHelicoidFrame(gl_widget->getFrameSize(), 0.2f), "Helicoid");
 }
 
 void MainWindow::on_actionTorus_triggered() {
-    setFrame(makeTorusFrame(gl_widget->getFrameSize(), 0.2f, 0.7f, 0.2f));
+    setFrame(makeTorusFrame(gl_widget->getFrameSize(), 0.2f, 0.7f, 0.2f), "Torus");
 }
 
 void MainWindow::on_actionBubbles_triggered() {
-    setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05f, 0.25f));
+    setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05f, 0.25f), "Bubbles");
 }
 
 void MainWindow::on_actionOpDefault_triggered() {
@@ -170,9 +172,9 @@ void MainWindow::on_actionOpen_triggered() {
         return;
     }
     if (filename.endsWith(".cube")) {
-        setFrame(cube::loadCube(filename.toStdString()));
+        setFrame(cube::loadCube(filename.toStdString()), QFileInfo(filename).fileName());
     } else {
-        setFrame(loadFrameFromFile(filename.toStdString()));
+        setFrame(loadFrameFromFile(filename.toStdString()), QFileInfo(filename).fileName());
     }
     settings.setValue(FRAME_DIR, QFileInfo(filename).dir().absolutePath());
     settings.setValue(FRAME_FILTER, selectedFilter);
@@ -190,7 +192,8 @@ void MainWindow::on_actionAbout_triggered() {
     QMessageBox::information(this, "About", about);
 }
 
-void MainWindow::setFrame(const Frame3D<GLfloat> &frame) {
+void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
+    setWindowTitle(default_title + (!title.isEmpty() ? ": " + title : ""));
     gl_widget->setFrame(frame);
     gl_widget->update();
 }
