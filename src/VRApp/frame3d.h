@@ -73,7 +73,9 @@ public:
     }
 
     size_t index(size_t x, size_t y, size_t z) const {
-        return z*_width*_height + x*_width + y;
+        // Frame is arranged as [depth] of [height]*[width] slices.
+        // z - num of slice, y - row in a slice, x - column.
+        return z*_width*_height + y*_width + x;
     }
 
 private:

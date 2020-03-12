@@ -158,11 +158,14 @@ void MainWindow::on_actionPalMonochrome_triggered() {
 
 void MainWindow::on_actionOpen_triggered() {
     const static QString FRAME_DIR = "frame_dir";
+    const static QString FRAME_FILTER = "frame_filter";
     QSettings settings;
+    QString selectedFilter = settings.value(FRAME_FILTER).toString();
     auto filename = QFileDialog::getOpenFileName(this,
                                                  "Open frame file",
                                                  settings.value(FRAME_DIR).toString(),
-                                                 "Frame files (*.frame);;Cube files (*.cube);;All files(*.*)");
+                                                 "Frame files (*.frame);;Cube files (*.cube);;All files(*.*)",
+                                                 &selectedFilter);
     if (filename.isNull()) {
         return;
     }
@@ -172,6 +175,7 @@ void MainWindow::on_actionOpen_triggered() {
         setFrame(loadFrameFromFile(filename.toStdString()));
     }
     settings.setValue(FRAME_DIR, QFileInfo(filename).dir().absolutePath());
+    settings.setValue(FRAME_FILTER, selectedFilter);
 }
 
 void MainWindow::on_actionExit_triggered() {

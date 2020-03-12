@@ -13,9 +13,9 @@ std::ostream& operator<< (std::ostream &out, const Vector &v);
 
 class AtomData {
 public:
-    int n = 0; // number of an element in PTE
-    double unk = 0.0; // unknown item
-    Vector rc = {}; // atresian coordinates in Angstrom [x..z]
+    int number = 0; // number of an element in PTE
+    double charge = 0.0; // unknown item
+    Vector center = {}; // atresian coordinates in Angstrom [x..z]
 };
 
 class CubeData {
@@ -24,7 +24,7 @@ public:
     bool is_in_angstrom = true; // true when in Angstrom, false when in Bhores
     size_t dim[3] = {0, 0, 0}; // cube dimensions
     Vector origin = {}; // cube origin
-    Vector dvec[3] = {}; // elementary vectors [dimensions: v1, v2, v3][coordinates of vi: x, y, z]
+    Vector axis[3] = {}; // elementary vectors [dimensions: v1, v2, v3][coordinates of vi: x, y, z]
     bool bord_period[3] = {true, true, true}; // [v1, v2, v3] borders periodicity
     std::vector<AtomData> atoms;
     std::vector<double> data;

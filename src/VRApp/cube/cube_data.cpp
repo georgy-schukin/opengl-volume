@@ -17,6 +17,10 @@ std::ostream& operator<< (std::ostream &out, const Vector &v) {
     return out << v[0] << v[1] << v[2];
 }
 
+namespace {
+    //Vector toBohr
+}
+
 CubeData readCubeFile(const std::string &filename) {
     std::ifstream cubfile(filename.c_str());
 
@@ -29,69 +33,40 @@ CubeData readCubeFile(const std::string &filename) {
     std::getline(cubfile, data.title[0]);
     std::getline(cubfile, data.title[1]);
 
-    int num_of_atoms = 0;
-    cubfile >> num_of_atoms;
+    int n_atoms = 0;
+    cubfile >> n_atoms;
 
-    data.is_in_angstrom = (num_of_atoms < 0);
-    num_of_atoms = std::abs(num_of_atoms);
+    data.is_in_angstrom = (n_atoms < 0);
+    const size_t num_of_atoms = static_cast<size_t>(std::abs(n_atoms));
 
     cubfile >> data.origin;
     for (size_t i = 0; i < 3; i++) {
-        cubfile >> data.dim[i] >> data.dvec[i];
+        cubfile >> data.dim[i] >> data.axis[i];
     }
 
     if (!data.is_in_angstrom) {
         for (size_t i = 0; i < 3; i++) {
             data.origin[i] *= ANGSTROMS_IN_BOHR;
-            data.dvec[i][0] *= ANGSTROMS_IN_BOHR;
-            data.dvec[i][1] *= ANGSTROMS_IN_BOHR;
-            data.dvec[i][2] *= ANGSTROMS_IN_BOHR;
+            data.axis[i][0] *= ANGSTROMS_IN_BOHR;
+            data.axis[i][1] *= ANGSTROMS_IN_BOHR;
+            data.axis[i][2] *= ANGSTROMS_IN_BOHR;
         }
     }
-    /*if (verbosity > 0)
-    {
-        cout << data.nat << " atoms, origin @ (" <<
-                            data.orig[0] << ", " <<
-                            data.orig[1] << ", " <<
-                            data.orig[2] << "), Angstrom" << endl;
-        cout <<" Dimensions " << data.dim[0] << " x " <<
-                                 data.dim[1] << " x " <<
-                                 data.dim[2] << "; " << endl;
-        cout <<" V1 = (" << data.dvec[0][0] << ", " <<
-                            data.dvec[0][1] << ", " <<
-                            data.dvec[0][2] << "), Angstrom" << endl;
-        cout <<" V2 = (" << data.dvec[1][0] << ", " <<
-                            data.dvec[1][1] << ", " <<
-                            data.dvec[1][2] << "), Angstrom" << endl;
-        cout <<" V3 = (" << data.dvec[2][0] << ", " <<
-                            data.dvec[2][1] << ", " <<
-                            data.dvec[2][2] << "), Angstrom" << endl;
-    }*/
 
-    data.atoms.resize(static_cast<size_t>(num_of_atoms));
+    data.atoms.resize(num_of_atoms);
     for (size_t i = 0; i < data.atoms.size(); i ++) {
-        cubfile >> data.atoms[i].n
-                >> data.atoms[i].unk
-                >> data.atoms[i].rc;
-
+        cubfile >> data.atoms[i].number
+                >> data.atoms[i].charge
+                >> data.atoms[i].center;
         if (!data.is_in_angstrom) {
-            data.atoms[i].rc[0] *= ANGSTROMS_IN_BOHR;
-            data.atoms[i].rc[1] *= ANGSTROMS_IN_BOHR;
-            data.atoms[i].rc[2] *= ANGSTROMS_IN_BOHR;
+            data.atoms[i].center[0] *= ANGSTROMS_IN_BOHR;
+            data.atoms[i].center[1] *= ANGSTROMS_IN_BOHR;
+            data.atoms[i].center[2] *= ANGSTROMS_IN_BOHR;
         }
-        /*if (verbosity > 0) cout << "atom #" << i+1 << ": " << data.atoms[i].n << " "
-                                                           << data.atoms[i].unk << " "
-                                                           << data.atoms[i].rc[0] << ", "
-                                                           << data.atoms[i].rc[1] << ", "
-                                                           << data.atoms[i].rc[2] << ", (A)" << endl;*/
     }
 
-    const size_t datanum = static_cast<size_t>(data.dim[0] * data.dim[1] * data.dim[2]);
-    data.data.resize(datanum);
-
-    //cout << "Reading " << datanum/1000 << "k data block... (* = " << STAR_NUM/1000 << "k values,  " <<
-     //       datanum/STARLINE_NUM << "+ * lines)" << endl;
-
+    const size_t data_size = data.dim[0] * data.dim[1] * data.dim[2];
+    data.data.resize(data_size);
     for (size_t i = 0; i < data.data.size(); i++) {
         cubfile >> data.data[i];
     }
@@ -102,7 +77,16 @@ CubeData readCubeFile(const std::string &filename) {
 }
 
 void writeCubeFile(const CubeData &data, const std::string &filename) {
+    std::ofstream cubfile(filename.c_str(), std::ios_base::out | std::ios_base::trunc);
 
+    if (!cubfile.is_open()) {
+        throw std::runtime_error("Cannot open " + filename);
+    }
+
+    cubfile << data.title[0] << std::endl;
+    cubfile << data.title[1] << std::endl;
+
+    cubfile.close();
 }
 
 }

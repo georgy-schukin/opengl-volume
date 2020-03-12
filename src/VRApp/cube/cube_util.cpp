@@ -9,12 +9,18 @@ Frame3D<GLfloat> cubeToframe(const CubeData &data) {
     const auto dx = data.dim[0];
     const auto dy = data.dim[1];
     const auto dz = data.dim[2];
+    // Cube(dx, dy, dz) data layout - x,y,z: dx slices of dy*dz arrays.
+    // Frame(dx, dy, dz) data layout - z,x,y: dz slices of dx*dy arrays.
     Frame3D<GLfloat> frame(dx, dy, dz);
-    frame.fill([&data, dx, dy](size_t i, size_t j, size_t k) -> auto {
-        const auto index = i*dx*dy + j*dx + k;
-        assert (index < data.data.size());
-        return static_cast<GLfloat>(data.data[index]);
-    });
+    for (size_t i = 0; i < dx; i++) {
+        for (size_t j = 0; j < dy; j++) {
+            for (size_t k = 0; k < dz; k++) {
+                const auto index = i*dy*dz + j*dz + k; // frame(i, j, k) = cube(i, j, k)
+                assert (index < data.data.size());
+                frame.at(i, j, k) = static_cast<GLfloat>(data.data[index]);
+            }
+        }
+    }
     frame.normalize();
     return frame;
 }
