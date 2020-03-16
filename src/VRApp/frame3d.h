@@ -50,6 +50,14 @@ public:
         }
     }
 
+    template <typename Iter>
+    void fill(Iter start, Iter end) {
+        auto data_start = _data.begin();
+        while (start != end) {
+            *data_start++ = static_cast<T>(*start++);
+        }
+    }
+
     void fillBy(const T &value) {
         std::fill(_data.begin(), _data.end(), value);
     }

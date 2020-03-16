@@ -9,22 +9,9 @@ Frame3D<GLfloat> readFrame(std::ifstream &in, size_t width, size_t height, size_
     std::vector<InputType> values(width*height*depth);
     in.read(reinterpret_cast<char *>(values.data()), static_cast<int>(values.size()*sizeof(InputType)));
 
-    const auto max = *std::max_element(values.begin(), values.end());
-    //const auto min = *std::min_element(values.begin(), values.end());
-    //const auto avg = double(std::accumulate(values.begin(), values.end(), 0.0)) / values.size();
-
     Frame3D<GLfloat> frame(width, height, depth);
-    // Slices are arranged by depth.
-    #pragma omp parallel for
-    for (size_t k = 0; k < depth; k++) {
-        for (size_t i = 0; i < width; i++) {
-            for (size_t j = 0; j < height; j++) {
-                const auto index = frame.index(i, j, k);
-                // Normalize data.
-                frame.at(i, j, k) = GLfloat(values[index])/(max);
-            }
-        }
-    }
+    frame.fill(values.begin(), values.end()); // load data 'as is' into frame
+    frame.normalize();
     return frame;
 }
 
