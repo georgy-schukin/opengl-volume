@@ -1,4 +1,4 @@
-#include "util.h"
+#include "frame_util.h"
 
 #include <algorithm>
 #include <cmath>
@@ -73,9 +73,9 @@ Frame3D<GLfloat> makeRandomFrame(size_t dim_size) {
 Frame3D<GLfloat> makeSectorFrame(size_t dim_size) {
     Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
     frame.fill([&](size_t i, size_t j, size_t k) -> auto {
-        const auto x = float(i)/(frame.width() - 1);
-        const auto y = float(j)/(frame.height() - 1);
-        const auto z = float(k)/(frame.depth() - 1);
+        const auto x = float(i)/float(frame.width() - 1);
+        const auto y = float(j)/float(frame.height() - 1);
+        const auto z = float(k)/float(frame.depth() - 1);
         return std::sqrt(x*x + y*y + z*z)/std::sqrt(3.0f);
     });
     return frame;
@@ -83,10 +83,11 @@ Frame3D<GLfloat> makeSectorFrame(size_t dim_size) {
 
 Frame3D<GLfloat> makeSphereFrame(size_t dim_size) {
     Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
+    const auto size = float(dim_size - 1);
     frame.fill([&](size_t i, size_t j, size_t k) -> auto {
-        const auto x = 1.0f - 2.0f*float(i)/(dim_size - 1);
-        const auto y = 1.0f - 2.0f*float(j)/(dim_size - 1);
-        const auto z = 1.0f - 2.0f*float(k)/(dim_size - 1);
+        const auto x = 1.0f - 2.0f*float(i)/size;
+        const auto y = 1.0f - 2.0f*float(j)/size;
+        const auto z = 1.0f - 2.0f*float(k)/size;
         if (z < 0.0f) {
             return 0.0f;
         }
@@ -99,10 +100,11 @@ Frame3D<GLfloat> makeSphereFrame(size_t dim_size) {
 Frame3D<GLfloat> makeAnalyticalSurfaceFrame(size_t dim_size, float cutoff,
                                             std::function<float(float,float)> surface_func) {
     Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
+    const float size = float(dim_size - 1);
     frame.fill([&](size_t i, size_t j, size_t k) -> auto {
-        const auto x = 1.0f - 2.0f*float(i)/(dim_size - 1);
-        const auto y = 1.0f - 2.0f*float(j)/(dim_size - 1);
-        const auto z = 1.0f - 2.0f*float(k)/(dim_size - 1);
+        const auto x = 1.0f - 2.0f*float(i)/size;
+        const auto y = 1.0f - 2.0f*float(j)/size;
+        const auto z = 1.0f - 2.0f*float(k)/size;
         const auto func_value = surface_func(x, y);
         const auto diff = std::abs(z - func_value);
         return diff <= cutoff ? 1.0f - diff/cutoff : 0.0f;
@@ -197,34 +199,5 @@ Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, float 
     return frame;
 }
 
-std::vector<QVector3D> makeRainbowPalette() {
-    const std::vector<QVector3D> rainbow = {
-        QVector3D(0.0f, 0.0f, 0.0f),
-        QVector3D(1.0f, 0.0f, 1.0f),
-        QVector3D(0.0f, 0.0f, 1.0f),
-        QVector3D(0.0f, 1.0f, 1.0f),
-        QVector3D(0.0f, 1.0f, 0.0f),
-        QVector3D(1.0f, 1.0f, 0.0f),
-        QVector3D(1.0f, 0.0f, 0.0f)
-    };
-    /*std::vector<QVector3D> palette;
-    for (size_t i = 0; i < rainbow.size() - 1; i++) {
-        const auto c1 = rainbow[i];
-        const auto c2 = rainbow[i + 1];
-        for (int j = 0; j < 10; j++) {
-            const float t = float(j)/10;
-            palette.push_back(c1*(1 - t) + c2*t);
-        }
-    }
-    return palette;*/
-    return rainbow;
-}
-
-std::vector<QVector3D> makeMonochromePalette() {
-    return {
-        QVector3D(0.0f, 0.0f, 0.0f),
-        QVector3D(1.0f, 1.0f, 1.0f)
-    };
-}
 
 

@@ -34,19 +34,21 @@ SOURCES += main.cpp\
     cube/cube_util.cpp \
     cutoff_dialog.cpp \
     file_util.cpp \
+    frame_util.cpp \
     main_window.cpp \
     my_opengl_widget.cpp \
     objects/cube.cpp \
     objects/hemisphere.cpp \
     objects/plane.cpp \
     objects/triangulated_shape.cpp \
-    util.cpp
+    palette_util.cpp
 
 HEADERS  += \
     cube/cube_data.h \
     cube/cube_util.h \
     cutoff_dialog.h \
     file_util.h \
+    frame_util.h \
     main_window.h \
     my_opengl_widget.h \
     objects/buffer.h \
@@ -55,7 +57,7 @@ HEADERS  += \
     objects/plane.h \
     objects/shape.h \
     objects/triangulated_shape.h \
-    util.h \
+    palette_util.h \
     frame3d.h
 
 FORMS    += \

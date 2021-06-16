@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>577</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFrame">
@@ -82,6 +82,7 @@
     <addaction name="actionOp_x_7"/>
     <addaction name="actionOp_x_8"/>
     <addaction name="actionOp_x_9"/>
+    <addaction name="actionOpNone"/>
    </widget>
    <widget class="QMenu" name="menuPalette">
     <property name="title">
@@ -302,6 +303,11 @@
   <action name="actionCutoff">
    <property name="text">
     <string>Cutoff...</string>
+   </property>
+  </action>
+  <action name="actionOpNone">
+   <property name="text">
+    <string>None</string>
    </property>
   </action>
  </widget>

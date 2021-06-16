@@ -1,6 +1,7 @@
 #include "my_opengl_widget.h"
 #include "frame3d.h"
-#include "util.h"
+#include "frame_util.h"
+#include "palette_util.h"
 
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
@@ -127,7 +128,7 @@ void MyOpenGLWidget::initView() {
     view_matrix.lookAt(QVector3D(3.0f, 3.0f, 3.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 1.0f, 0.0f));
 
     projection_matrix.setToIdentity();
-    const auto aspect = float(width())/height();
+    const auto aspect = float(width()) / float(height());
     projection_matrix.perspective(45.0f, aspect, 0.01f, 100.0f);
 
     texture_matrix.setToIdentity();
@@ -179,39 +180,41 @@ void MyOpenGLWidget::paintGL() {
     program->setUniformValue(mvp_loc, mvp);*/
 
     const int tex3d_loc = program->uniformLocation("texture3d");
-    const int pal_loc = program->uniformLocation("palette");
-    const int op_loc = program->uniformLocation("opacity");
+    const int palette_loc = program->uniformLocation("palette");
+    const int opacity_loc = program->uniformLocation("opacity");
 
     gl->glActiveTexture(GL_TEXTURE0);
     program->setUniformValue(tex3d_loc, 0);
     data_texture.bind();
 
     gl->glActiveTexture(GL_TEXTURE1);
-    program->setUniformValue(pal_loc, 1);
+    program->setUniformValue(palette_loc, 1);
     color_texture.bind();
 
     gl->glActiveTexture(GL_TEXTURE2);
-    program->setUniformValue(op_loc, 2);
+    program->setUniformValue(opacity_loc, 2);
     opacity_texture.bind();
 
-    QMatrix4x4 plane_model;
-    plane_model.scale(2, 2, 1);
+    QMatrix4x4 plane_model_matrix;
+    plane_model_matrix.scale(2, 2, 1); // plane is [-2,2] by X and Y
+
+    static const float cube_half_size = 1.0f; // cube vertices' coords are +1/-1
+    static const float cube_extent_radius = cube_half_size * std::sqrt(3.0f); // radius of a sphere around cube
+    static const float step_coeff = cube_half_size * std::sqrt(2.0f);
 
     const auto max_dim = std::max(data_texture.width(), std::max(data_texture.height(), data_texture.depth()));
-    const auto plane_density = max_dim;
-    // Data cube is located in [0,0] in world coordinates and has side length of 2.
-    const float center_dist = (view_matrix * QVector4D(0, 0, 0, 1)).length();
-    const float cube_size = 1.0f;
-    const float cube_extent = cube_size*std::sqrt(3.0f);
-    const float step = 2.0f*cube_size/plane_density;
+    // Data cube is located in [0,0,0] in world coordinates and has side length of 2.
+    const float view_distance = (view_matrix * QVector4D(0, 0, 0, 1)).length(); // distance from the camera to the origin
+    const float step = step_coeff / static_cast<float>(max_dim);
+    const int num_of_steps = static_cast<int>(2.0f * cube_extent_radius / step);
 
-    plane_model.translate(0, 0, - (center_dist + cube_extent));
-    for (int i = 0; i <= int(2*cube_extent/step); i++) {
-        program->setUniformValue(proj_loc, projection_matrix * plane_model);
-        program->setUniformValue(tex_inv_loc, texture_inverse_matrix * plane_model);
+    plane_model_matrix.translate(0, 0, -view_distance - cube_extent_radius); // plane is in view space
+    for (int i = 0; i <= num_of_steps; i++) {
+        program->setUniformValue(proj_loc, projection_matrix * plane_model_matrix);
+        program->setUniformValue(tex_inv_loc, texture_inverse_matrix * plane_model_matrix);
         plane->draw(gl);
         //hemisphere->draw(gl);
-        plane_model.translate(0, 0, step);
+        plane_model_matrix.translate(0, 0, step);
     }
 
     //cube->draw(gl);

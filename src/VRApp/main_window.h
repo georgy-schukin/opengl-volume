@@ -46,6 +46,7 @@ private slots:
     void on_actionOp_x_7_triggered();
     void on_actionOp_x_8_triggered();
     void on_actionOp_x_9_triggered();
+    void on_actionOpNone_triggered();
 
     void on_actionPalRainbow_triggered();
     void on_actionPalMonochrome_triggered();

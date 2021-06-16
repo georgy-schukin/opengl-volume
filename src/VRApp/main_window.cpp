@@ -1,7 +1,8 @@
 #include "main_window.h"
 #include "ui_main_window.h"
 #include "cutoff_dialog.h"
-#include "util.h"
+#include "frame_util.h"
+#include "palette_util.h"
 #include "file_util.h"
 #include "cube/cube_util.h"
 
@@ -150,6 +151,10 @@ void MainWindow::on_actionOp_x_9_triggered() {
     setOpacityPalette(powOpacityPalette(9));
 }
 
+void MainWindow::on_actionOpNone_triggered() {
+    setOpacityPalette(std::vector<GLfloat> {1.0f});
+}
+
 void MainWindow::on_actionPalRainbow_triggered() {
     setColorPalette(makeRainbowPalette());
 }
@@ -227,3 +232,4 @@ void MainWindow::on_actionCutoff_triggered() {
         gl_widget->update();
     }
 }
+
