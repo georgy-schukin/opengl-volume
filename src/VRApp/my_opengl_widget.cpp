@@ -7,8 +7,10 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QMouseEvent>
+#include <QMessageBox>
 
 #include <cmath>
+#include <exception>
 
 MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     QOpenGLWidget(parent),
@@ -36,7 +38,13 @@ void MyOpenGLWidget::initializeGL() {
     gl->glEnable(GL_BLEND);
     gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    program = loadProgram("shaders/plane.vert", "shaders/plane.frag");
+    try {
+        program = loadProgram("shaders/plane.vert", "shaders/plane.frag");
+    }
+    catch (const std::exception &exp) {
+        QMessageBox *box = new QMessageBox(QMessageBox::Critical, "Error", exp.what(), QMessageBox::Ok, this);
+        box->show();
+    }
 
     initView();
     initObjects();
@@ -47,9 +55,17 @@ void MyOpenGLWidget::initializeGL() {
 
 std::shared_ptr<QOpenGLShaderProgram> MyOpenGLWidget::loadProgram(QString vertex_shader_file, QString fragment_shader_file) {
     auto prog = std::make_shared<QOpenGLShaderProgram>();
-    prog->addShaderFromSourceFile(QOpenGLShader::Vertex, vertex_shader_file);
-    prog->addShaderFromSourceFile(QOpenGLShader::Fragment, fragment_shader_file);
-    prog->link();
+    if (!prog->addShaderFromSourceFile(QOpenGLShader::Vertex, vertex_shader_file)) {
+        throw std::runtime_error(std::string("Failed to load vertex shaders from ") + vertex_shader_file.toStdString()
+                                 + ":\n" + prog->log().toStdString());
+    }
+    if (!prog->addShaderFromSourceFile(QOpenGLShader::Fragment, fragment_shader_file)) {
+        throw std::runtime_error(std::string("Failed to load fragment shaders from ") + fragment_shader_file.toStdString()
+                                 + ":\n" + prog->log().toStdString());
+    }
+    if (!prog->link()) {
+        throw std::runtime_error(std::string("Failed to link program:\n") + prog->log().toStdString());
+    }
     return prog;
 }
 
@@ -59,7 +75,9 @@ void MyOpenGLWidget::initObjects() {
     cube->attachTextureCoords(program.get(), "tCoord");*/
 
     plane = std::make_shared<Plane>();
-    plane->attachVertices(program.get(), "vertex");
+    if (program) {
+        plane->attachVertices(program.get(), "vertex");
+    }
 
     //hemisphere = std::make_shared<HemiSphere>(1.0, 16, 16);
     //hemisphere->attachVertices(program.get(), "vertex");
@@ -153,6 +171,7 @@ void MyOpenGLWidget::paintGL() {
     gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (!program ||
+        !plane ||
         !data_texture.isCreated() ||
         !color_texture.isCreated() ||
         !opacity_texture.isCreated())

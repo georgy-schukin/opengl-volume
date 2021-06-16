@@ -193,7 +193,7 @@ void MainWindow::on_actionAbout_triggered() {
     QString about =
             QString("Volume Rendering v1.0<br>") +
             QString("Programmed by Georgy Schukin<br>") +
-            QString("<a href='mailto:schukin@ssd.sscc.ru'>schukin@ssd.sscc.ru</a>");
+            QString("<a href='mailto:georgy.schukin@gmail.com'>georgy.schukin@gmail.com</a>");
     QMessageBox::information(this, "About", about);
 }
 
