@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>577</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFrame">
@@ -89,6 +89,7 @@
      <string>Palette</string>
     </property>
     <addaction name="actionPalRainbow"/>
+    <addaction name="actionPalRainbow_w_black"/>
     <addaction name="actionPalMonochrome"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -308,6 +309,14 @@
   <action name="actionOpNone">
    <property name="text">
     <string>None</string>
+   </property>
+  </action>
+  <action name="actionPalRainbow_w_black">
+   <property name="text">
+    <string>Rainbow with Black</string>
+   </property>
+   <property name="shortcut">
+    <string>B</string>
    </property>
   </action>
  </widget>

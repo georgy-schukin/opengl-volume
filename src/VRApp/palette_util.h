@@ -8,6 +8,7 @@
 #include <functional>
 
 std::vector<QVector3D> makeRainbowPalette();
+std::vector<QVector3D> makeRainbowWithBlackPalette();
 std::vector<QVector3D> makeMonochromePalette();
 
 template <typename Func>

@@ -61,6 +61,8 @@ private slots:
 
     void on_actionCutoff_triggered();
 
+    void on_actionPalRainbow_w_black_triggered();
+
 private:
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");
     void setColorPalette(const std::vector<QVector3D> &palette);

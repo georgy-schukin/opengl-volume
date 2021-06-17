@@ -159,6 +159,10 @@ void MainWindow::on_actionPalRainbow_triggered() {
     setColorPalette(makeRainbowPalette());
 }
 
+void MainWindow::on_actionPalRainbow_w_black_triggered() {
+    setColorPalette(makeRainbowWithBlackPalette());
+}
+
 void MainWindow::on_actionPalMonochrome_triggered() {
     setColorPalette(makeMonochromePalette());
 }
