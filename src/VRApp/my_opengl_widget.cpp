@@ -35,11 +35,7 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
 void MyOpenGLWidget::initializeGL() {
     auto *gl = context()->functions();
 
-    gl->glDisable(GL_DEPTH_TEST);
-    gl->glDisable(GL_CULL_FACE);
     gl->glEnable(GL_MULTISAMPLE);
-    gl->glEnable(GL_BLEND);
-    gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     try {
         initView();
@@ -106,6 +102,11 @@ void MyOpenGLWidget::setOpacityPalette(const std::vector<GLfloat> &values) {
     opacity_texture.setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, values.data());
 }
 
+void MyOpenGLWidget::setRenderer(std::shared_ptr<Renderer> rend) {
+    renderer = rend;
+    update_renderer = true;
+}
+
 void MyOpenGLWidget::setBackgroundColor(QColor color) {
     background_color = color;
 }
@@ -146,6 +147,11 @@ void MyOpenGLWidget::paintGL() {
     QMatrix4x4 rotate;
     rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
     rotate.rotate(rotation_x_angle, QVector3D(1.0f, 0.0f, 0.0f));
+
+    if (update_renderer) {
+        initRenderer();
+        update_renderer = false;
+    }
 
     renderer->setMVP(rotate * model_matrix, view_matrix, projection_matrix);
     renderer->setCutoff(cutoff_low, cutoff_high);

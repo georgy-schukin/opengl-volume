@@ -5,7 +5,6 @@
 #include <memory>
 
 class Plane;
-class QOpenGLShaderProgram;
 
 class SliceRenderer : public Renderer {
 public:

@@ -49,6 +49,7 @@ private slots:
     void on_actionOpNone_triggered();
 
     void on_actionPalRainbow_triggered();
+    void on_actionPalRainbow_w_black_triggered();
     void on_actionPalMonochrome_triggered();
 
     void on_actionOpen_triggered();
@@ -59,9 +60,10 @@ private slots:
 
     void on_actionBackground_Color_triggered();
 
-    void on_actionCutoff_triggered();
+    void on_actionCutoff_triggered();    
 
-    void on_actionPalRainbow_w_black_triggered();
+    void on_actionRenderSlices_triggered();
+    void on_actionRenderRay_Casting_triggered();
 
 private:
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");

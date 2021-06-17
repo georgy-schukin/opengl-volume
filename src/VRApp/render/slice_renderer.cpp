@@ -3,6 +3,7 @@
 
 #include <QOpenGLFunctions>
 #include <QOpenGLTexture>
+#include <QOpenGLShaderProgram>
 #include <cmath>
 
 void SliceRenderer::init(QOpenGLFunctions *gl) {
@@ -14,9 +15,18 @@ void SliceRenderer::init(QOpenGLFunctions *gl) {
     texture_matrix.setToIdentity();
     texture_matrix.scale(2.0f);
     texture_matrix.translate(-0.5f, -0.5f, -0.5f);
+
+    gl->glDisable(GL_DEPTH_TEST);
+    gl->glDisable(GL_CULL_FACE);
+    gl->glEnable(GL_BLEND);
+    gl->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void SliceRenderer::render(QOpenGLFunctions *gl) {
+    if (!program || !data_texture || !color_texture || !opacity_texture) {
+        return;
+    }
+
     program->bind();
 
     program->setUniformValue(program->uniformLocation("cutoff_low"), cutoff_low);

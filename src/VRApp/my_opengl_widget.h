@@ -20,6 +20,7 @@ public:
     void setFrame(const Frame3D<GLfloat> &data);
     void setColorPalette(const std::vector<QVector3D> &colors);
     void setOpacityPalette(const std::vector<GLfloat> &values);
+    void setRenderer(std::shared_ptr<Renderer> rend);
 
     size_t getFrameSize() const {
         return frame_size;
@@ -69,5 +70,7 @@ private:
     QColor background_color {0, 0, 25};
 
     float cutoff_low {0.0f}, cutoff_high {1.0f};
+
+    bool update_renderer = false;
 };
 

@@ -4,6 +4,8 @@
 #include "frame_util.h"
 #include "palette_util.h"
 #include "cube/cube_util.h"
+#include "render/slice_renderer.h"
+#include "render/ray_cast_renderer.h"
 
 #include <QStatusBar>
 #include <QToolBar>
@@ -236,3 +238,13 @@ void MainWindow::on_actionCutoff_triggered() {
     }
 }
 
+
+void MainWindow::on_actionRenderSlices_triggered() {
+    gl_widget->setRenderer(std::make_shared<SliceRenderer>());
+    gl_widget->update();
+}
+
+void MainWindow::on_actionRenderRay_Casting_triggered() {
+    gl_widget->setRenderer(std::make_shared<RayCastRenderer>());
+    gl_widget->update();
+}

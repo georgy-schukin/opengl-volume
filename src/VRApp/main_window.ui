@@ -105,9 +105,17 @@
     <addaction name="actionBackground_Color"/>
     <addaction name="actionCutoff"/>
    </widget>
+   <widget class="QMenu" name="menuRender">
+    <property name="title">
+     <string>Render</string>
+    </property>
+    <addaction name="actionRenderSlices"/>
+    <addaction name="actionRenderRay_Casting"/>
+   </widget>
    <addaction name="menuFrame"/>
    <addaction name="menuPalette"/>
    <addaction name="menuOpacity"/>
+   <addaction name="menuRender"/>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -317,6 +325,16 @@
    </property>
    <property name="shortcut">
     <string>B</string>
+   </property>
+  </action>
+  <action name="actionRenderSlices">
+   <property name="text">
+    <string>Slices</string>
+   </property>
+  </action>
+  <action name="actionRenderRay_Casting">
+   <property name="text">
+    <string>Ray Casting</string>
    </property>
   </action>
  </widget>
