@@ -3,7 +3,6 @@
 #include "cutoff_dialog.h"
 #include "frame_util.h"
 #include "palette_util.h"
-#include "file_util.h"
 #include "cube/cube_util.h"
 
 #include <QStatusBar>

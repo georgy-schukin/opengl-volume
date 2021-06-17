@@ -8,12 +8,8 @@
 #include <QTimer>
 #include <memory>
 
-#include "objects/cube.h"
-#include "objects/plane.h"
-#include "objects/hemisphere.h"
 #include "frame3d.h"
-
-class QOpenGLShaderProgram;
+#include "render/renderer.h"
 
 class MyOpenGLWidget : public QOpenGLWidget {
     Q_OBJECT
@@ -48,23 +44,18 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
-private:
-    std::shared_ptr<QOpenGLShaderProgram> loadProgram(QString vertex_shader_file, QString fragment_shader_file);
-    void initView();
-    void initObjects();
-    void initTextures();
+private:    
+    void initView();    
+    void initRenderer();
 
     void onTimer();
 
-private:
-    std::shared_ptr<QOpenGLShaderProgram> program;
+private:    
     QOpenGLTexture data_texture, color_texture, opacity_texture;
 
-    QMatrix4x4 model_matrix, view_matrix, projection_matrix, texture_matrix;
+    QMatrix4x4 model_matrix, view_matrix, projection_matrix;
 
-    std::shared_ptr<Cube> cube;
-    std::shared_ptr<Plane> plane;
-    std::shared_ptr<HemiSphere> hemisphere;
+    std::shared_ptr<Renderer> renderer;
 
     float rotation_y_angle {0.0f}, rotation_x_angle {0.0f};
 
