@@ -212,10 +212,7 @@ void MyOpenGLWidget::paintGL() {
 
     gl->glActiveTexture(GL_TEXTURE2);
     program->setUniformValue(opacity_loc, 2);
-    opacity_texture.bind();
-
-    QMatrix4x4 plane_model_matrix;
-    plane_model_matrix.scale(2, 2, 1); // plane is [-2,2] by X and Y
+    opacity_texture.bind();    
 
     static const float cube_half_size = 1.0f; // cube vertices' coords are +1/-1
     static const float cube_extent_radius = cube_half_size * std::sqrt(3.0f); // radius of a sphere around cube
@@ -227,6 +224,8 @@ void MyOpenGLWidget::paintGL() {
     const float step = step_coeff / static_cast<float>(max_dim);
     const int num_of_steps = static_cast<int>(2.0f * cube_extent_radius / step);
 
+    QMatrix4x4 plane_model_matrix;
+    plane_model_matrix.scale(cube_extent_radius, cube_extent_radius, 1); // scale plane to fit over cube
     plane_model_matrix.translate(0, 0, -view_distance - cube_extent_radius); // plane is in view space
     for (int i = 0; i <= num_of_steps; i++) {
         program->setUniformValue(proj_loc, projection_matrix * plane_model_matrix);
