@@ -25,6 +25,9 @@ void TriangulatedShape::attachColors(QOpenGLShaderProgram *program, QString var)
 
 void TriangulatedShape::attachBuffer(QOpenGLShaderProgram *program, QString var, Buffer &buf) {
     const int loc = program->attributeLocation(var);
+    if (loc == -1) {
+        return;
+    }
     vao.bind();
     buf.bind();
     program->enableAttributeArray(loc);

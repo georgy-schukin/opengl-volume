@@ -4,29 +4,29 @@ Cube::Cube() {
     // Vertex coordinates.
     const std::vector<QVector3D> vertices = {
         // front
-        QVector3D(-1.0f, -1.0f,  1.0f),
-        QVector3D(1.0f, -1.0f,  1.0f),
-        QVector3D(1.0f,  1.0f,  1.0f),
-        QVector3D(-1.0f,  1.0f,  1.0f),
+        QVector3D(-1.0f, -1.0f,  -1.0f),
+        QVector3D(1.0f, -1.0f,  -1.0f),
+        QVector3D(1.0f,  1.0f,  -1.0f),
+        QVector3D(-1.0f,  1.0f,  -1.0f),
         // back
-        QVector3D(-1.0f, -1.0f, -1.0f),
-        QVector3D(1.0f, -1.0f, -1.0f),
-        QVector3D(1.0f,  1.0f, -1.0f),
-        QVector3D(-1.0f,  1.0f, -1.0f)
+        QVector3D(-1.0f, -1.0f, 1.0f),
+        QVector3D(1.0f, -1.0f, 1.0f),
+        QVector3D(1.0f,  1.0f, 1.0f),
+        QVector3D(-1.0f,  1.0f, 1.0f)
     };
 
     // Vertex texture coordinates.
     const std::vector<QVector3D> tex_coords = {
         // front
-        QVector3D(0.0f, 0.0f,  1.0f),
-        QVector3D(1.0f, 0.0f,  1.0f),
-        QVector3D(1.0f, 1.0f,  1.0f),
-        QVector3D(0.0f, 1.0f,  1.0f),
+        QVector3D(0.0f, 0.0f,  0.0f),
+        QVector3D(1.0f, 0.0f,  0.0f),
+        QVector3D(1.0f, 1.0f,  0.0f),
+        QVector3D(0.0f, 1.0f,  0.0f),
         // back
-        QVector3D(0.0f, 0.0f, 0.0f),
-        QVector3D(1.0f, 0.0f, 0.0f),
-        QVector3D(1.0f, 1.0f, 0.0f),
-        QVector3D(0.0f, 1.0f, 0.0f)
+        QVector3D(0.0f, 0.0f, 1.0f),
+        QVector3D(1.0f, 0.0f, 1.0f),
+        QVector3D(1.0f, 1.0f, 1.0f),
+        QVector3D(0.0f, 1.0f, 1.0f)
     };
 
     // Vertex colors.
@@ -37,10 +37,10 @@ Cube::Cube() {
         QVector3D(0.0f, 0.0f, 1.0f),
         QVector3D(1.0f, 1.0f, 1.0f),
         // back colors
-        QVector3D(1.0f, 0.0f, 0.0f),
-        QVector3D(0.0f, 1.0f, 0.0f),
-        QVector3D(0.0f, 0.0f, 1.0f),
-        QVector3D(1.0f, 1.0f, 1.0f)
+        QVector3D(1.0f, 1.0f, 0.0f),
+        QVector3D(0.0f, 1.0f, 1.0f),
+        QVector3D(1.0f, 0.0f, 1.0f),
+        QVector3D(0.0f, 0.0f, 0.0f)
     };
 
     const std::vector<GLuint> indices = {
@@ -66,5 +66,6 @@ Cube::Cube() {
 
     setVertices(vertices, GL_FLOAT, 3);
     setTextureCoords(tex_coords, GL_FLOAT, 3);
+    setColors(colors, GL_FLOAT, 3);
     setIndices(indices, GL_UNSIGNED_INT);
 }

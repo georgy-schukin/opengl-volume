@@ -37,14 +37,8 @@ void MyOpenGLWidget::initializeGL() {
 
     gl->glEnable(GL_MULTISAMPLE);
 
-    try {
-        initView();
-        initRenderer();
-    }
-    catch (const std::exception &exp) {
-        QMessageBox *box = new QMessageBox(QMessageBox::Critical, "Error", exp.what(), QMessageBox::Ok, this);
-        box->show();
-    }    
+    initView();
+    initRenderer();
 
     emit initialized();
 }
@@ -61,10 +55,16 @@ void MyOpenGLWidget::initView() {
 }
 
 void MyOpenGLWidget::initRenderer() {
-    renderer->init(context()->functions());
-    renderer->setDataTexture(&data_texture);
-    renderer->setColorTexture(&color_texture);
-    renderer->setOpacityTexture(&opacity_texture);
+    try {
+        renderer->init(context()->functions());
+        renderer->setDataTexture(&data_texture);
+        renderer->setColorTexture(&color_texture);
+        renderer->setOpacityTexture(&opacity_texture);
+    }
+    catch (const std::exception &exp) {
+        QMessageBox *box = new QMessageBox(QMessageBox::Critical, "Error", exp.what(), QMessageBox::Ok, this);
+        box->show();
+    }
 }
 
 void MyOpenGLWidget::setFrame(const Frame3D<GLfloat> &data) {

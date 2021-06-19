@@ -331,10 +331,16 @@
    <property name="text">
     <string>Slices</string>
    </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
   </action>
   <action name="actionRenderRay_Casting">
    <property name="text">
     <string>Ray Casting</string>
+   </property>
+   <property name="shortcut">
+    <string>R</string>
    </property>
   </action>
  </widget>
