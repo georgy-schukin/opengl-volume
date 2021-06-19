@@ -23,8 +23,11 @@ void main()
         float value = texture(texture3d, position).r;
 
         if (value >= cutoff_low && value <= cutoff_high) {
+            value = (value - cutoff_low) * cutoff_coeff;
+
             vec3 color = texture(palette, value).rgb;
             float alpha = texture(opacity, value).r;
+
             vec4 src = vec4(color * alpha, alpha);
             // Front-to-back compositing.
             dest = (1.0 - dest.a) * src + dest;

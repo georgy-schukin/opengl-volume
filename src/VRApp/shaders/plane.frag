@@ -27,7 +27,7 @@ void main()
         discard;
     }
 
-    //value = (value - cutoff_low)*cutoff_coeff;
+    value = (value - cutoff_low) * cutoff_coeff;
 
     vec3 color = texture(palette, value).rgb;
     float alpha = texture(opacity, value).r;
