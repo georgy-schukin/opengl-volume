@@ -82,6 +82,7 @@
     <addaction name="actionOp_x_7"/>
     <addaction name="actionOp_x_8"/>
     <addaction name="actionOp_x_9"/>
+    <addaction name="actionOpLog"/>
     <addaction name="actionOpNone"/>
    </widget>
    <widget class="QMenu" name="menuPalette">
@@ -341,6 +342,11 @@
    </property>
    <property name="shortcut">
     <string>R</string>
+   </property>
+  </action>
+  <action name="actionOpLog">
+   <property name="text">
+    <string>Log</string>
    </property>
   </action>
  </widget>

@@ -48,6 +48,7 @@ private slots:
     void on_actionOp_x_7_triggered();
     void on_actionOp_x_8_triggered();
     void on_actionOp_x_9_triggered();
+    void on_actionOpLog_triggered();
     void on_actionOpNone_triggered();
 
     void on_actionPalRainbow_triggered();
@@ -65,7 +66,7 @@ private slots:
     void on_actionCutoff_triggered();    
 
     void on_actionRenderSlices_triggered();
-    void on_actionRenderRay_Casting_triggered();
+    void on_actionRenderRay_Casting_triggered();    
 
 private:
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");

@@ -26,6 +26,10 @@ std::vector<GLfloat> powOpacityPalette(int n) {
     return makeOpacityPalette(1024, [n](const GLfloat &x) {return std::pow(x, n);});
 }
 
+std::vector<GLfloat> logOpacityPalette(float step = 1.0f) {
+    return makeOpacityPalette(1024, [step](const GLfloat &x) {return std::log(x + step) / std::log(1.0f + step);});
+}
+
 QColor getColorSetting(QString key) {
     QSettings settings;
     auto value = settings.value(key);
@@ -174,6 +178,10 @@ void MainWindow::on_actionOp_x_9_triggered() {
     setOpacityPalette(powOpacityPalette(9));
 }
 
+void MainWindow::on_actionOpLog_triggered() {
+    setOpacityPalette(logOpacityPalette());
+}
+
 void MainWindow::on_actionOpNone_triggered() {
     setOpacityPalette(std::vector<GLfloat> {1.0f});
 }
@@ -251,3 +259,4 @@ void MainWindow::on_actionRenderSlices_triggered() {
 void MainWindow::on_actionRenderRay_Casting_triggered() {
     setRenderer(std::make_shared<RayCastRenderer>());
 }
+
