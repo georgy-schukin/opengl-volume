@@ -8,3 +8,6 @@ DESTDIR = $$PWD
 
 SOURCES += \
         main.cpp
+
+HEADERS += \
+    ../common/types.h

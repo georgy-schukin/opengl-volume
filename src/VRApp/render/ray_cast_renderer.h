@@ -11,8 +11,10 @@ public:
     RayCastRenderer() = default;
     ~RayCastRenderer() override = default;
 
-    void init(QOpenGLFunctions *gl) override;
-    void render(QOpenGLFunctions *gl) override;
+    void init(QOpenGLFunctions *gl) override;    
+
+protected:
+    void doRender(QOpenGLFunctions *gl) override;
 
 private:
     std::shared_ptr<Cube> cube;

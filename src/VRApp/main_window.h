@@ -5,12 +5,14 @@
 #include <QVector3D>
 
 #include <vector>
+#include <memory>
 
 namespace Ui {
 class MainWindow;
 }
 
 class MyOpenGLWidget;
+class Renderer;
 
 template <typename T>
 class Frame3D;
@@ -69,6 +71,7 @@ private:
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");
     void setColorPalette(const std::vector<QVector3D> &palette);
     void setOpacityPalette(const std::vector<GLfloat> &palette);
+    void setRenderer(std::shared_ptr<Renderer> renderer);
 
 private:
     Ui::MainWindow *ui;

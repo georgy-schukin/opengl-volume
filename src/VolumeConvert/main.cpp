@@ -1,8 +1,8 @@
 /*
  * Utility for converting raw volume data into .frame file format.
  * Frame format is (binary):
- * - Header: width height depth (unsigned short each),
- * - Data: slices in depth-order, width*height unsigned shorts each.
+ * - Header: type (uchar) width height depth (ushort),
+ * - Data: slices in depth-order, each slice is width*height elements.
 */
 
 #include "../common/types.h"
@@ -27,7 +27,10 @@ ValueType getType(const std::string &type) {
         {"int8", ValueType::VT_INT8},
         {"uint8", ValueType::VT_UINT8},
         {"int16", ValueType::VT_INT16},
-        {"uint16", ValueType::VT_UINT16}
+        {"uint16", ValueType::VT_UINT16},
+        {"int32", ValueType::VT_INT32},
+        {"uint32", ValueType::VT_UINT32},
+        {"float32", ValueType::VT_FLOAT}
     };
     auto it = types.find(type);
     if (it != types.end()) {
@@ -72,7 +75,7 @@ int main(int argc, char **argv) {
         out.write(reinterpret_cast<const char *>(&w), sizeof(w));
         out.write(reinterpret_cast<const char *>(&h), sizeof(h));
         out.write(reinterpret_cast<const char *>(&d), sizeof(d));
-        out.write(data.data(), static_cast<int>(data.size()));
+        out.write(data.data(), data.size());
         out.close();
 
         std::cout << "Done " << output_file << std::endl;

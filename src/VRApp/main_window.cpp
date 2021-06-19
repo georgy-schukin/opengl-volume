@@ -68,8 +68,30 @@ void MainWindow::initGlWidget() {
         gl_widget->setBackgroundColor(bgColor);
     }
     setFrame(makeSectorFrame(gl_widget->getFrameSize()), "Sector");
-    setColorPalette(makeRainbowPalette());
+    setColorPalette(makeRainbowWithBlackPalette());
     setOpacityPalette(defaultOpacityPalette());
+    setRenderer(std::make_shared<RayCastRenderer>());
+}
+
+void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
+    setWindowTitle(default_title + (!title.isEmpty() ? ": " + title : ""));
+    gl_widget->setFrame(frame);
+    gl_widget->update();
+}
+
+void MainWindow::setColorPalette(const std::vector<QVector3D> &palette) {
+    gl_widget->setColorPalette(palette);
+    gl_widget->update();
+}
+
+void MainWindow::setOpacityPalette(const std::vector<GLfloat> &palette) {
+    gl_widget->setOpacityPalette(palette);
+    gl_widget->update();
+}
+
+void MainWindow::setRenderer(std::shared_ptr<Renderer> renderer) {
+    gl_widget->setRenderer(renderer);
+    gl_widget->update();
 }
 
 void MainWindow::on_actionSector_triggered() {
@@ -202,22 +224,6 @@ void MainWindow::on_actionAbout_triggered() {
     QMessageBox::information(this, "About", about);
 }
 
-void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
-    setWindowTitle(default_title + (!title.isEmpty() ? ": " + title : ""));
-    gl_widget->setFrame(frame);
-    gl_widget->update();
-}
-
-void MainWindow::setColorPalette(const std::vector<QVector3D> &palette) {
-    gl_widget->setColorPalette(palette);
-    gl_widget->update();
-}
-
-void MainWindow::setOpacityPalette(const std::vector<GLfloat> &palette) {
-    gl_widget->setOpacityPalette(palette);
-    gl_widget->update();
-}
-
 void MainWindow::on_actionBackground_Color_triggered() {
     QColor color = QColorDialog::getColor(gl_widget->getBackgroundColor(), this,
                                           "Choose background color",
@@ -238,13 +244,10 @@ void MainWindow::on_actionCutoff_triggered() {
     }
 }
 
-
 void MainWindow::on_actionRenderSlices_triggered() {
-    gl_widget->setRenderer(std::make_shared<SliceRenderer>());
-    gl_widget->update();
+    setRenderer(std::make_shared<SliceRenderer>());
 }
 
 void MainWindow::on_actionRenderRay_Casting_triggered() {
-    gl_widget->setRenderer(std::make_shared<RayCastRenderer>());
-    gl_widget->update();
+    setRenderer(std::make_shared<RayCastRenderer>());
 }

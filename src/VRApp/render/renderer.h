@@ -14,7 +14,7 @@ public:
     virtual ~Renderer() = default;
 
     virtual void init(QOpenGLFunctions *gl) = 0;
-    virtual void render(QOpenGLFunctions *gl) = 0;
+    void render(QOpenGLFunctions *gl);
 
     void setDataTexture(QOpenGLTexture *tex) {
         data_texture = tex;
@@ -41,6 +41,8 @@ public:
 
 protected:
     static std::shared_ptr<QOpenGLShaderProgram> loadProgram(const char *vert_shader_file, const char *frag_shader_file);
+
+    virtual void doRender(QOpenGLFunctions *gl) = 0;
 
 protected:
     QMatrix4x4 model_matrix;

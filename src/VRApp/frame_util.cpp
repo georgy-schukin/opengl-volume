@@ -96,6 +96,12 @@ Frame3D<GLfloat> loadFrameFromFile(const std::string &filename) {
         return readFrame<ValueType::VT_INT16>(in, width, height, depth);
     case ValueType::VT_UINT16:
         return readFrame<ValueType::VT_UINT16>(in, width, height, depth);
+    case ValueType::VT_INT32:
+        return readFrame<ValueType::VT_UINT32>(in, width, height, depth);
+    case ValueType::VT_UINT32:
+        return readFrame<ValueType::VT_UINT32>(in, width, height, depth);
+    case ValueType::VT_FLOAT:
+        return readFrame<ValueType::VT_FLOAT>(in, width, height, depth);
     default:
         throw std::runtime_error("Unknown value type: " + std::to_string(type));
     }

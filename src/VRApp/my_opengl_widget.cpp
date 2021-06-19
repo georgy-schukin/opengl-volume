@@ -3,6 +3,7 @@
 #include "frame_util.h"
 #include "palette_util.h"
 #include "render/slice_renderer.h"
+#include "render/ray_cast_renderer.h"
 
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
@@ -26,7 +27,7 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
     format.setSamples(4);
     setFormat(format);
 
-    renderer = std::make_shared<SliceRenderer>();
+    renderer = std::make_shared<RayCastRenderer>();
 
     connect(&timer, &QTimer::timeout, this, &MyOpenGLWidget::onTimer);
     timer.start(timer_interval);
@@ -72,9 +73,9 @@ void MyOpenGLWidget::setFrame(const Frame3D<GLfloat> &data) {
     data_texture.setSize(static_cast<int>(data.width()),
                        static_cast<int>(data.height()),
                        static_cast<int>(data.depth()));
-    data_texture.setMinMagFilters(QOpenGLTexture::LinearMipMapLinear,  QOpenGLTexture::LinearMipMapLinear);
+    data_texture.setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
     data_texture.setWrapMode(QOpenGLTexture::ClampToEdge);
-    data_texture.setAutoMipMapGenerationEnabled(true);
+    //data_texture.setAutoMipMapGenerationEnabled(true);
     data_texture.setMaximumAnisotropy(16.0f);
     data_texture.setBorderColor(0.0f, 0.0f, 0.0f, 0.0f);
     data_texture.setFormat(QOpenGLTexture::R32F);
@@ -85,7 +86,7 @@ void MyOpenGLWidget::setFrame(const Frame3D<GLfloat> &data) {
 void MyOpenGLWidget::setColorPalette(const std::vector<QVector3D> &colors) {
     color_texture.destroy();
     color_texture.setSize(static_cast<int>(colors.size()));
-    color_texture.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
+    color_texture.setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
     color_texture.setWrapMode(QOpenGLTexture::ClampToEdge);
     color_texture.setFormat(QOpenGLTexture::RGB8_UNorm);
     color_texture.allocateStorage();
@@ -95,7 +96,7 @@ void MyOpenGLWidget::setColorPalette(const std::vector<QVector3D> &colors) {
 void MyOpenGLWidget::setOpacityPalette(const std::vector<GLfloat> &values) {
     opacity_texture.destroy();
     opacity_texture.setSize(static_cast<int>(values.size()));
-    opacity_texture.setMinMagFilters(QOpenGLTexture::Linear,  QOpenGLTexture::Linear);
+    opacity_texture.setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
     opacity_texture.setWrapMode(QOpenGLTexture::ClampToEdge);
     opacity_texture.setFormat(QOpenGLTexture::R32F);
     opacity_texture.allocateStorage();

@@ -11,8 +11,10 @@ public:
     SliceRenderer() = default;
     ~SliceRenderer() override = default;
 
-    void init(QOpenGLFunctions *gl) override;
-    void render(QOpenGLFunctions *gl) override;
+    void init(QOpenGLFunctions *gl) override;    
+
+protected:
+    void doRender(QOpenGLFunctions *gl) override;
 
 private:
     QMatrix4x4 texture_matrix;
