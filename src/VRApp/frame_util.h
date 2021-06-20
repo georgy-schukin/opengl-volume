@@ -15,16 +15,16 @@ Frame3D<GLfloat> makeRandomFrame(size_t dim_size);
 Frame3D<GLfloat> makeSectorFrame(size_t dim_size);
 Frame3D<GLfloat> makeSphereFrame(size_t dim_size);
 
-Frame3D<GLfloat> makeAnalyticalSurfaceFrame(size_t dim_size, float cutoff,
-                                            std::function<float(float,float)> surface_func);
-Frame3D<GLfloat> makeImplicitSurfaceFrame(size_t dim_size, float cutoff,
-                                           std::function<float(float,float,float)> surface_func);
+Frame3D<GLfloat> makeAnalyticalSurfaceFrame(size_t dim_size, double cutoff,
+                                            std::function<double(double,double)> surface_func);
+Frame3D<GLfloat> makeImplicitSurfaceFrame(size_t dim_size, double cutoff,
+                                           std::function<double(double,double,double)> surface_func);
 
-Frame3D<GLfloat> makeParaboloidFrame(size_t dim_size, float cutoff);
-Frame3D<GLfloat> makeHyperboloidFrame(size_t dim_size, float cutoff);
-Frame3D<GLfloat> makeHyperbolicParaboloidFrame(size_t dim_size, float cutoff);
-Frame3D<GLfloat> makeHelixFrame(size_t dim_size, float cutoff, float R, float r, float a);
-Frame3D<GLfloat> makeHelicoidFrame(size_t dim_size, float cutoff);
-Frame3D<GLfloat> makeTorusFrame(size_t dim_size, float cutoff, float R, float r);
+Frame3D<GLfloat> makeParaboloidFrame(size_t dim_size, double cutoff);
+Frame3D<GLfloat> makeHyperboloidFrame(size_t dim_size, double cutoff);
+Frame3D<GLfloat> makeHyperbolicParaboloidFrame(size_t dim_size, double cutoff);
+Frame3D<GLfloat> makeHelixFrame(size_t dim_size, double cutoff, double R, double r, double a);
+Frame3D<GLfloat> makeHelicoidFrame(size_t dim_size, double cutoff);
+Frame3D<GLfloat> makeTorusFrame(size_t dim_size, double cutoff, double R, double r);
 
-Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, float min_rad, float max_rad);
+Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, double min_rad, double max_rad);

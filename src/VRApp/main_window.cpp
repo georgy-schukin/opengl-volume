@@ -179,31 +179,31 @@ void MainWindow::on_actionSphere_triggered() {
 }
 
 void MainWindow::on_actionParabololoid_triggered() {
-    setFrame(makeParaboloidFrame(gl_widget->getFrameSize(), 0.2f), "Paraboloid");
+    setFrame(makeParaboloidFrame(gl_widget->getFrameSize(), 0.2), "Paraboloid");
 }
 
 void MainWindow::on_actionHyperboloid_triggered() {
-    setFrame(makeHyperboloidFrame(gl_widget->getFrameSize(), 0.2f), "Hyperboloid");
+    setFrame(makeHyperboloidFrame(gl_widget->getFrameSize(), 0.2), "Hyperboloid");
 }
 
 void MainWindow::on_actionHyperbolic_Paraboloid_triggered() {
-    setFrame(makeHyperbolicParaboloidFrame(gl_widget->getFrameSize(), 0.2f), "Hyperbolic Paraboloid");
+    setFrame(makeHyperbolicParaboloidFrame(gl_widget->getFrameSize(), 0.2), "Hyperbolic Paraboloid");
 }
 
 void MainWindow::on_actionHelix_triggered() {
-    setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2f, 0.6f, 0.1f, 8.0f), "Helix");
+    setFrame(makeHelixFrame(gl_widget->getFrameSize(), 0.2, 0.6, 0.1, 8.0), "Helix");
 }
 
 void MainWindow::on_actionHelicoid_triggered() {
-    setFrame(makeHelicoidFrame(gl_widget->getFrameSize(), 0.2f), "Helicoid");
+    setFrame(makeHelicoidFrame(gl_widget->getFrameSize(), 0.2), "Helicoid");
 }
 
 void MainWindow::on_actionTorus_triggered() {
-    setFrame(makeTorusFrame(gl_widget->getFrameSize(), 0.2f, 0.7f, 0.2f), "Torus");
+    setFrame(makeTorusFrame(gl_widget->getFrameSize(), 0.2, 0.7, 0.2), "Torus");
 }
 
 void MainWindow::on_actionBubbles_triggered() {
-    setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05f, 0.25f), "Bubbles");
+    setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05, 0.25), "Bubbles");
 }
 
 void MainWindow::on_actionOpDefault_triggered() {

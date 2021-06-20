@@ -71,7 +71,7 @@ void main() {
     vec3 texCoord = (coord + vec3(1.0)) * 0.5;
     vec3 position = texCoord;
     vec3 direction = normalize(coord - eyePosition); // ray direction from eye
-    vec4 dest = vec4(0.0);        
+    vec4 dest = vec4(0.0);            
 
     for (int i = 0; i < numSteps; i++) {
         float value = getValue(position);
