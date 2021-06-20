@@ -105,6 +105,7 @@
     </property>
     <addaction name="actionBackground_Color"/>
     <addaction name="actionCutoff"/>
+    <addaction name="actionShow_hide_Toolbar"/>
    </widget>
    <widget class="QMenu" name="menuRender">
     <property name="title">
@@ -347,6 +348,11 @@
   <action name="actionOpLog">
    <property name="text">
     <string>Log</string>
+   </property>
+  </action>
+  <action name="actionShow_hide_Toolbar">
+   <property name="text">
+    <string>Show/hide Toolbar</string>
    </property>
   </action>
  </widget>

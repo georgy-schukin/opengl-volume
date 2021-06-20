@@ -121,6 +121,14 @@ void MyOpenGLWidget::setCutoff(float low, float high) {
     cutoff_high = high;
 }
 
+void MyOpenGLWidget::setCutoffLow(float low) {
+    cutoff_low = low;
+}
+
+void MyOpenGLWidget::setCutoffHigh(float high) {
+    cutoff_high = high;
+}
+
 std::pair<float, float> MyOpenGLWidget::getCutoff() const {
     return std::make_pair(cutoff_low, cutoff_high);
 }

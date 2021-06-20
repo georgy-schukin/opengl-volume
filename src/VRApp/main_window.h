@@ -3,6 +3,8 @@
 #include <QMainWindow>
 #include <QOpenGLFunctions>
 #include <QVector3D>
+#include <QLabel>
+#include <QSlider>
 
 #include <vector>
 #include <memory>
@@ -23,6 +25,9 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+signals:
+    void cutoffChanged(float low, float high);
 
 private slots:
     void initGlWidget();
@@ -68,15 +73,25 @@ private slots:
     void on_actionRenderSlices_triggered();
     void on_actionRenderRay_Casting_triggered();    
 
+    void on_actionShow_hide_Toolbar_triggered();
+
 private:
+    void initStatus();
+    void initToolbar();
+
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");
     void setColorPalette(const std::vector<QVector3D> &palette);
     void setOpacityPalette(const std::vector<GLfloat> &palette);
-    void setRenderer(std::shared_ptr<Renderer> renderer);
+    void setRenderer(std::shared_ptr<Renderer> renderer);    
+    void setCutoff(float low, float high);
+
+    std::pair<float, float> getCutoff() const;
 
 private:
     Ui::MainWindow *ui;
     MyOpenGLWidget *gl_widget;
     QString default_title;
+    QLabel *size_label, *cutoff_label;
+    QSlider *slider_low, *slider_high;
 };
 

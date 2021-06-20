@@ -30,6 +30,8 @@ public:
     QColor getBackgroundColor() const;
 
     void setCutoff(float low, float high);
+    void setCutoffLow(float low);
+    void setCutoffHigh(float high);
     std::pair<float, float> getCutoff() const;
 
 signals:

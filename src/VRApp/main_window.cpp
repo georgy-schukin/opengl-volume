@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QColorDialog>
 #include <QSettings>
+#include <QSlider>
 
 #include <cmath>
 
@@ -51,12 +52,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->mainToolBar->hide();
-    ui->statusBar->hide();
-
     gl_widget = ui->openGLWidget;
-
     connect(gl_widget, &MyOpenGLWidget::initialized, this, &MainWindow::initGlWidget);
+
+    initStatus();
+    initToolbar();
 
     default_title = windowTitle();
 }
@@ -66,6 +66,56 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::initStatus() {
+    size_label = new QLabel(this);
+
+    cutoff_label = new QLabel(this);
+    connect(this, &MainWindow::cutoffChanged, [this](float low, float high) {
+       cutoff_label->setText(QString("Cutoff: [%0, %1]").arg(low).arg(high));
+    });
+
+    ui->statusBar->addWidget(size_label);
+    ui->statusBar->addWidget(cutoff_label);
+}
+
+void MainWindow::initToolbar() {
+    slider_low = new QSlider(Qt::Horizontal, this);
+    slider_low->setMinimum(0);
+    slider_low->setMaximum(100);
+    slider_low->setValue(slider_low->minimum());
+    slider_low->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    connect(slider_low, &QSlider::valueChanged, [this](int value) {
+        setCutoff(float(value) / slider_low->maximum(), getCutoff().second);
+    });
+
+    slider_high = new QSlider(Qt::Horizontal, this);
+    slider_high->setMinimum(0);
+    slider_high->setMaximum(100);
+    slider_high->setValue(slider_high->maximum());
+    slider_high->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    connect(slider_high, &QSlider::valueChanged, [this](int value) {
+        setCutoff(getCutoff().first, float(value) / slider_high->maximum());
+    });
+
+    connect(this, &MainWindow::cutoffChanged, [this](float low, float high) {
+        const auto s_low = static_cast<int>(low * slider_low->maximum());
+        const auto s_high = static_cast<int>(high * slider_high->maximum());
+        if (s_low != slider_low->value()) {
+            slider_low->setValue(s_low);
+        }
+        if (s_high != slider_high->value()) {
+            slider_high->setValue(s_high);
+        }
+    });
+
+    ui->mainToolBar->addWidget(new QLabel("Low: ", this));
+    ui->mainToolBar->addWidget(slider_low);
+    ui->mainToolBar->addWidget(new QLabel("High: ", this));
+    ui->mainToolBar->addWidget(slider_high);
+
+    ui->mainToolBar->hide();
+}
+
 void MainWindow::initGlWidget() {
     auto bgColor = getColorSetting(BG_COLOR_KEY);
     if (bgColor.isValid()) {
@@ -73,12 +123,14 @@ void MainWindow::initGlWidget() {
     }
     setFrame(makeSectorFrame(gl_widget->getFrameSize()), "Sector");
     setColorPalette(makeRainbowWithBlackPalette());
-    setOpacityPalette(defaultOpacityPalette());
+    setOpacityPalette(powOpacityPalette(1));
     setRenderer(std::make_shared<RayCastRenderer>());
+    setCutoff(0.0, 1.0);
 }
 
 void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
     setWindowTitle(default_title + (!title.isEmpty() ? ": " + title : ""));
+    size_label->setText(QString("Size: %0 x %1 x %2").arg(frame.width()).arg(frame.height()).arg(frame.depth()));
     gl_widget->setFrame(frame);
     gl_widget->update();
 }
@@ -96,6 +148,16 @@ void MainWindow::setOpacityPalette(const std::vector<GLfloat> &palette) {
 void MainWindow::setRenderer(std::shared_ptr<Renderer> renderer) {
     gl_widget->setRenderer(renderer);
     gl_widget->update();
+}
+
+void MainWindow::setCutoff(float low, float high) {
+    gl_widget->setCutoff(low, high);
+    gl_widget->update();
+    emit cutoffChanged(low, high);
+}
+
+std::pair<float, float> MainWindow::getCutoff() const {
+    return gl_widget->getCutoff();
 }
 
 void MainWindow::on_actionSector_triggered() {
@@ -244,11 +306,10 @@ void MainWindow::on_actionBackground_Color_triggered() {
 }
 
 void MainWindow::on_actionCutoff_triggered() {
-    const auto cutoff = gl_widget->getCutoff();
+    const auto cutoff = getCutoff();
     CutoffDialog dlg(cutoff.first, cutoff.second, this);
     if (dlg.exec() == QDialog::Accepted) {
-        gl_widget->setCutoff(dlg.getLow(), dlg.getHigh());
-        gl_widget->update();
+        setCutoff(dlg.getLow(), dlg.getHigh());
     }
 }
 
@@ -260,3 +321,7 @@ void MainWindow::on_actionRenderRay_Casting_triggered() {
     setRenderer(std::make_shared<RayCastRenderer>());
 }
 
+
+void MainWindow::on_actionShow_hide_Toolbar_triggered() {
+    ui->mainToolBar->setHidden(!ui->mainToolBar->isHidden());
+}
