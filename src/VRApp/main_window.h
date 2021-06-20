@@ -54,11 +54,12 @@ private slots:
     void on_actionOp_x_8_triggered();
     void on_actionOp_x_9_triggered();
     void on_actionOpLog_triggered();
-    void on_actionOpNone_triggered();
+    void on_actionOpFull_triggered();
 
     void on_actionPalRainbow_triggered();
     void on_actionPalRainbow_w_black_triggered();
     void on_actionPalMonochrome_triggered();
+    void on_actionPalSingle_color_triggered();
 
     void on_actionOpen_triggered();
 
@@ -74,7 +75,6 @@ private slots:
     void on_actionRenderRay_Casting_triggered();    
 
     void on_actionShow_hide_Toolbar_triggered();
-
     void on_actionShow_hide_Statusbar_triggered();
 
 private:

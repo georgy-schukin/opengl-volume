@@ -83,7 +83,7 @@
     <addaction name="actionOp_x_8"/>
     <addaction name="actionOp_x_9"/>
     <addaction name="actionOpLog"/>
-    <addaction name="actionOpNone"/>
+    <addaction name="actionOpFull"/>
    </widget>
    <widget class="QMenu" name="menuPalette">
     <property name="title">
@@ -92,6 +92,7 @@
     <addaction name="actionPalRainbow"/>
     <addaction name="actionPalRainbow_w_black"/>
     <addaction name="actionPalMonochrome"/>
+    <addaction name="actionPalSingle_color"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -317,9 +318,12 @@
     <string>Cutoff...</string>
    </property>
   </action>
-  <action name="actionOpNone">
+  <action name="actionOpFull">
    <property name="text">
-    <string>None</string>
+    <string>Constant</string>
+   </property>
+   <property name="toolTip">
+    <string>Full</string>
    </property>
   </action>
   <action name="actionPalRainbow_w_black">
@@ -365,6 +369,11 @@
    </property>
    <property name="shortcut">
     <string>Y</string>
+   </property>
+  </action>
+  <action name="actionPalSingle_color">
+   <property name="text">
+    <string>Single color...</string>
    </property>
   </action>
  </widget>

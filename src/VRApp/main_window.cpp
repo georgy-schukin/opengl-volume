@@ -244,7 +244,7 @@ void MainWindow::on_actionOpLog_triggered() {
     setOpacityPalette(logOpacityPalette());
 }
 
-void MainWindow::on_actionOpNone_triggered() {
+void MainWindow::on_actionOpFull_triggered() {
     setOpacityPalette(std::vector<GLfloat> {1.0f});
 }
 
@@ -258,6 +258,15 @@ void MainWindow::on_actionPalRainbow_w_black_triggered() {
 
 void MainWindow::on_actionPalMonochrome_triggered() {
     setColorPalette(makeMonochromePalette());
+}
+
+void MainWindow::on_actionPalSingle_color_triggered() {
+    QColor color = QColorDialog::getColor(Qt::red, this,
+                                          "Choose color",
+                                          QColorDialog::DontUseNativeDialog);
+    if (color.isValid()) {
+        setColorPalette({QVector3D(color.redF(), color.greenF(), color.blueF())});
+    }
 }
 
 void MainWindow::on_actionOpen_triggered() {
@@ -329,3 +338,4 @@ void MainWindow::on_actionShow_hide_Toolbar_triggered() {
 void MainWindow::on_actionShow_hide_Statusbar_triggered() {
     ui->statusBar->setHidden(!ui->statusBar->isHidden());
 }
+
