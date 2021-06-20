@@ -27,9 +27,10 @@ void Renderer::render(QOpenGLFunctions *gl) {
 
     program->bind();
 
-    program->setUniformValue(program->uniformLocation("cutoff_low"), cutoff_low);
-    program->setUniformValue(program->uniformLocation("cutoff_high"), cutoff_high);
-    program->setUniformValue(program->uniformLocation("cutoff_coeff"), 1.0f/(cutoff_high - cutoff_low));
+    program->setUniformValue(program->uniformLocation("cutoffLow"), cutoff_low);
+    program->setUniformValue(program->uniformLocation("cutoffHigh"), cutoff_high);
+    const auto cutoff_coeff = (cutoff_low != cutoff_high ? 1.0f / (cutoff_high - cutoff_low) : 1.0f);
+    program->setUniformValue(program->uniformLocation("cutoffCoeff"), cutoff_coeff);
 
     const int tex3d_loc = program->uniformLocation("texture3d");
     const int palette_loc = program->uniformLocation("palette");

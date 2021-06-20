@@ -21,6 +21,7 @@ public:
     void setColorPalette(const std::vector<QVector3D> &colors);
     void setOpacityPalette(const std::vector<GLfloat> &values);
     void setRenderer(std::shared_ptr<Renderer> rend);
+    void enableLighting(bool enabled);
 
     size_t getFrameSize() const {
         return frame_size;

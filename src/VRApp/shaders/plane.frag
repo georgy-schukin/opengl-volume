@@ -7,7 +7,7 @@ out vec4 fragColor;
 uniform sampler3D texture3d;
 uniform sampler1D palette;
 uniform sampler1D opacity;
-uniform float cutoff_low, cutoff_high, cutoff_coeff;
+uniform float cutoffLow, cutoffHigh, cutoffCoeff;
 
 void main()
 {
@@ -23,11 +23,11 @@ void main()
 
     float value = texture(texture3d, texCoord).r;
 
-    if (value < cutoff_low || value > cutoff_high) {
+    if (value < cutoffLow || value > cutoffHigh) {
         discard;
     }
 
-    value = (value - cutoff_low) * cutoff_coeff;
+    value = (value - cutoffLow) * cutoffCoeff;
 
     vec3 color = texture(palette, value).rgb;
     float alpha = texture(opacity, value).r;

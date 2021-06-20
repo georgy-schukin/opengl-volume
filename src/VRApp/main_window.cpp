@@ -126,6 +126,7 @@ void MainWindow::initGlWidget() {
     setOpacityPalette(powOpacityPalette(1));
     setRenderer(std::make_shared<RayCastRenderer>());
     setCutoff(0.0, 1.0);
+    enableLighting(ui->actionUse_Lighting->isChecked());
 }
 
 void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
@@ -154,6 +155,11 @@ void MainWindow::setCutoff(float low, float high) {
     gl_widget->setCutoff(low, high);
     gl_widget->update();
     emit cutoffChanged(low, high);
+}
+
+void MainWindow::enableLighting(bool enabled) {
+    gl_widget->enableLighting(enabled);
+    gl_widget->update();
 }
 
 std::pair<float, float> MainWindow::getCutoff() const {
@@ -339,3 +345,7 @@ void MainWindow::on_actionShow_hide_Statusbar_triggered() {
     ui->statusBar->setHidden(!ui->statusBar->isHidden());
 }
 
+
+void MainWindow::on_actionUse_Lighting_triggered() {
+    enableLighting(ui->actionUse_Lighting->isChecked());
+}

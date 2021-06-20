@@ -15,6 +15,7 @@ public:
 
     virtual void init(QOpenGLFunctions *gl) = 0;
     void render(QOpenGLFunctions *gl);
+    virtual void enableLighting(bool enabled) {}
 
     void setDataTexture(QOpenGLTexture *tex) {
         data_texture = tex;

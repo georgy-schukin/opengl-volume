@@ -108,6 +108,7 @@
     <addaction name="actionCutoff"/>
     <addaction name="actionShow_hide_Toolbar"/>
     <addaction name="actionShow_hide_Statusbar"/>
+    <addaction name="actionUse_Lighting"/>
    </widget>
    <widget class="QMenu" name="menuRender">
     <property name="title">
@@ -374,6 +375,20 @@
   <action name="actionPalSingle_color">
    <property name="text">
     <string>Single color...</string>
+   </property>
+  </action>
+  <action name="actionUse_Lighting">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Use Lighting</string>
+   </property>
+   <property name="shortcut">
+    <string>L</string>
    </property>
   </action>
  </widget>

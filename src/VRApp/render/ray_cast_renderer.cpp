@@ -25,9 +25,13 @@ void RayCastRenderer::init(QOpenGLFunctions *gl) {
 void RayCastRenderer::doRender(QOpenGLFunctions *gl) {
     const auto mv = view_matrix * model_matrix;
     const auto mvp = projection_matrix * mv;
-    const auto eye = mv.inverted() * QVector4D(0.0f, 0.0f, 0.0f, 1.0f);
+    const auto mvInv = mv.inverted();
+    const auto eye = mvInv * QVector4D(0.0f, 0.0f, 0.0f, 1.0f);
+    const auto light = mvInv * QVector4D(-5.0f, -5.0f, -5.0f, 1.0f);
     program->setUniformValue(program->uniformLocation("MVP"), mvp);
-    program->setUniformValue(program->uniformLocation("eye"), eye);
+    program->setUniformValue(program->uniformLocation("eyePosition"), QVector3D(eye.x(), eye.y(), eye.z()));
+    program->setUniformValue(program->uniformLocation("lightPosition"), QVector3D(light.x(), light.y(), light.z()));
+    program->setUniformValue(program->uniformLocation("lightingEnabled"), lightingEnabled);
 
     const auto max_dim = std::max(data_texture->width(), std::max(data_texture->height(), data_texture->depth()));
     const auto step = std::sqrt(3.0f) / max_dim;

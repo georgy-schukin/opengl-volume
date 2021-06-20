@@ -108,6 +108,12 @@ void MyOpenGLWidget::setRenderer(std::shared_ptr<Renderer> rend) {
     update_renderer = true;
 }
 
+void MyOpenGLWidget::enableLighting(bool enabled) {
+    if (renderer) {
+        renderer->enableLighting(enabled);
+    }
+}
+
 void MyOpenGLWidget::setBackgroundColor(QColor color) {
     background_color = color;
 }

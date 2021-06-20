@@ -77,6 +77,8 @@ private slots:
     void on_actionShow_hide_Toolbar_triggered();
     void on_actionShow_hide_Statusbar_triggered();
 
+    void on_actionUse_Lighting_triggered();
+
 private:
     void initStatus();
     void initToolbar();
@@ -86,6 +88,7 @@ private:
     void setOpacityPalette(const std::vector<GLfloat> &palette);
     void setRenderer(std::shared_ptr<Renderer> renderer);    
     void setCutoff(float low, float high);
+    void enableLighting(bool enabled);
 
     std::pair<float, float> getCutoff() const;
 
