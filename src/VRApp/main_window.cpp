@@ -325,3 +325,7 @@ void MainWindow::on_actionRenderRay_Casting_triggered() {
 void MainWindow::on_actionShow_hide_Toolbar_triggered() {
     ui->mainToolBar->setHidden(!ui->mainToolBar->isHidden());
 }
+
+void MainWindow::on_actionShow_hide_Statusbar_triggered() {
+    ui->statusBar->setHidden(!ui->statusBar->isHidden());
+}

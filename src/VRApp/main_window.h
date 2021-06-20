@@ -75,6 +75,8 @@ private slots:
 
     void on_actionShow_hide_Toolbar_triggered();
 
+    void on_actionShow_hide_Statusbar_triggered();
+
 private:
     void initStatus();
     void initToolbar();

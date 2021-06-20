@@ -106,6 +106,7 @@
     <addaction name="actionBackground_Color"/>
     <addaction name="actionCutoff"/>
     <addaction name="actionShow_hide_Toolbar"/>
+    <addaction name="actionShow_hide_Statusbar"/>
    </widget>
    <widget class="QMenu" name="menuRender">
     <property name="title">
@@ -353,6 +354,17 @@
   <action name="actionShow_hide_Toolbar">
    <property name="text">
     <string>Show/hide Toolbar</string>
+   </property>
+   <property name="shortcut">
+    <string>T</string>
+   </property>
+  </action>
+  <action name="actionShow_hide_Statusbar">
+   <property name="text">
+    <string>Show/hide Statusbar</string>
+   </property>
+   <property name="shortcut">
+    <string>Y</string>
    </property>
   </action>
  </widget>
