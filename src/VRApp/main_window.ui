@@ -64,6 +64,7 @@
      <addaction name="actionTorus"/>
     </widget>
     <addaction name="actionOpen"/>
+    <addaction name="actionOpen_Raw"/>
     <addaction name="menuCustom_Frame"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -389,6 +390,14 @@
    </property>
    <property name="shortcut">
     <string>L</string>
+   </property>
+  </action>
+  <action name="actionOpen_Raw">
+   <property name="text">
+    <string>Open Raw...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
    </property>
   </action>
  </widget>

@@ -42,6 +42,7 @@ SOURCES += main.cpp\
     objects/plane.cpp \
     objects/triangulated_shape.cpp \
     palette_util.cpp \
+    raw_dialog.cpp \
     render/ray_cast_renderer.cpp \
     render/renderer.cpp \
     render/slice_renderer.cpp
@@ -63,13 +64,15 @@ HEADERS  += \
     objects/triangulated_shape.h \
     palette_util.h \
     frame3d.h \
+    raw_dialog.h \
     render/ray_cast_renderer.h \
     render/renderer.h \
     render/slice_renderer.h
 
 FORMS    += \
     cutoff_dialog.ui \
-    main_window.ui
+    main_window.ui \
+    raw_dialog.ui
 
 DISTFILES += \
     shaders/basic.vert \

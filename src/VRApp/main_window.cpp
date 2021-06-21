@@ -1,6 +1,7 @@
 #include "main_window.h"
 #include "ui_main_window.h"
 #include "cutoff_dialog.h"
+#include "raw_dialog.h"
 #include "frame_util.h"
 #include "frame_loader.h"
 #include "palette_util.h"
@@ -43,7 +44,9 @@ void setColorSetting(QString key, QColor color) {
     settings.setValue(key, static_cast<unsigned int>(color.rgb()));
 }
 
-const QString BG_COLOR_KEY = "background-color";
+const static QString BG_COLOR_KEY = "background-color";
+const static QString FRAME_DIR_KEY = "frame-dir";
+const static QString FRAME_FILTER_KEY = "frame-filter";
 
 }
 
@@ -276,14 +279,12 @@ void MainWindow::on_actionPalSingle_color_triggered() {
     }
 }
 
-void MainWindow::on_actionOpen_triggered() {
-    const static QString FRAME_DIR = "frame_dir";
-    const static QString FRAME_FILTER = "frame_filter";
+void MainWindow::on_actionOpen_triggered() {    
     QSettings settings;
-    QString selectedFilter = settings.value(FRAME_FILTER).toString();
+    QString selectedFilter = settings.value(FRAME_FILTER_KEY).toString();
     auto filename = QFileDialog::getOpenFileName(this,
                                                  "Open frame file",
-                                                 settings.value(FRAME_DIR).toString(),
+                                                 settings.value(FRAME_DIR_KEY).toString(),
                                                  "Frame files (*.frame);;Cube files (*.cube);;All files(*.*)",
                                                  &selectedFilter);
     if (filename.isNull()) {
@@ -295,8 +296,25 @@ void MainWindow::on_actionOpen_triggered() {
         } else {
             setFrame(FrameLoader::load(filename.toStdString()), QFileInfo(filename).fileName());
         }
-        settings.setValue(FRAME_DIR, QFileInfo(filename).dir().absolutePath());
-        settings.setValue(FRAME_FILTER, selectedFilter);
+        settings.setValue(FRAME_DIR_KEY, QFileInfo(filename).dir().absolutePath());
+        settings.setValue(FRAME_FILTER_KEY, selectedFilter);
+    }
+    catch (const std::exception &e) {
+        showError(e.what());
+    }
+}
+
+void MainWindow::on_actionOpen_Raw_triggered() {
+    try {
+        QSettings settings;
+        RawDialog dlg(this, settings.value(FRAME_DIR_KEY).toString());
+        if (dlg.exec() == QDialog::Accepted) {
+            const auto filename = dlg.getFilename();
+            setFrame(FrameLoader::loadRaw(filename.toStdString(),
+                                          dlg.getWidth(), dlg.getHeight(), dlg.getDepth(),
+                                          dlg.getValueType()), QFileInfo(filename).fileName());
+            settings.setValue(FRAME_DIR_KEY, QFileInfo(filename).dir().absolutePath());
+        }
     }
     catch (const std::exception &e) {
         showError(e.what());
@@ -357,3 +375,5 @@ void MainWindow::on_actionUse_Lighting_triggered() {
 void MainWindow::showError(QString message) {
     QMessageBox::critical(this, "Error", message);
 }
+
+

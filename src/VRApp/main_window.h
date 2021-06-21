@@ -79,6 +79,8 @@ private slots:
 
     void on_actionUse_Lighting_triggered();
 
+    void on_actionOpen_Raw_triggered();
+
 private:
     void initStatus();
     void initToolbar();
