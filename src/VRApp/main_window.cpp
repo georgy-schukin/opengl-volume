@@ -2,6 +2,7 @@
 #include "ui_main_window.h"
 #include "cutoff_dialog.h"
 #include "frame_util.h"
+#include "frame_loader.h"
 #include "palette_util.h"
 #include "cube/cube_util.h"
 #include "render/slice_renderer.h"
@@ -288,13 +289,18 @@ void MainWindow::on_actionOpen_triggered() {
     if (filename.isNull()) {
         return;
     }
-    if (filename.endsWith(".cube")) {
-        setFrame(cube::loadCube(filename.toStdString()), QFileInfo(filename).fileName());
-    } else {
-        setFrame(loadFrameFromFile(filename.toStdString()), QFileInfo(filename).fileName());
+    try {
+        if (filename.endsWith(".cube")) {
+            setFrame(cube::loadCube(filename.toStdString()), QFileInfo(filename).fileName());
+        } else {
+            setFrame(FrameLoader::load(filename.toStdString()), QFileInfo(filename).fileName());
+        }
+        settings.setValue(FRAME_DIR, QFileInfo(filename).dir().absolutePath());
+        settings.setValue(FRAME_FILTER, selectedFilter);
     }
-    settings.setValue(FRAME_DIR, QFileInfo(filename).dir().absolutePath());
-    settings.setValue(FRAME_FILTER, selectedFilter);
+    catch (const std::exception &e) {
+        showError(e.what());
+    }
 }
 
 void MainWindow::on_actionExit_triggered() {
@@ -336,7 +342,6 @@ void MainWindow::on_actionRenderRay_Casting_triggered() {
     setRenderer(std::make_shared<RayCastRenderer>());
 }
 
-
 void MainWindow::on_actionShow_hide_Toolbar_triggered() {
     ui->mainToolBar->setHidden(!ui->mainToolBar->isHidden());
 }
@@ -345,7 +350,10 @@ void MainWindow::on_actionShow_hide_Statusbar_triggered() {
     ui->statusBar->setHidden(!ui->statusBar->isHidden());
 }
 
-
 void MainWindow::on_actionUse_Lighting_triggered() {
     enableLighting(ui->actionUse_Lighting->isChecked());
+}
+
+void MainWindow::showError(QString message) {
+    QMessageBox::critical(this, "Error", message);
 }

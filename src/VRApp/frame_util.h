@@ -9,8 +9,6 @@
 #include <string>
 #include <functional>
 
-Frame3D<GLfloat> loadFrameFromFile(const std::string &filename);
-
 Frame3D<GLfloat> makeRandomFrame(size_t dim_size);
 Frame3D<GLfloat> makeSectorFrame(size_t dim_size);
 Frame3D<GLfloat> makeSphereFrame(size_t dim_size);

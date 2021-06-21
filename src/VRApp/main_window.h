@@ -92,6 +92,8 @@ private:
 
     std::pair<float, float> getCutoff() const;
 
+    void showError(QString message);
+
 private:
     Ui::MainWindow *ui;
     MyOpenGLWidget *gl_widget;

@@ -33,6 +33,7 @@ SOURCES += main.cpp\
     cube/cube_data.cpp \
     cube/cube_util.cpp \
     cutoff_dialog.cpp \
+    frame_loader.cpp \
     frame_util.cpp \
     main_window.cpp \
     my_opengl_widget.cpp \
@@ -46,9 +47,11 @@ SOURCES += main.cpp\
     render/slice_renderer.cpp
 
 HEADERS  += \
+    ../common/types.h \
     cube/cube_data.h \
     cube/cube_util.h \
     cutoff_dialog.h \
+    frame_loader.h \
     frame_util.h \
     main_window.h \
     my_opengl_widget.h \
