@@ -4,6 +4,8 @@
 #include <QFileDialog>
 #include <QLineEdit>
 #include <QRegularExpression>
+#include <vector>
+#include <algorithm>
 
 RawDialog::RawDialog(QWidget *parent, QString frame_dir) :
     QDialog(parent),
@@ -74,11 +76,19 @@ void RawDialog::detectParamsFromFilename(QString filename) {
         ui->heightSpinBox->setValue(match.captured(2).toInt());
         ui->depthSpinBox->setValue(match.captured(3).toInt());
     }
+    std::vector<std::pair<size_t, QString>> sorted;
     for (size_t i = 0; i < type_items.size(); i++) {
-        const auto &item = type_items.at(i);
-        if (basename.indexOf(item.second) >= 0) {
-            ui->typeComboBox->setCurrentIndex(i);
+        sorted.push_back({i, type_items.at(i).second});
+    }
+    std::sort(sorted.begin(), sorted.end(), [](const auto &p1, const auto &p2) {
+        return p1.second > p2.second; // sort desc by string length, bigger string first
+    });
+    for (const auto &p: sorted) {
+        if (basename.indexOf(p.second) >= 0) {
+            ui->typeComboBox->setCurrentIndex(p.first);
             break;
         }
     }
+
+
 }
