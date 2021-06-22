@@ -44,7 +44,7 @@ public:
         for (size_t k = 0; k < _depth; k++) {
             for (size_t i = 0; i < _width; i++) {
                 for (size_t j = 0; j < _height; j++) {
-                    at(i, j, k) = func(i, j, k);
+                    at(i, j, k) = static_cast<T>(func(i, j, k));
                 }
             }
         }
@@ -64,9 +64,12 @@ public:
 
     void normalize() {
         auto mm = std::minmax_element(_data.begin(), _data.end());
-        const auto min = *(mm.first);
+        const auto min = std::min(static_cast<T>(0.0), *(mm.first));
         const auto max = *(mm.second);
-        const auto coeff = 1.0/(max - std::min(static_cast<T>(0.0), min));
+        if (std::abs(max - min) < 1e-8) {
+            return;
+        }
+        const auto coeff = 1.0 / (max - min);
         for (auto &el: _data) {
             el *= coeff;
         }

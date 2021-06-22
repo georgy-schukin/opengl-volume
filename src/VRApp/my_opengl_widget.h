@@ -75,5 +75,6 @@ private:
     float cutoff_low {0.0f}, cutoff_high {1.0f};
 
     bool update_renderer = false;
+    bool lighting_enabled = false;
 };
 

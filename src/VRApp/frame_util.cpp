@@ -16,12 +16,8 @@ namespace  {
         return start*(T(1.0) - ind) + ind*end;
     }
 
-    bool lessOrEqual(float a, float b) {
-        return (a < b) || (std::abs(a - b) < 1e-6f);
-    }
-
     bool lessOrEqual(double a, double b) {
-        return (a < b) || (std::abs(a - b) < 1e-6);
+        return (a < b) || (std::abs(a - b) < 1e-8);
     }
 
     GLfloat hounsfield(int value) {
@@ -82,10 +78,10 @@ Frame3D<GLfloat> makeRandomFrame(size_t dim_size) {
 Frame3D<GLfloat> makeSectorFrame(size_t dim_size) {
     Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
     frame.fill([&](size_t i, size_t j, size_t k) -> auto {
-        const auto x = float(i)/float(frame.width() - 1);
-        const auto y = float(j)/float(frame.height() - 1);
-        const auto z = float(k)/float(frame.depth() - 1);
-        return std::sqrt(x*x + y*y + z*z)/std::sqrt(3.0f);
+        const auto x = double(i) / (frame.width() - 1);
+        const auto y = double(j) / (frame.height() - 1);
+        const auto z = double(k) / (frame.depth() - 1);
+        return std::sqrt(x*x + y*y + z*z) / std::sqrt(3.0);
     });
     return frame;
 }
@@ -98,10 +94,10 @@ Frame3D<GLfloat> makeSphereFrame(size_t dim_size) {
         const auto y = 1.0 - double(j) * coeff;
         const auto z = 1.0 - double(k) * coeff;
         if (z < 0.0) {
-            return 0.0f;
+            return 0.0;
         }
         const auto dist = std::sqrt(x*x + y*y + z*z);
-        return lessOrEqual(dist, 1.0) ? float(1.0 - dist) : 0.0f;
+        return lessOrEqual(dist, 1.0) ? 1.0 - dist : 0.0;
     });
     return frame;
 }
@@ -116,7 +112,7 @@ Frame3D<GLfloat> makeAnalyticalSurfaceFrame(size_t dim_size, double cutoff,
         const auto z = 1.0 - double(k) * coeff;
         const auto func_value = surface_func(x, y);
         const auto diff = std::abs(z - func_value);
-        return lessOrEqual(diff, cutoff) ? float(1.0 - diff/cutoff) : 0.0f;
+        return lessOrEqual(diff, cutoff) ? 1.0 - diff/cutoff : 0.0;
     });
     return frame;
 }
@@ -132,7 +128,7 @@ Frame3D<GLfloat> makeImplicitSurfaceFrame(size_t dim_size, double cutoff,
         const auto func_value = surface_func(x, y, z);
         // Diff should be zero if the point lies on the surface.
         const auto diff = std::abs(func_value);
-        return lessOrEqual(diff, cutoff) ? float(1.0 - diff/cutoff) : 0.0f;
+        return lessOrEqual(diff, cutoff) ? 1.0 - diff/cutoff : 0.0;
     });
     return frame;
 }
@@ -205,7 +201,7 @@ Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, double
                 value += 1.0 - dist/rad;
             }
         }
-        return (float)std::min(value, 1.0);
+        return std::min(value, 1.0);
     });
     return frame;
 }

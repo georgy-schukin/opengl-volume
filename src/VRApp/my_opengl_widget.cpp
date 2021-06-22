@@ -56,15 +56,15 @@ void MyOpenGLWidget::initView() {
 }
 
 void MyOpenGLWidget::initRenderer() {
-    try {
+    try {        
         renderer->init(context()->functions());
         renderer->setDataTexture(&data_texture);
         renderer->setColorTexture(&color_texture);
         renderer->setOpacityTexture(&opacity_texture);
+        renderer->enableLighting(lighting_enabled);
     }
     catch (const std::exception &exp) {
-        QMessageBox *box = new QMessageBox(QMessageBox::Critical, "Error", exp.what(), QMessageBox::Ok, this);
-        box->show();
+        QMessageBox::critical(this, "Error", exp.what());
     }
 }
 
@@ -109,6 +109,7 @@ void MyOpenGLWidget::setRenderer(std::shared_ptr<Renderer> rend) {
 }
 
 void MyOpenGLWidget::enableLighting(bool enabled) {
+    lighting_enabled = enabled;
     if (renderer) {
         renderer->enableLighting(enabled);
     }
