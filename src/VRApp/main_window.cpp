@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     gl_widget = ui->openGLWidget;
     connect(gl_widget, &MyOpenGLWidget::initialized, this, &MainWindow::initGlWidget);
 
-    initStatus();
+    initStatusbar();
     initToolbar();
 
     default_title = windowTitle();
@@ -70,7 +70,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::initStatus() {
+void MainWindow::initStatusbar() {
     size_label = new QLabel(this);
 
     cutoff_label = new QLabel(this);
@@ -80,6 +80,10 @@ void MainWindow::initStatus() {
 
     ui->statusBar->addWidget(size_label);
     ui->statusBar->addWidget(cutoff_label);
+
+    if (!ui->actionShow_hide_Statusbar->isChecked()) {
+        ui->statusBar->hide();
+    }
 }
 
 void MainWindow::initToolbar() {
@@ -117,7 +121,9 @@ void MainWindow::initToolbar() {
     ui->mainToolBar->addWidget(new QLabel("High: ", this));
     ui->mainToolBar->addWidget(slider_high);
 
-    ui->mainToolBar->hide();
+    if (!ui->actionShow_hide_Toolbar->isChecked()) {
+        ui->mainToolBar->hide();
+    }
 }
 
 void MainWindow::initGlWidget() {

@@ -358,16 +358,28 @@
    </property>
   </action>
   <action name="actionShow_hide_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Show/hide Toolbar</string>
+    <string>Show Toolbar</string>
    </property>
    <property name="shortcut">
     <string>T</string>
    </property>
   </action>
   <action name="actionShow_hide_Statusbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Show/hide Statusbar</string>
+    <string>Show Statusbar</string>
    </property>
    <property name="shortcut">
     <string>Y</string>

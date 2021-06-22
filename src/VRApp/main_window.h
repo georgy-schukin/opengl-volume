@@ -82,7 +82,7 @@ private slots:
     void on_actionOpen_Raw_triggered();
 
 private:
-    void initStatus();
+    void initStatusbar();
     void initToolbar();
 
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");
