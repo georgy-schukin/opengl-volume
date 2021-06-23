@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>577</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFrame">
@@ -73,7 +73,7 @@
     <property name="title">
      <string>Opacity</string>
     </property>
-    <addaction name="actionOpDefault"/>
+    <addaction name="actionOpFull"/>
     <addaction name="actionOp_x"/>
     <addaction name="actionOp_x_2"/>
     <addaction name="actionOp_x_3"/>
@@ -84,7 +84,7 @@
     <addaction name="actionOp_x_8"/>
     <addaction name="actionOp_x_9"/>
     <addaction name="actionOpLog"/>
-    <addaction name="actionOpFull"/>
+    <addaction name="actionOpDefault"/>
    </widget>
    <widget class="QMenu" name="menuPalette">
     <property name="title">
@@ -151,10 +151,7 @@
   </action>
   <action name="actionOpDefault">
    <property name="text">
-    <string>Default</string>
-   </property>
-   <property name="shortcut">
-    <string>0</string>
+    <string>Custom</string>
    </property>
   </action>
   <action name="actionOp_x_2">
@@ -326,6 +323,9 @@
    </property>
    <property name="toolTip">
     <string>Full</string>
+   </property>
+   <property name="shortcut">
+    <string>0</string>
    </property>
   </action>
   <action name="actionPalRainbow_w_black">

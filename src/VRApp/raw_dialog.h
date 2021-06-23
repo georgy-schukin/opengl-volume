@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../common/types.h"
+#include "../common/types.h"
 
 #include <QDialog>
 #include <cstddef>
@@ -16,7 +16,7 @@ class RawDialog : public QDialog
 
 public:
     explicit RawDialog(QWidget *parent = nullptr, QString frame_dir = "");
-    ~RawDialog();
+    ~RawDialog() override;
 
     QString getFilename() const;
     size_t getWidth() const;

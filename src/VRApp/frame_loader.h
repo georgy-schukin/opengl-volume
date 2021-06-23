@@ -1,7 +1,7 @@
 #pragma once
 
 #include "frame3d.h"
-#include "../../common/types.h"
+#include "../common/types.h"
 
 #include <QOpenGLFunctions>
 #include <string>
