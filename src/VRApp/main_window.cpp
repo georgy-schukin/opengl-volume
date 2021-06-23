@@ -63,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initToolbar();
 
     default_title = windowTitle();
+    setWindowIcon(QIcon(":/resources/cube.png"));
 }
 
 MainWindow::~MainWindow()
@@ -285,7 +286,7 @@ void MainWindow::on_actionPalSingle_color_triggered() {
     }
 }
 
-void MainWindow::on_actionOpen_triggered() {    
+void MainWindow::on_actionOpen_triggered() {
     QSettings settings;
     QString selectedFilter = settings.value(FRAME_FILTER_KEY).toString();
     auto filename = QFileDialog::getOpenFileName(this,

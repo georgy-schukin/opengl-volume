@@ -83,3 +83,6 @@ DISTFILES += \
     shaders/raycast.vert \
     shaders/texture.frag \
     shaders/texture.vert
+
+RESOURCES += \
+    resources.qrc
