@@ -23,6 +23,7 @@ public:
     void setRenderer(std::shared_ptr<Renderer> rend);
     void enableLighting(bool enabled);
     void enableCorrectScale(bool enabled);
+    void setStepMultiplier(int multiplier);
 
     size_t getFrameSize() const {
         return frame_size;
@@ -74,6 +75,8 @@ private:
     QColor background_color {0, 0, 25};
 
     float cutoff_low {0.0f}, cutoff_high {1.0f};
+
+    int step_multiplier = 1;
 
     bool update_renderer = false;
     bool lighting_enabled = false;

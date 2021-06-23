@@ -117,10 +117,20 @@ void MainWindow::initToolbar() {
         }
     });
 
+    step_mult_box = new QSpinBox(this);
+    step_mult_box->setMinimum(1);
+    step_mult_box->setMaximum(1000);
+    step_mult_box->setValue(1);
+    connect(step_mult_box, qOverload<int>(&QSpinBox::valueChanged), [this](int value) {
+        setStepMultiplier(value);
+    });
+
     ui->mainToolBar->addWidget(new QLabel("Low: ", this));
     ui->mainToolBar->addWidget(slider_low);
     ui->mainToolBar->addWidget(new QLabel("High: ", this));
     ui->mainToolBar->addWidget(slider_high);
+    ui->mainToolBar->addWidget(new QLabel("Step mult: ", this));
+    ui->mainToolBar->addWidget(step_mult_box);
 
     if (!ui->actionShow_hide_Toolbar->isChecked()) {
         ui->mainToolBar->hide();
@@ -176,6 +186,11 @@ void MainWindow::enableLighting(bool enabled) {
 
 void MainWindow::enableCorrectScale(bool enabled) {
     gl_widget->enableCorrectScale(enabled);
+    gl_widget->update();
+}
+
+void MainWindow::setStepMultiplier(int multiplier) {
+    gl_widget->setStepMultiplier(multiplier);
     gl_widget->update();
 }
 

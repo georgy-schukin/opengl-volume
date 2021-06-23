@@ -40,6 +40,10 @@ public:
         cutoff_high = high;
     }
 
+    void setStepMultiplier(int multipl) {
+        step_multiplier = multipl;
+    }
+
 protected:
     static std::shared_ptr<QOpenGLShaderProgram> loadProgram(const char *vert_shader_file, const char *frag_shader_file);
 
@@ -57,4 +61,6 @@ protected:
     std::shared_ptr<QOpenGLShaderProgram> program;
 
     float cutoff_low {0.0f}, cutoff_high {1.0f};
+
+    int step_multiplier = 1;
 };

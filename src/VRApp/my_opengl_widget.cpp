@@ -62,6 +62,7 @@ void MyOpenGLWidget::initRenderer() {
         renderer->setColorTexture(&color_texture);
         renderer->setOpacityTexture(&opacity_texture);
         renderer->enableLighting(lighting_enabled);
+        renderer->setStepMultiplier(step_multiplier);
     }
     catch (const std::exception &exp) {
         QMessageBox::critical(this, "Error", exp.what());
@@ -142,6 +143,13 @@ void MyOpenGLWidget::setCutoffHigh(float high) {
 
 std::pair<float, float> MyOpenGLWidget::getCutoff() const {
     return std::make_pair(cutoff_low, cutoff_high);
+}
+
+void MyOpenGLWidget::setStepMultiplier(int multiplier) {
+    step_multiplier = multiplier;
+    if (renderer) {
+        renderer->setStepMultiplier(multiplier);
+    }
 }
 
 void MyOpenGLWidget::resizeGL(int width, int height) {

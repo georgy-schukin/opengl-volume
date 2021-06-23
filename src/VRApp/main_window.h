@@ -5,6 +5,7 @@
 #include <QVector3D>
 #include <QLabel>
 #include <QSlider>
+#include <QSpinBox>
 
 #include <vector>
 #include <memory>
@@ -94,6 +95,7 @@ private:
     void setCutoff(float low, float high);
     void enableLighting(bool enabled);
     void enableCorrectScale(bool enabled);
+    void setStepMultiplier(int multiplier);
 
     std::pair<float, float> getCutoff() const;
 
@@ -105,5 +107,6 @@ private:
     QString default_title;
     QLabel *size_label, *cutoff_label;
     QSlider *slider_low, *slider_high;
+    QSpinBox *step_mult_box;
 };
 
