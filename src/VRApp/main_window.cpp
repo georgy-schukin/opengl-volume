@@ -138,6 +138,7 @@ void MainWindow::initGlWidget() {
     setRenderer(std::make_shared<RayCastRenderer>());
     setCutoff(0.0, 1.0);
     enableLighting(ui->actionUse_Lighting->isChecked());
+    enableCorrectScale(ui->actionCorrect_Scale->isChecked());
 }
 
 void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
@@ -170,6 +171,11 @@ void MainWindow::setCutoff(float low, float high) {
 
 void MainWindow::enableLighting(bool enabled) {
     gl_widget->enableLighting(enabled);
+    gl_widget->update();
+}
+
+void MainWindow::enableCorrectScale(bool enabled) {
+    gl_widget->enableCorrectScale(enabled);
     gl_widget->update();
 }
 
@@ -383,4 +389,6 @@ void MainWindow::showError(QString message) {
     QMessageBox::critical(this, "Error", message);
 }
 
-
+void MainWindow::on_actionCorrect_Scale_triggered() {
+    enableCorrectScale(ui->actionCorrect_Scale->isChecked());
+}

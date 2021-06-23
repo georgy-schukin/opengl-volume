@@ -56,7 +56,7 @@ void MyOpenGLWidget::initView() {
 }
 
 void MyOpenGLWidget::initRenderer() {
-    try {        
+    try {
         renderer->init(context()->functions());
         renderer->setDataTexture(&data_texture);
         renderer->setColorTexture(&color_texture);
@@ -115,6 +115,10 @@ void MyOpenGLWidget::enableLighting(bool enabled) {
     }
 }
 
+void MyOpenGLWidget::enableCorrectScale(bool enabled) {
+    correct_scale = enabled;
+}
+
 void MyOpenGLWidget::setBackgroundColor(QColor color) {
     background_color = color;
 }
@@ -164,12 +168,20 @@ void MyOpenGLWidget::paintGL() {
     rotate.rotate(rotation_y_angle, QVector3D(0.0f, 1.0f, 0.0f));
     rotate.rotate(rotation_x_angle, QVector3D(1.0f, 0.0f, 0.0f));
 
+    QMatrix4x4 scale;
+    if (correct_scale) {
+        const auto md = static_cast<GLfloat>(std::max(data_texture.width(), std::max(data_texture.height(), data_texture.depth())));
+        scale.scale(static_cast<GLfloat>(data_texture.width()) / md,
+                    static_cast<GLfloat>(data_texture.height()) / md,
+                    static_cast<GLfloat>(data_texture.depth()) / md);
+    }
+
     if (update_renderer) {
         initRenderer();
         update_renderer = false;
     }
 
-    renderer->setMVP(rotate * model_matrix, view_matrix, projection_matrix);
+    renderer->setMVP(rotate * scale * model_matrix, view_matrix, projection_matrix);
     renderer->setCutoff(cutoff_low, cutoff_high);
     renderer->render(gl);
 }

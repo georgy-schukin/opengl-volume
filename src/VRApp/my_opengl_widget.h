@@ -22,6 +22,7 @@ public:
     void setOpacityPalette(const std::vector<GLfloat> &values);
     void setRenderer(std::shared_ptr<Renderer> rend);
     void enableLighting(bool enabled);
+    void enableCorrectScale(bool enabled);
 
     size_t getFrameSize() const {
         return frame_size;
@@ -48,13 +49,13 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
-private:    
-    void initView();    
+private:
+    void initView();
     void initRenderer();
 
     void onTimer();
 
-private:    
+private:
     QOpenGLTexture data_texture, color_texture, opacity_texture;
 
     QMatrix4x4 model_matrix, view_matrix, projection_matrix;
@@ -76,5 +77,6 @@ private:
 
     bool update_renderer = false;
     bool lighting_enabled = false;
+    bool correct_scale = false;
 };
 

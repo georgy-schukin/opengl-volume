@@ -110,6 +110,7 @@
     <addaction name="actionShow_hide_Toolbar"/>
     <addaction name="actionShow_hide_Statusbar"/>
     <addaction name="actionUse_Lighting"/>
+    <addaction name="actionCorrect_Scale"/>
    </widget>
    <widget class="QMenu" name="menuRender">
     <property name="title">
@@ -410,6 +411,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="actionCorrect_Scale">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Correct Scale</string>
    </property>
   </action>
  </widget>

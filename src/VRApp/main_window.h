@@ -69,10 +69,10 @@ private slots:
 
     void on_actionBackground_Color_triggered();
 
-    void on_actionCutoff_triggered();    
+    void on_actionCutoff_triggered();
 
     void on_actionRenderSlices_triggered();
-    void on_actionRenderRay_Casting_triggered();    
+    void on_actionRenderRay_Casting_triggered();
 
     void on_actionShow_hide_Toolbar_triggered();
     void on_actionShow_hide_Statusbar_triggered();
@@ -81,6 +81,8 @@ private slots:
 
     void on_actionOpen_Raw_triggered();
 
+    void on_actionCorrect_Scale_triggered();
+
 private:
     void initStatusbar();
     void initToolbar();
@@ -88,9 +90,10 @@ private:
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");
     void setColorPalette(const std::vector<QVector3D> &palette);
     void setOpacityPalette(const std::vector<GLfloat> &palette);
-    void setRenderer(std::shared_ptr<Renderer> renderer);    
+    void setRenderer(std::shared_ptr<Renderer> renderer);
     void setCutoff(float low, float high);
     void enableLighting(bool enabled);
+    void enableCorrectScale(bool enabled);
 
     std::pair<float, float> getCutoff() const;
 
