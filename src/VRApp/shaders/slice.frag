@@ -8,6 +8,7 @@ uniform sampler3D texture3d;
 uniform sampler1D palette;
 uniform sampler1D opacity;
 uniform float cutoffLow, cutoffHigh, cutoffCoeff;
+uniform float stepMultCoeff;
 
 void main()
 {
@@ -30,6 +31,6 @@ void main()
     value = (value - cutoffLow) * cutoffCoeff;
 
     vec3 color = texture(palette, value).rgb;
-    float alpha = texture(opacity, value).r;
+    float alpha = texture(opacity, value).r * stepMultCoeff;
     fragColor = vec4(color, alpha);
 }

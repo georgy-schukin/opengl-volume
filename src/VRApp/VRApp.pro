@@ -77,10 +77,10 @@ FORMS    += \
 DISTFILES += \
     shaders/basic.vert \
     shaders/basic.frag \
-    shaders/plane.frag \
-    shaders/plane.vert \
     shaders/raycast.frag \
     shaders/raycast.vert \
+    shaders/slice.frag \
+    shaders/slice.vert \
     shaders/texture.frag \
     shaders/texture.vert
 

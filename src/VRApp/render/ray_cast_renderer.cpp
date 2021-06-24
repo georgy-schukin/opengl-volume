@@ -38,6 +38,7 @@ void RayCastRenderer::doRender(QOpenGLFunctions *gl) {
     const auto num_of_steps = static_cast<int>(2.0f * std::sqrt(3.0f) / step);
     program->setUniformValue(program->uniformLocation("step"), step);
     program->setUniformValue(program->uniformLocation("numSteps"), num_of_steps);
+    program->setUniformValue(program->uniformLocation("stepMultCoeff"), 1.0f / static_cast<GLfloat>(step_multiplier));
 
     cube->draw(gl);
 }

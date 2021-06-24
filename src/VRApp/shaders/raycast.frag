@@ -13,6 +13,7 @@ uniform vec3 lightPosition;
 uniform bool lightingEnabled;
 uniform float step;
 uniform int numSteps;
+uniform float stepMultCoeff;
 
 float getValue(vec3 coord) {
     return texture(texture3d, coord).r;
@@ -71,7 +72,7 @@ void main() {
     vec3 texCoord = (coord + vec3(1.0)) * 0.5;
     vec3 position = texCoord;
     vec3 direction = normalize(coord - eyePosition); // ray direction from eye
-    vec4 dest = vec4(0.0);            
+    vec4 dest = vec4(0.0);
 
     for (int i = 0; i < numSteps; i++) {
         float value = getValue(position);
@@ -80,7 +81,7 @@ void main() {
             value = (value - cutoffLow) * cutoffCoeff;
 
             vec3 color = getColor(value);
-            float alpha = getAlpha(value);
+            float alpha = getAlpha(value) * stepMultCoeff;
 
             if (lightingEnabled) {
                 vec3 N = gradient(position);
@@ -107,6 +108,6 @@ void main() {
         if (isOutOfVolume(position)) {
             break;
         }
-    }    
+    }
     fragColor = dest;
 }

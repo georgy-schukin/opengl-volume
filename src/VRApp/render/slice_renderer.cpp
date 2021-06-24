@@ -7,7 +7,7 @@
 #include <cmath>
 
 void SliceRenderer::init(QOpenGLFunctions *gl) {
-    program = loadProgram("shaders/plane.vert", "shaders/plane.frag");
+    program = loadProgram("shaders/slice.vert", "shaders/slice.frag");
 
     plane = std::make_shared<Plane>();
     plane->attachVertices(program.get(), "vertex");
@@ -34,6 +34,7 @@ void SliceRenderer::doRender(QOpenGLFunctions *gl) {
     const auto max_dim = std::max(data_texture->width(), std::max(data_texture->height(), data_texture->depth()));
     const auto step = 1.0f / static_cast<GLfloat>(max_dim * step_multiplier);
     const auto num_of_steps = static_cast<int>(2.0f * cube_extent_radius / step);
+    program->setUniformValue(program->uniformLocation("stepMultCoeff"), 1.0f / static_cast<GLfloat>(step_multiplier));
 
     const auto texture_inverse_matrix = (view_matrix * model_matrix * texture_matrix).inverted();
     QMatrix4x4 plane_model_matrix;
