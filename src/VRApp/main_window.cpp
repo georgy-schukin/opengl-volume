@@ -240,6 +240,16 @@ void MainWindow::setStepMultiplier(int multiplier) {
     setSetting(STEP_MULTIPLIER_KEY, multiplier);
 }
 
+void MainWindow::showToolbar(bool show) {
+    ui->mainToolBar->setHidden(!show);
+    setSetting(SHOW_TOOLBAR_KEY, show);
+}
+
+void MainWindow::showStatusbar(bool show) {
+    ui->statusBar->setHidden(!show);
+    setSetting(SHOW_STATUSBAR_KEY, show);
+}
+
 std::pair<float, float> MainWindow::getCutoff() const {
     return gl_widget->getCutoff();
 }
@@ -436,15 +446,11 @@ void MainWindow::on_actionRenderRay_Casting_triggered() {
 }
 
 void MainWindow::on_actionShow_hide_Toolbar_triggered() {
-    const auto show = ui->mainToolBar->isHidden();
-    ui->mainToolBar->setHidden(!show);
-    setSetting(SHOW_TOOLBAR_KEY, show);
+    showToolbar(!ui->actionShow_hide_Toolbar->isChecked());
 }
 
 void MainWindow::on_actionShow_hide_Statusbar_triggered() {
-    const auto show = ui->statusBar->isHidden();
-    ui->statusBar->setHidden(!show);
-    setSetting(SHOW_STATUSBAR_KEY, show);
+    showToolbar(!ui->actionShow_hide_Statusbar->isChecked());
 }
 
 void MainWindow::on_actionUse_Lighting_triggered() {
@@ -461,4 +467,14 @@ void MainWindow::on_actionCorrect_Scale_triggered() {
 
 void MainWindow::on_actionEnable_Jitter_triggered() {
     enableJitter(ui->actionEnable_Jitter->isChecked());
+}
+
+void MainWindow::on_actionReset_All_triggered() {
+    setCutoff(0.0, 1.0);
+    setStepMultiplier(1);
+    enableLighting(false);
+    enableJitter(false);
+    enableCorrectScale(false);
+    showToolbar(true);
+    showStatusbar(true);
 }

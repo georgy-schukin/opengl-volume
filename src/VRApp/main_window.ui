@@ -112,6 +112,7 @@
     <addaction name="actionUse_Lighting"/>
     <addaction name="actionEnable_Jitter"/>
     <addaction name="actionCorrect_Scale"/>
+    <addaction name="actionReset_All"/>
    </widget>
    <widget class="QMenu" name="menuRender">
     <property name="title">
@@ -431,6 +432,11 @@
    </property>
    <property name="shortcut">
     <string>J</string>
+   </property>
+  </action>
+  <action name="actionReset_All">
+   <property name="text">
+    <string>Reset All</string>
    </property>
   </action>
  </widget>

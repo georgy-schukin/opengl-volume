@@ -86,6 +86,8 @@ private slots:
 
     void on_actionEnable_Jitter_triggered();
 
+    void on_actionReset_All_triggered();
+
 private:
     void initStatusbar();
     void initToolbar();
@@ -99,6 +101,9 @@ private:
     void enableJitter(bool enabled);
     void enableCorrectScale(bool enabled);
     void setStepMultiplier(int multiplier);
+
+    void showToolbar(bool show);
+    void showStatusbar(bool show);
 
     std::pair<float, float> getCutoff() const;
 
