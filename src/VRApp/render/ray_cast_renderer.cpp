@@ -34,9 +34,10 @@ void RayCastRenderer::doRender(QOpenGLFunctions *gl) {
     program->setUniformValue(program->uniformLocation("lightingEnabled"), lightingEnabled);
 
     const auto max_dim = std::max(data_texture->width(), std::max(data_texture->height(), data_texture->depth()));
-    const auto step = std::sqrt(3.0f) / static_cast<GLfloat>(max_dim * step_multiplier);
+    const auto step = 1.0f / static_cast<GLfloat>(max_dim * step_multiplier);
+    const auto num_of_steps = static_cast<int>(2.0f * std::sqrt(3.0f) / step);
     program->setUniformValue(program->uniformLocation("step"), step);
-    program->setUniformValue(program->uniformLocation("numSteps"), static_cast<int>(2.0f * std::sqrt(3.0f) / step));
+    program->setUniformValue(program->uniformLocation("numSteps"), num_of_steps);
 
     cube->draw(gl);
 }
