@@ -11,12 +11,12 @@ public:
     RayCastRenderer() = default;
     ~RayCastRenderer() override = default;
 
-    void init(QOpenGLFunctions *gl) override;    
     void enableLighting(bool enabled) override {
         lightingEnabled = enabled;
     }
 
 protected:
+    void doInit(QOpenGLFunctions *gl) override;
     void doRender(QOpenGLFunctions *gl) override;
 
 private:

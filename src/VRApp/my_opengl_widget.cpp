@@ -62,6 +62,7 @@ void MyOpenGLWidget::initRenderer() {
         renderer->setColorTexture(&color_texture);
         renderer->setOpacityTexture(&opacity_texture);
         renderer->enableLighting(lighting_enabled);
+        renderer->enableJitter(jitter_enabled);
         renderer->setStepMultiplier(step_multiplier);
     }
     catch (const std::exception &exp) {
@@ -113,6 +114,13 @@ void MyOpenGLWidget::enableLighting(bool enabled) {
     lighting_enabled = enabled;
     if (renderer) {
         renderer->enableLighting(enabled);
+    }
+}
+
+void MyOpenGLWidget::enableJitter(bool enabled) {
+    jitter_enabled = enabled;
+    if (renderer) {
+        renderer->enableJitter(enabled);
     }
 }
 

@@ -84,6 +84,8 @@ private slots:
 
     void on_actionCorrect_Scale_triggered();
 
+    void on_actionEnable_Jitter_triggered();
+
 private:
     void initStatusbar();
     void initToolbar();
@@ -94,6 +96,7 @@ private:
     void setRenderer(std::shared_ptr<Renderer> renderer);
     void setCutoff(float low, float high);
     void enableLighting(bool enabled);
+    void enableJitter(bool enabled);
     void enableCorrectScale(bool enabled);
     void setStepMultiplier(int multiplier);
 

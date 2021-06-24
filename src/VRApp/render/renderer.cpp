@@ -3,6 +3,23 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 #include <stdexcept>
+#include <vector>
+#include <random>
+
+namespace {
+
+std::vector<GLfloat> randomJitter2D(int size) {
+    std::vector<GLfloat> jitter;
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<GLfloat> dist(0.0f, 1.0f);
+    for (int i = 0; i < size * size; i++) {
+        jitter.push_back(dist(mt));
+    }
+    return jitter;
+}
+
+}
 
 std::shared_ptr<QOpenGLShaderProgram> Renderer::loadProgram(const char *vert_shader_file, const char *frag_shader_file) {
     auto prog = std::make_shared<QOpenGLShaderProgram>();
@@ -20,6 +37,23 @@ std::shared_ptr<QOpenGLShaderProgram> Renderer::loadProgram(const char *vert_sha
     return prog;
 }
 
+void Renderer::init(QOpenGLFunctions *gl) {
+    jitter_texture = std::make_unique<QOpenGLTexture>(QOpenGLTexture::Target2D);
+    initJitter(jitter_texture.get());
+
+    doInit(gl);
+}
+
+void Renderer::initJitter(QOpenGLTexture *jitter) {
+    jitter->setSize(jitter_size, jitter_size);
+    jitter->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
+    jitter->setWrapMode(QOpenGLTexture::Repeat);
+    jitter->setFormat(QOpenGLTexture::R32F);
+    jitter->allocateStorage();
+    const auto jitter_data = randomJitter2D(jitter_size);
+    jitter->setData(QOpenGLTexture::Red, QOpenGLTexture::Float32, jitter_data.data());
+}
+
 void Renderer::render(QOpenGLFunctions *gl) {
     if (!program || !data_texture || !color_texture || !opacity_texture) {
         return;
@@ -29,24 +63,27 @@ void Renderer::render(QOpenGLFunctions *gl) {
 
     program->setUniformValue(program->uniformLocation("cutoffLow"), cutoff_low);
     program->setUniformValue(program->uniformLocation("cutoffHigh"), cutoff_high);
-    const auto cutoff_coeff = (cutoff_low != cutoff_high ? 1.0f / (cutoff_high - cutoff_low) : 1.0f);
+    const auto cutoff_coeff = (std::abs(cutoff_low - cutoff_high) > 1e-8f ? 1.0f / (cutoff_high - cutoff_low) : 1.0f);
     program->setUniformValue(program->uniformLocation("cutoffCoeff"), cutoff_coeff);
 
-    const int tex3d_loc = program->uniformLocation("texture3d");
-    const int palette_loc = program->uniformLocation("palette");
-    const int opacity_loc = program->uniformLocation("opacity");
-
     gl->glActiveTexture(GL_TEXTURE0);
-    program->setUniformValue(tex3d_loc, 0);
+    program->setUniformValue(program->uniformLocation("texture3d"), 0);
     data_texture->bind();
 
     gl->glActiveTexture(GL_TEXTURE1);
-    program->setUniformValue(palette_loc, 1);
+    program->setUniformValue(program->uniformLocation("palette"), 1);
     color_texture->bind();
 
     gl->glActiveTexture(GL_TEXTURE2);
-    program->setUniformValue(opacity_loc, 2);
+    program->setUniformValue(program->uniformLocation("opacity"), 2);
     opacity_texture->bind();
+
+    gl->glActiveTexture(GL_TEXTURE3);
+    program->setUniformValue(program->uniformLocation("jitter"), 3);
+    jitter_texture->bind();
+
+    program->setUniformValue(program->uniformLocation("jitterSize"), jitter_size);
+    program->setUniformValue(program->uniformLocation("jitterEnabled"), jitter_enabled);
 
     doRender(gl);
 

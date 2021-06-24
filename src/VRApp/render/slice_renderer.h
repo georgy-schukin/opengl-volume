@@ -11,9 +11,8 @@ public:
     SliceRenderer() = default;
     ~SliceRenderer() override = default;
 
-    void init(QOpenGLFunctions *gl) override;    
-
 protected:
+    void doInit(QOpenGLFunctions *gl) override;
     void doRender(QOpenGLFunctions *gl) override;
 
 private:

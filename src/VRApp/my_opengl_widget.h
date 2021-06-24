@@ -22,6 +22,7 @@ public:
     void setOpacityPalette(const std::vector<GLfloat> &values);
     void setRenderer(std::shared_ptr<Renderer> rend);
     void enableLighting(bool enabled);
+    void enableJitter(bool enabled);
     void enableCorrectScale(bool enabled);
     void setStepMultiplier(int multiplier);
 
@@ -81,5 +82,6 @@ private:
     bool update_renderer = false;
     bool lighting_enabled = false;
     bool correct_scale = false;
+    bool jitter_enabled = false;
 };
 

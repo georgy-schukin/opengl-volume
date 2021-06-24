@@ -121,6 +121,7 @@ void MainWindow::initToolbar() {
     step_mult_box->setMinimum(1);
     step_mult_box->setMaximum(1000);
     step_mult_box->setValue(1);
+    step_mult_box->setFocusPolicy(Qt::TabFocus);
     connect(step_mult_box, qOverload<int>(&QSpinBox::valueChanged), [this](int value) {
         setStepMultiplier(value);
     });
@@ -148,6 +149,7 @@ void MainWindow::initGlWidget() {
     setRenderer(std::make_shared<RayCastRenderer>());
     setCutoff(0.0, 1.0);
     enableLighting(ui->actionUse_Lighting->isChecked());
+    enableJitter(ui->actionEnable_Jitter->isChecked());
     enableCorrectScale(ui->actionCorrect_Scale->isChecked());
 }
 
@@ -181,6 +183,11 @@ void MainWindow::setCutoff(float low, float high) {
 
 void MainWindow::enableLighting(bool enabled) {
     gl_widget->enableLighting(enabled);
+    gl_widget->update();
+}
+
+void MainWindow::enableJitter(bool enabled) {
+    gl_widget->enableJitter(enabled);
     gl_widget->update();
 }
 
@@ -406,4 +413,8 @@ void MainWindow::showError(QString message) {
 
 void MainWindow::on_actionCorrect_Scale_triggered() {
     enableCorrectScale(ui->actionCorrect_Scale->isChecked());
+}
+
+void MainWindow::on_actionEnable_Jitter_triggered() {
+    enableJitter(ui->actionEnable_Jitter->isChecked());
 }

@@ -6,7 +6,7 @@
 #include <QOpenGLShaderProgram>
 #include <cmath>
 
-void RayCastRenderer::init(QOpenGLFunctions *gl) {
+void RayCastRenderer::doInit(QOpenGLFunctions *gl) {
     program = loadProgram("shaders/raycast.vert", "shaders/raycast.frag");
 
     cube = std::make_shared<Cube>();

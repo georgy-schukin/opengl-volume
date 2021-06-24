@@ -110,6 +110,7 @@
     <addaction name="actionShow_hide_Toolbar"/>
     <addaction name="actionShow_hide_Statusbar"/>
     <addaction name="actionUse_Lighting"/>
+    <addaction name="actionEnable_Jitter"/>
     <addaction name="actionCorrect_Scale"/>
    </widget>
    <widget class="QMenu" name="menuRender">
@@ -419,6 +420,17 @@
    </property>
    <property name="text">
     <string>Correct Scale</string>
+   </property>
+  </action>
+  <action name="actionEnable_Jitter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable Jitter</string>
+   </property>
+   <property name="shortcut">
+    <string>J</string>
    </property>
   </action>
  </widget>

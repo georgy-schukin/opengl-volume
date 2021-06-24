@@ -6,7 +6,7 @@
 #include <QOpenGLShaderProgram>
 #include <cmath>
 
-void SliceRenderer::init(QOpenGLFunctions *gl) {
+void SliceRenderer::doInit(QOpenGLFunctions *gl) {
     program = loadProgram("shaders/slice.vert", "shaders/slice.frag");
 
     plane = std::make_shared<Plane>();

@@ -7,10 +7,18 @@ out vec4 fragColor;
 uniform sampler3D texture3d;
 uniform sampler1D palette;
 uniform sampler1D opacity;
+
+uniform sampler2D jitter;
+uniform int jitterSize;
+uniform bool jitterEnabled;
+
 uniform float cutoffLow, cutoffHigh, cutoffCoeff;
+
 uniform vec3 eyePosition;
+
 uniform vec3 lightPosition;
 uniform bool lightingEnabled;
+
 uniform float step;
 uniform int numSteps;
 uniform float stepMultCoeff;
@@ -73,6 +81,11 @@ void main() {
     vec3 position = texCoord;
     vec3 direction = normalize(coord - eyePosition); // ray direction from eye
     vec4 dest = vec4(0.0);
+
+    if (jitterEnabled) {
+        float jitterCoeff = texture(jitter, gl_FragCoord.xy / vec2(jitterSize)).r;
+        position += direction * step * jitterCoeff;
+    }
 
     for (int i = 0; i < numSteps; i++) {
         float value = getValue(position);
