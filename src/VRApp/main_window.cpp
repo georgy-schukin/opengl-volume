@@ -33,9 +33,9 @@ std::vector<GLfloat> logOpacityPalette(float step = 1.0f) {
     return makeOpacityPalette(1024, [step](const GLfloat &x) {return std::log(x + step) / std::log(1.0f + step);});
 }
 
-QColor getColorSetting(QString key) {
+QColor getColorSetting(QString key, QColor default_color) {
     QSettings settings;
-    auto value = settings.value(key);
+    auto value = settings.value(key, static_cast<unsigned int>(default_color.rgb()));
     return QColor(QRgb(value.toUInt()));
 }
 
@@ -44,9 +44,30 @@ void setColorSetting(QString key, QColor color) {
     settings.setValue(key, static_cast<unsigned int>(color.rgb()));
 }
 
+template <class T>
+void setSetting(QString key, T value) {
+    QSettings settings;
+    settings.setValue(key, value);
+}
+
+template <class T>
+QVariant getSetting(QString key, T default_value) {
+    QSettings settings;
+    return settings.value(key, default_value);
+}
+
 const static QString BG_COLOR_KEY = "background-color";
+const static QString SINGLE_COLOR_KEY = "single-color";
 const static QString FRAME_DIR_KEY = "frame-dir";
 const static QString FRAME_FILTER_KEY = "frame-filter";
+const static QString SHOW_TOOLBAR_KEY = "show-toolbar";
+const static QString SHOW_STATUSBAR_KEY = "show-statusbar";
+const static QString ENABLE_LIGHTING_KEY = "enable-lighting";
+const static QString ENABLE_JITTER_KEY = "enable-jitter";
+const static QString ENABLE_CORRECT_SCALE_KEY = "enable-correct-scale";
+const static QString CUTOFF_LOW_KEY = "cutoff-low";
+const static QString CUTOFF_HIGH_KEY = "cutoff-high";
+const static QString STEP_MULTIPLIER_KEY = "step-multiplier";
 
 }
 
@@ -82,9 +103,9 @@ void MainWindow::initStatusbar() {
     ui->statusBar->addWidget(size_label);
     ui->statusBar->addWidget(cutoff_label);
 
-    if (!ui->actionShow_hide_Statusbar->isChecked()) {
-        ui->statusBar->hide();
-    }
+    const auto show = getSetting(SHOW_STATUSBAR_KEY, true).toBool();
+    ui->actionShow_hide_Statusbar->setChecked(show);
+    ui->statusBar->setHidden(!show);
 }
 
 void MainWindow::initToolbar() {
@@ -120,7 +141,7 @@ void MainWindow::initToolbar() {
     step_mult_box = new QSpinBox(this);
     step_mult_box->setMinimum(1);
     step_mult_box->setMaximum(1000);
-    step_mult_box->setValue(1);
+    step_mult_box->setValue(getSetting(STEP_MULTIPLIER_KEY, 1).toInt());
     step_mult_box->setFocusPolicy(Qt::TabFocus);
     connect(step_mult_box, qOverload<int>(&QSpinBox::valueChanged), [this](int value) {
         setStepMultiplier(value);
@@ -133,24 +154,36 @@ void MainWindow::initToolbar() {
     ui->mainToolBar->addWidget(new QLabel("Step mult: ", this));
     ui->mainToolBar->addWidget(step_mult_box);
 
-    if (!ui->actionShow_hide_Toolbar->isChecked()) {
-        ui->mainToolBar->hide();
-    }
+    const auto show = getSetting(SHOW_TOOLBAR_KEY, true).toBool();
+    ui->actionShow_hide_Toolbar->setChecked(show);
+    ui->mainToolBar->setHidden(!show);
 }
 
 void MainWindow::initGlWidget() {
-    auto bgColor = getColorSetting(BG_COLOR_KEY);
+    auto bgColor = getColorSetting(BG_COLOR_KEY, Qt::white);
     if (bgColor.isValid()) {
         gl_widget->setBackgroundColor(bgColor);
     }
+
     setFrame(makeSectorFrame(gl_widget->getFrameSize()), "Sector");
     setColorPalette(makeRainbowWithBlackPalette());
     setOpacityPalette(powOpacityPalette(1));
     setRenderer(std::make_shared<RayCastRenderer>());
-    setCutoff(0.0, 1.0);
-    enableLighting(ui->actionUse_Lighting->isChecked());
-    enableJitter(ui->actionEnable_Jitter->isChecked());
-    enableCorrectScale(ui->actionCorrect_Scale->isChecked());
+
+    const auto c_low = getSetting(CUTOFF_LOW_KEY, 0.0).toFloat();
+    const auto c_high = getSetting(CUTOFF_HIGH_KEY, 1.0).toFloat();
+    setCutoff(c_low, c_high);
+    setStepMultiplier(getSetting(STEP_MULTIPLIER_KEY, 1).toInt());
+
+    const auto lighting_enabled = getSetting(ENABLE_LIGHTING_KEY, false).toBool();
+    const auto jitter_enabled = getSetting(ENABLE_JITTER_KEY, false).toBool();
+    const auto correct_scale_enabled = getSetting(ENABLE_CORRECT_SCALE_KEY, false).toBool();
+    ui->actionUse_Lighting->setChecked(lighting_enabled);
+    ui->actionEnable_Jitter->setChecked(jitter_enabled);
+    ui->actionCorrect_Scale->setChecked(correct_scale_enabled);
+    enableLighting(lighting_enabled);
+    enableJitter(jitter_enabled);
+    enableCorrectScale(correct_scale_enabled);
 }
 
 void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
@@ -178,27 +211,33 @@ void MainWindow::setRenderer(std::shared_ptr<Renderer> renderer) {
 void MainWindow::setCutoff(float low, float high) {
     gl_widget->setCutoff(low, high);
     gl_widget->update();
+    setSetting(CUTOFF_LOW_KEY, low);
+    setSetting(CUTOFF_HIGH_KEY, high);
     emit cutoffChanged(low, high);
 }
 
 void MainWindow::enableLighting(bool enabled) {
     gl_widget->enableLighting(enabled);
     gl_widget->update();
+    setSetting(ENABLE_LIGHTING_KEY, enabled);
 }
 
 void MainWindow::enableJitter(bool enabled) {
     gl_widget->enableJitter(enabled);
     gl_widget->update();
+    setSetting(ENABLE_JITTER_KEY, enabled);
 }
 
 void MainWindow::enableCorrectScale(bool enabled) {
     gl_widget->enableCorrectScale(enabled);
     gl_widget->update();
+    setSetting(ENABLE_CORRECT_SCALE_KEY, enabled);
 }
 
 void MainWindow::setStepMultiplier(int multiplier) {
     gl_widget->setStepMultiplier(multiplier);
     gl_widget->update();
+    setSetting(STEP_MULTIPLIER_KEY, multiplier);
 }
 
 std::pair<float, float> MainWindow::getCutoff() const {
@@ -306,11 +345,12 @@ void MainWindow::on_actionPalMonochrome_triggered() {
 }
 
 void MainWindow::on_actionPalSingle_color_triggered() {
-    QColor color = QColorDialog::getColor(Qt::red, this,
+    QColor color = QColorDialog::getColor(getColorSetting(SINGLE_COLOR_KEY, Qt::red), this,
                                           "Choose color",
                                           QColorDialog::DontUseNativeDialog);
     if (color.isValid()) {
         setColorPalette({QVector3D(color.redF(), color.greenF(), color.blueF())});
+        setColorSetting(SINGLE_COLOR_KEY, color);
     }
 }
 
@@ -396,11 +436,15 @@ void MainWindow::on_actionRenderRay_Casting_triggered() {
 }
 
 void MainWindow::on_actionShow_hide_Toolbar_triggered() {
-    ui->mainToolBar->setHidden(!ui->mainToolBar->isHidden());
+    const auto show = ui->mainToolBar->isHidden();
+    ui->mainToolBar->setHidden(!show);
+    setSetting(SHOW_TOOLBAR_KEY, show);
 }
 
 void MainWindow::on_actionShow_hide_Statusbar_triggered() {
-    ui->statusBar->setHidden(!ui->statusBar->isHidden());
+    const auto show = ui->statusBar->isHidden();
+    ui->statusBar->setHidden(!show);
+    setSetting(SHOW_STATUSBAR_KEY, show);
 }
 
 void MainWindow::on_actionUse_Lighting_triggered() {
