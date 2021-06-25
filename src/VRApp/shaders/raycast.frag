@@ -96,7 +96,7 @@ void main() {
             vec3 color = getColor(value);
             float alpha = getAlpha(value) * stepMultCoeff;
 
-            if (lightingEnabled) {
+            if (lightingEnabled && alpha > 0.05) {
                 vec3 N = gradient(position);
                 vec3 L = normalize(lightPosition - position);
                 vec3 V = -direction;
