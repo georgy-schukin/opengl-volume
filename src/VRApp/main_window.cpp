@@ -16,6 +16,7 @@
 #include <QColorDialog>
 #include <QSettings>
 #include <QSlider>
+#include <QLineEdit>
 
 #include <cmath>
 
@@ -80,16 +81,24 @@ MainWindow::MainWindow(QWidget *parent) :
     gl_widget = ui->openGLWidget;
     connect(gl_widget, &MyOpenGLWidget::initialized, this, &MainWindow::initGlWidget);
 
+    initMenu();
     initStatusbar();
-    initToolbar();
+    initToolbar();    
 
     default_title = windowTitle();
     setWindowIcon(QIcon(":/resources/cube.png"));
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::initMenu() {
+    connect(this, &MainWindow::showToolbarChanged, ui->actionShow_hide_Toolbar, &QAction::setChecked);
+    connect(this, &MainWindow::showStatusbarChanged, ui->actionShow_hide_Statusbar, &QAction::setChecked);
+    connect(this, &MainWindow::enableLightingChanged, ui->actionUse_Lighting, &QAction::setChecked);
+    connect(this, &MainWindow::enableJitterChanged, ui->actionEnable_Jitter, &QAction::setChecked);
+    connect(this, &MainWindow::enableCorrectScaleChanged, ui->actionCorrect_Scale, &QAction::setChecked);
 }
 
 void MainWindow::initStatusbar() {
@@ -101,18 +110,13 @@ void MainWindow::initStatusbar() {
     });
 
     ui->statusBar->addWidget(size_label);
-    ui->statusBar->addWidget(cutoff_label);
-
-    const auto show = getSetting(SHOW_STATUSBAR_KEY, true).toBool();
-    ui->actionShow_hide_Statusbar->setChecked(show);
-    ui->statusBar->setHidden(!show);
+    ui->statusBar->addWidget(cutoff_label);    
 }
 
 void MainWindow::initToolbar() {
     slider_low = new QSlider(Qt::Horizontal, this);
     slider_low->setMinimum(0);
-    slider_low->setMaximum(100);
-    slider_low->setValue(slider_low->minimum());
+    slider_low->setMaximum(100);    
     slider_low->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     connect(slider_low, &QSlider::valueChanged, [this](int value) {
         setCutoff(float(value) / slider_low->maximum(), getCutoff().second);
@@ -120,8 +124,7 @@ void MainWindow::initToolbar() {
 
     slider_high = new QSlider(Qt::Horizontal, this);
     slider_high->setMinimum(0);
-    slider_high->setMaximum(100);
-    slider_high->setValue(slider_high->maximum());
+    slider_high->setMaximum(100);    
     slider_high->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     connect(slider_high, &QSlider::valueChanged, [this](int value) {
         setCutoff(getCutoff().first, float(value) / slider_high->maximum());
@@ -130,33 +133,28 @@ void MainWindow::initToolbar() {
     connect(this, &MainWindow::cutoffChanged, [this](float low, float high) {
         const auto s_low = static_cast<int>(low * slider_low->maximum());
         const auto s_high = static_cast<int>(high * slider_high->maximum());
-        if (s_low != slider_low->value()) {
-            slider_low->setValue(s_low);
-        }
-        if (s_high != slider_high->value()) {
-            slider_high->setValue(s_high);
-        }
+        // Block signals to not cause changing cutoff again.
+        const auto block_l = slider_low->blockSignals(true);
+        slider_low->setValue(s_low);
+        slider_low->blockSignals(block_l);
+        const auto block_h = slider_high->blockSignals(true);
+        slider_high->setValue(s_high);
+        slider_high->blockSignals(block_h);
     });
 
     step_mult_box = new QSpinBox(this);
     step_mult_box->setMinimum(1);
-    step_mult_box->setMaximum(1000);
-    step_mult_box->setValue(getSetting(STEP_MULTIPLIER_KEY, 1).toInt());
+    step_mult_box->setMaximum(1000);    
     step_mult_box->setFocusPolicy(Qt::TabFocus);
-    connect(step_mult_box, qOverload<int>(&QSpinBox::valueChanged), [this](int value) {
-        setStepMultiplier(value);
-    });
+    connect(step_mult_box, qOverload<int>(&QSpinBox::valueChanged), this, &MainWindow::setStepMultiplier);
+    connect(this, &MainWindow::stepMultiplierChanged, step_mult_box, &QSpinBox::setValue);
 
     ui->mainToolBar->addWidget(new QLabel("Low: ", this));
     ui->mainToolBar->addWidget(slider_low);
     ui->mainToolBar->addWidget(new QLabel("High: ", this));
     ui->mainToolBar->addWidget(slider_high);
     ui->mainToolBar->addWidget(new QLabel("Step mult: ", this));
-    ui->mainToolBar->addWidget(step_mult_box);
-
-    const auto show = getSetting(SHOW_TOOLBAR_KEY, true).toBool();
-    ui->actionShow_hide_Toolbar->setChecked(show);
-    ui->mainToolBar->setHidden(!show);
+    ui->mainToolBar->addWidget(step_mult_box);    
 }
 
 void MainWindow::initGlWidget() {
@@ -170,20 +168,29 @@ void MainWindow::initGlWidget() {
     setOpacityPalette(powOpacityPalette(1));
     setRenderer(std::make_shared<RayCastRenderer>());
 
-    const auto c_low = getSetting(CUTOFF_LOW_KEY, 0.0).toFloat();
-    const auto c_high = getSetting(CUTOFF_HIGH_KEY, 1.0).toFloat();
-    setCutoff(c_low, c_high);
+    initSettings();
+}
+
+void MainWindow::initSettings() {
+    setCutoff(getSetting(CUTOFF_LOW_KEY, 0.0).toFloat(), getSetting(CUTOFF_HIGH_KEY, 1.0).toFloat());
     setStepMultiplier(getSetting(STEP_MULTIPLIER_KEY, 1).toInt());
 
-    const auto lighting_enabled = getSetting(ENABLE_LIGHTING_KEY, false).toBool();
-    const auto jitter_enabled = getSetting(ENABLE_JITTER_KEY, false).toBool();
-    const auto correct_scale_enabled = getSetting(ENABLE_CORRECT_SCALE_KEY, false).toBool();
-    ui->actionUse_Lighting->setChecked(lighting_enabled);
-    ui->actionEnable_Jitter->setChecked(jitter_enabled);
-    ui->actionCorrect_Scale->setChecked(correct_scale_enabled);
-    enableLighting(lighting_enabled);
-    enableJitter(jitter_enabled);
-    enableCorrectScale(correct_scale_enabled);
+    enableLighting(getSetting(ENABLE_LIGHTING_KEY, false).toBool());
+    enableJitter(getSetting(ENABLE_JITTER_KEY, false).toBool());
+    enableCorrectScale(getSetting(ENABLE_CORRECT_SCALE_KEY, false).toBool());
+
+    showToolbar(getSetting(SHOW_TOOLBAR_KEY, false).toBool());
+    showStatusbar(getSetting(SHOW_STATUSBAR_KEY, false).toBool());
+}
+
+void MainWindow::resetSettings() {
+    setCutoff(0.0, 1.0);
+    setStepMultiplier(1);
+    enableLighting(false);
+    enableJitter(false);
+    enableCorrectScale(false);
+    showToolbar(true);
+    showStatusbar(true);
 }
 
 void MainWindow::setFrame(const Frame3D<GLfloat> &frame, const QString &title) {
@@ -220,34 +227,40 @@ void MainWindow::enableLighting(bool enabled) {
     gl_widget->enableLighting(enabled);
     gl_widget->update();
     setSetting(ENABLE_LIGHTING_KEY, enabled);
+    emit enableLightingChanged(enabled);
 }
 
 void MainWindow::enableJitter(bool enabled) {
     gl_widget->enableJitter(enabled);
     gl_widget->update();
     setSetting(ENABLE_JITTER_KEY, enabled);
+    emit enableJitterChanged(enabled);
 }
 
 void MainWindow::enableCorrectScale(bool enabled) {
     gl_widget->enableCorrectScale(enabled);
     gl_widget->update();
     setSetting(ENABLE_CORRECT_SCALE_KEY, enabled);
+    emit enableCorrectScaleChanged(enabled);
 }
 
 void MainWindow::setStepMultiplier(int multiplier) {
     gl_widget->setStepMultiplier(multiplier);
     gl_widget->update();
     setSetting(STEP_MULTIPLIER_KEY, multiplier);
+    emit stepMultiplierChanged(multiplier);
 }
 
 void MainWindow::showToolbar(bool show) {
     ui->mainToolBar->setHidden(!show);
     setSetting(SHOW_TOOLBAR_KEY, show);
+    emit showToolbarChanged(show);
 }
 
 void MainWindow::showStatusbar(bool show) {
     ui->statusBar->setHidden(!show);
     setSetting(SHOW_STATUSBAR_KEY, show);
+    emit showStatusbarChanged(show);
 }
 
 std::pair<float, float> MainWindow::getCutoff() const {
@@ -446,11 +459,11 @@ void MainWindow::on_actionRenderRay_Casting_triggered() {
 }
 
 void MainWindow::on_actionShow_hide_Toolbar_triggered() {
-    showToolbar(!ui->actionShow_hide_Toolbar->isChecked());
+    showToolbar(ui->actionShow_hide_Toolbar->isChecked());
 }
 
 void MainWindow::on_actionShow_hide_Statusbar_triggered() {
-    showToolbar(!ui->actionShow_hide_Statusbar->isChecked());
+    showStatusbar(ui->actionShow_hide_Statusbar->isChecked());
 }
 
 void MainWindow::on_actionUse_Lighting_triggered() {
@@ -470,11 +483,5 @@ void MainWindow::on_actionEnable_Jitter_triggered() {
 }
 
 void MainWindow::on_actionReset_All_triggered() {
-    setCutoff(0.0, 1.0);
-    setStepMultiplier(1);
-    enableLighting(false);
-    enableJitter(false);
-    enableCorrectScale(false);
-    showToolbar(true);
-    showStatusbar(true);
+    resetSettings();
 }

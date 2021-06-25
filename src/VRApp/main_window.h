@@ -29,6 +29,12 @@ public:
 
 signals:
     void cutoffChanged(float low, float high);
+    void stepMultiplierChanged(int);
+    void enableLightingChanged(bool);
+    void enableJitterChanged(bool);
+    void enableCorrectScaleChanged(bool);
+    void showToolbarChanged(bool);
+    void showStatusbarChanged(bool);
 
 private slots:
     void initGlWidget();
@@ -89,8 +95,12 @@ private slots:
     void on_actionReset_All_triggered();
 
 private:
+    void initMenu();
     void initStatusbar();
     void initToolbar();
+
+    void initSettings();
+    void resetSettings();
 
     void setFrame(const Frame3D<GLfloat> &frame, const QString &title = "");
     void setColorPalette(const std::vector<QVector3D> &palette);
