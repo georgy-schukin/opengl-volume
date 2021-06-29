@@ -15,7 +15,10 @@ public:
 
     void init(QOpenGLFunctions *gl);
     void render(QOpenGLFunctions *gl);
-    virtual void enableLighting(bool enabled) {}
+
+    void enableLighting(bool enabled) {
+        lighting_enabled = enabled;
+    }
 
     void enableJitter(bool enabled) {
         jitter_enabled = enabled;
@@ -73,5 +76,6 @@ protected:
 
     int step_multiplier = 1;
     int jitter_size = 64;
+    bool lighting_enabled = false;
     bool jitter_enabled = false;
 };

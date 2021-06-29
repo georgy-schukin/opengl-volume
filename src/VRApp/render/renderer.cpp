@@ -85,6 +85,13 @@ void Renderer::render(QOpenGLFunctions *gl) {
     program->setUniformValue(program->uniformLocation("jitterSize"), jitter_size);
     program->setUniformValue(program->uniformLocation("jitterEnabled"), jitter_enabled);
 
+    const auto mvInv = (view_matrix * model_matrix).inverted();
+    const auto eye = mvInv * QVector4D(0.0f, 0.0f, 0.0f, 1.0f);
+    const auto light = mvInv * QVector4D(-5.0f, -5.0f, -5.0f, 1.0f);
+    program->setUniformValue(program->uniformLocation("eyePosition"), QVector3D(eye.x(), eye.y(), eye.z()));
+    program->setUniformValue(program->uniformLocation("lightPosition"), QVector3D(light.x(), light.y(), light.z()));
+    program->setUniformValue(program->uniformLocation("lightingEnabled"), lighting_enabled);
+
     doRender(gl);
 
     data_texture->release();

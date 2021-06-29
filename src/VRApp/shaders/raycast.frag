@@ -15,13 +15,12 @@ uniform bool jitterEnabled;
 uniform float cutoffLow, cutoffHigh, cutoffCoeff;
 
 uniform vec3 eyePosition;
-
 uniform vec3 lightPosition;
 uniform bool lightingEnabled;
 
 uniform float step;
-uniform int numSteps;
 uniform float stepMultCoeff;
+uniform int numSteps;
 
 float getValue(vec3 coord) {
     return texture(texture3d, coord).r;
@@ -78,7 +77,7 @@ bool isOutOfVolume(vec3 pos) {
 
 void main() {
     vec3 texCoord = (coord + vec3(1.0)) * 0.5;
-    vec3 position = texCoord;
+    vec3 position = texCoord; // current texture coords in the cube
     vec3 direction = normalize(coord - eyePosition); // ray direction from eye
     vec4 dest = vec4(0.0);
 
@@ -91,15 +90,16 @@ void main() {
         float value = getValue(position);
 
         if (value >= cutoffLow && value <= cutoffHigh) {
-            value = (value - cutoffLow) * cutoffCoeff;
+            value = (value - cutoffLow) * cutoffCoeff; // rescale value into cutoff range
 
             vec3 color = getColor(value);
             float alpha = getAlpha(value) * stepMultCoeff;
 
             if (lightingEnabled && alpha > 0.05) {
-                vec3 N = gradient(position);
-                vec3 L = normalize(lightPosition - position);
-                vec3 V = -direction;
+                vec3 currCoord = position * 2.0 - vec3(1.0); // currect coordinate in [-1,1] cube
+                vec3 N = gradient(position); // normal
+                vec3 L = normalize(lightPosition - currCoord); // direction to light
+                vec3 V = -direction; // direction to eye
 
                 color += shade(N, V, L);
             }
