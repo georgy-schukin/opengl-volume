@@ -25,6 +25,7 @@ public:
     void enableJitter(bool enabled);
     void enableCorrectScale(bool enabled);
     void setStepMultiplier(int multiplier);
+    void enableAutorotation(bool enabled);
 
     size_t getFrameSize() const {
         return frame_size;
@@ -66,7 +67,7 @@ private:
 
     float rotation_y_angle {0.0f}, rotation_x_angle {0.0f};
 
-    QTimer timer;
+    QTimer rotation_timer;
     int timer_interval {60};
 
     QPoint mouse_pos {0, 0};
@@ -82,6 +83,6 @@ private:
     bool update_renderer = false;
     bool lighting_enabled = false;
     bool correct_scale = false;
-    bool jitter_enabled = false;
+    bool jitter_enabled = false;    
 };
 

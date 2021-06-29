@@ -29,8 +29,7 @@ MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
 
     renderer = std::make_shared<RayCastRenderer>();
 
-    connect(&timer, &QTimer::timeout, this, &MyOpenGLWidget::onTimer);
-    timer.start(timer_interval);
+    connect(&rotation_timer, &QTimer::timeout, this, &MyOpenGLWidget::onTimer);
 }
 
 void MyOpenGLWidget::initializeGL() {
@@ -124,6 +123,14 @@ void MyOpenGLWidget::enableJitter(bool enabled) {
     }
 }
 
+void MyOpenGLWidget::enableAutorotation(bool enabled) {
+    if (enabled) {
+        rotation_timer.start(timer_interval);
+    } else {
+        rotation_timer.stop();
+    }
+}
+
 void MyOpenGLWidget::enableCorrectScale(bool enabled) {
     correct_scale = enabled;
 }
@@ -208,14 +215,9 @@ void MyOpenGLWidget::onTimer() {
 }
 
 void MyOpenGLWidget::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        mouse_pos = event->pos();
-    } else if (event->button() == Qt::RightButton) {
-        if (timer.isActive()) {
-            timer.stop();
-        } else {
-            timer.start(timer_interval);
-        }
+    mouse_pos = event->pos();
+    if (event->button() == Qt::RightButton) {
+        enableAutorotation(!rotation_timer.isActive());
     }
 }
 
@@ -232,4 +234,3 @@ void MyOpenGLWidget::wheelEvent(QWheelEvent *event) {
     view_matrix.translate(shift);
     update();
 }
-

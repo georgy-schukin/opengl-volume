@@ -94,6 +94,8 @@ private slots:
 
     void on_actionReset_All_triggered();
 
+    void on_actionHelp_triggered();
+
 private:
     void initMenu();
     void initStatusbar();
@@ -114,6 +116,7 @@ private:
 
     void showToolbar(bool show);
     void showStatusbar(bool show);
+    void enableAutorotation(bool enabled);
 
     std::pair<float, float> getCutoff() const;
 

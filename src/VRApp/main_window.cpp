@@ -110,7 +110,7 @@ void MainWindow::initStatusbar() {
     });
 
     ui->statusBar->addWidget(size_label);
-    ui->statusBar->addWidget(cutoff_label);    
+    ui->statusBar->addWidget(cutoff_label);        
 }
 
 void MainWindow::initToolbar() {
@@ -261,6 +261,10 @@ void MainWindow::showStatusbar(bool show) {
     ui->statusBar->setHidden(!show);
     setSetting(SHOW_STATUSBAR_KEY, show);
     emit showStatusbarChanged(show);
+}
+
+void MainWindow::enableAutorotation(bool enabled) {
+    gl_widget->enableAutorotation(enabled);
 }
 
 std::pair<float, float> MainWindow::getCutoff() const {
@@ -484,4 +488,12 @@ void MainWindow::on_actionEnable_Jitter_triggered() {
 
 void MainWindow::on_actionReset_All_triggered() {
     resetSettings();
+}
+
+void MainWindow::on_actionHelp_triggered() {
+    const auto help_str = QString("Controls:\n") +
+            QString(" Left mouse button: rotate\n") +
+            QString(" Right mouse button: autorotation on/off\n") +
+            QString(" Mouse wheel: zoom\n");
+    QMessageBox::information(this, "Info", help_str);
 }
