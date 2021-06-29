@@ -107,11 +107,14 @@
     </property>
     <addaction name="actionBackground_Color"/>
     <addaction name="actionCutoff"/>
-    <addaction name="actionShow_hide_Toolbar"/>
-    <addaction name="actionShow_hide_Statusbar"/>
+    <addaction name="separator"/>
     <addaction name="actionUse_Lighting"/>
     <addaction name="actionEnable_Jitter"/>
     <addaction name="actionCorrect_Scale"/>
+    <addaction name="separator"/>
+    <addaction name="actionShow_hide_Toolbar"/>
+    <addaction name="actionShow_hide_Statusbar"/>
+    <addaction name="separator"/>
     <addaction name="actionReset_All"/>
    </widget>
    <widget class="QMenu" name="menuRender">
