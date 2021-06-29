@@ -422,6 +422,9 @@
    <property name="text">
     <string>Correct Scale</string>
    </property>
+   <property name="shortcut">
+    <string>K</string>
+   </property>
   </action>
   <action name="actionEnable_Jitter">
    <property name="checkable">
