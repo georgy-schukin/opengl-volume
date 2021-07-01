@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>577</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFrame">
@@ -62,6 +62,8 @@
      <addaction name="actionHelix"/>
      <addaction name="actionHelicoid"/>
      <addaction name="actionTorus"/>
+     <addaction name="actionPerlin_Noise"/>
+     <addaction name="actionPerlin_Noise_with_Octaves"/>
     </widget>
     <addaction name="actionOpen"/>
     <addaction name="actionOpen_Raw"/>
@@ -455,6 +457,16 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F1</string>
+   </property>
+  </action>
+  <action name="actionPerlin_Noise">
+   <property name="text">
+    <string>Perlin Noise</string>
+   </property>
+  </action>
+  <action name="actionPerlin_Noise_with_Octaves">
+   <property name="text">
+    <string>Perlin Noise with Octaves</string>
    </property>
   </action>
  </widget>

@@ -11,7 +11,7 @@
 
 namespace  {
     template <typename T, typename U>
-    T lerp(T start, T end, U u_start, U u_end, U u_value) {
+    T lerp2(T start, T end, U u_start, U u_end, U u_value) {
         const T ind = T(u_value - u_start)/(u_end - u_start);
         return start*(T(1.0) - ind) + ind*end;
     }
@@ -39,7 +39,7 @@ namespace  {
             const auto vs = std::get<2>(t);
             const auto ve = std::get<3>(t);
             if (value >= rs && value < re) {
-                return lerp(vs, ve, rs, re, value);
+                return lerp2(vs, ve, rs, re, value);
             }
         }
         return 0.0f;
@@ -61,6 +61,51 @@ namespace  {
             histo[buck]++;
         }
         return histo;
+    }
+
+    double fade(double t) {
+        return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
+    }
+
+    double lerp(double t, double a, double b) {
+        return a + t * (b - a);
+    }
+
+    double grad(size_t hash, double x, double y, double z) {
+      const auto h = hash & 15;
+      double u = h < 8 ? x : y,
+             v = h < 4 ? y : h == 12||h == 14 ? x : z;
+      return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+    }
+
+    double noise(double x, double y, double z, const std::vector<size_t> &perm) {
+        const auto X = static_cast<size_t>(floor(x)) % perm.size();
+        const auto Y = static_cast<size_t>(floor(y)) % perm.size();
+        const auto Z = static_cast<size_t>(floor(z)) % perm.size();
+
+        x -= floor(x);
+        y -= floor(y);
+        z -= floor(z);
+
+        const auto u = fade(x);
+        const auto v = fade(y);
+        const auto w = fade(z);
+
+        const auto A =  (perm[X] + Y) % perm.size();
+        const auto AA = (perm[A] + Z) % perm.size();
+        const auto AB = (perm[(A + 1) % perm.size()] + Z) % perm.size();
+        const auto B =  (perm[(X + 1) % perm.size()] + Y) % perm.size();
+        const auto BA = (perm[B] + Z) % perm.size();
+        const auto BB = (perm[(B + 1) % perm.size()] + Z) % perm.size();
+
+        return lerp(w, lerp(v, lerp(u, grad(perm[AA], x, y, z),
+                                       grad(perm[BA], x - 1, y, z)),
+                               lerp(u, grad(perm[AB], x, y - 1, z),
+                                       grad(perm[BB], x - 1, y - 1, z))),
+                       lerp(v, lerp(u, grad(perm[(AA + 1) % perm.size()], x, y, z - 1),
+                                       grad(perm[(BA + 1) % perm.size()], x - 1, y, z - 1)),
+                               lerp(u, grad(perm[(AB + 1) % perm.size()], x, y - 1, z - 1),
+                                       grad(perm[(BB + 1) % perm.size()], x - 1, y - 1, z - 1))));
     }
 }
 
@@ -206,5 +251,41 @@ Frame3D<GLfloat> makeBubblesFrame(size_t dim_size, size_t num_of_bubbles, double
     return frame;
 }
 
+Frame3D<GLfloat> makePerlinNoiseFrame(size_t dim_size, double freq) {
+    std::vector<size_t> permutations;
+    for (size_t i = 0; i < 256; i++) {
+        permutations.push_back(i);
+    }
+    std::random_shuffle(permutations.begin(), permutations.end());
 
+    Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
+    frame.fill([&](size_t i, size_t j, size_t k) -> auto {
+        const auto x = double(i) * freq;
+        const auto y = double(j) * freq;
+        const auto z = double(k) * freq;
+        return noise(x, y, z, permutations);
+    });
+    return frame;
+}
 
+Frame3D<GLfloat> makePerlinNoiseOctavesFrame(size_t dim_size, int steps, double start_freq, double start_ampl) {
+    std::vector<size_t> permutations;
+    for (size_t i = 0; i < 256; i++) {
+        permutations.push_back(i);
+    }
+    std::random_shuffle(permutations.begin(), permutations.end());
+
+    Frame3D<GLfloat> frame(dim_size, dim_size, dim_size);
+    frame.fill([&](size_t i, size_t j, size_t k) -> auto {
+        double value = 0.0;
+        const auto x = double(i) * start_freq;
+        const auto y = double(j) * start_freq;
+        const auto z = double(k) * start_freq;
+        for (int n = 0; n < steps; n++) {
+            const auto coeff = n + 1;
+            value += start_ampl * noise(x * coeff, y * coeff, z * coeff, permutations) / coeff;
+        }
+        return std::min(1.0, value);
+    });
+    return frame;
+}

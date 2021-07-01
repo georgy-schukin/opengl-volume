@@ -83,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initMenu();
     initStatusbar();
-    initToolbar();    
+    initToolbar();
 
     default_title = windowTitle();
     setWindowIcon(QIcon(":/resources/cube.png"));
@@ -110,13 +110,13 @@ void MainWindow::initStatusbar() {
     });
 
     ui->statusBar->addWidget(size_label);
-    ui->statusBar->addWidget(cutoff_label);        
+    ui->statusBar->addWidget(cutoff_label);
 }
 
 void MainWindow::initToolbar() {
     slider_low = new QSlider(Qt::Horizontal, this);
     slider_low->setMinimum(0);
-    slider_low->setMaximum(100);    
+    slider_low->setMaximum(100);
     slider_low->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     connect(slider_low, &QSlider::valueChanged, [this](int value) {
         setCutoff(float(value) / slider_low->maximum(), getCutoff().second);
@@ -124,7 +124,7 @@ void MainWindow::initToolbar() {
 
     slider_high = new QSlider(Qt::Horizontal, this);
     slider_high->setMinimum(0);
-    slider_high->setMaximum(100);    
+    slider_high->setMaximum(100);
     slider_high->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     connect(slider_high, &QSlider::valueChanged, [this](int value) {
         setCutoff(getCutoff().first, float(value) / slider_high->maximum());
@@ -144,7 +144,7 @@ void MainWindow::initToolbar() {
 
     step_mult_box = new QSpinBox(this);
     step_mult_box->setMinimum(1);
-    step_mult_box->setMaximum(1000);    
+    step_mult_box->setMaximum(1000);
     step_mult_box->setFocusPolicy(Qt::TabFocus);
     connect(step_mult_box, qOverload<int>(&QSpinBox::valueChanged), this, &MainWindow::setStepMultiplier);
     connect(this, &MainWindow::stepMultiplierChanged, step_mult_box, &QSpinBox::setValue);
@@ -154,7 +154,7 @@ void MainWindow::initToolbar() {
     ui->mainToolBar->addWidget(new QLabel("High: ", this));
     ui->mainToolBar->addWidget(slider_high);
     ui->mainToolBar->addWidget(new QLabel("Step mult: ", this));
-    ui->mainToolBar->addWidget(step_mult_box);    
+    ui->mainToolBar->addWidget(step_mult_box);
 }
 
 void MainWindow::initGlWidget() {
@@ -309,6 +309,14 @@ void MainWindow::on_actionTorus_triggered() {
 
 void MainWindow::on_actionBubbles_triggered() {
     setFrame(makeBubblesFrame(gl_widget->getFrameSize(), 20, 0.05, 0.25), "Bubbles");
+}
+
+void MainWindow::on_actionPerlin_Noise_triggered() {
+    setFrame(makePerlinNoiseFrame(gl_widget->getFrameSize(), 0.05));
+}
+
+void MainWindow::on_actionPerlin_Noise_with_Octaves_triggered() {
+    setFrame(makePerlinNoiseOctavesFrame(gl_widget->getFrameSize(), 4, 0.05, 1.0));
 }
 
 void MainWindow::on_actionOpDefault_triggered() {

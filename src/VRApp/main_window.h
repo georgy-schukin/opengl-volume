@@ -49,6 +49,8 @@ private slots:
     void on_actionHelicoid_triggered();
     void on_actionTorus_triggered();
     void on_actionBubbles_triggered();
+    void on_actionPerlin_Noise_triggered();
+    void on_actionPerlin_Noise_with_Octaves_triggered();
 
     void on_actionOpDefault_triggered();
     void on_actionOp_x_triggered();
