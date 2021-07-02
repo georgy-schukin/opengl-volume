@@ -40,7 +40,7 @@ public:
 
     template <typename Func>
     void fill(Func func) {
-        //#pragma omp parallel for
+        #pragma omp parallel for collapse(3)
         for (size_t k = 0; k < _depth; k++) {
             for (size_t i = 0; i < _width; i++) {
                 for (size_t j = 0; j < _height; j++) {
